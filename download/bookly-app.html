@@ -1,0 +1,3963 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookly — Digital Book Store</title>
+<style>
+:root{
+    --bg:#070809;
+    --panel:#0d0f11;
+    --panel2:#101214;
+    --field:#090b0d;
+    --text:#f2f2f0;
+    --text2:#b1b5ba;
+    --muted:#777c83;
+    --muted2:#555a61;
+    --line:rgba(255,255,255,.075);
+    --line2:rgba(255,255,255,.13);
+    --sidebar:320px;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+}
+
+body{
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 70% -20%,
+            rgba(255,255,255,.055),
+            transparent 35%
+        ),
+        var(--bg);
+
+    color:var(--text);
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+button,
+input,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+input,
+textarea{
+    outline:none;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app{
+    width:100%;
+    height:100vh;
+
+    display:grid;
+
+    grid-template-columns:
+        var(--sidebar)
+        minmax(0,1fr);
+
+    overflow:hidden;
+
+    transition:grid-template-columns .28s ease;
+}
+
+.app.sidebar-hidden{
+    grid-template-columns:
+        0
+        minmax(0,1fr);
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar{
+    width:var(--sidebar);
+    min-width:0;
+    height:100vh;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.018),
+            transparent 40%
+        ),
+        var(--panel);
+
+    border-right:1px solid var(--line);
+
+    transition:
+        transform .28s ease,
+        opacity .2s ease;
+}
+
+.app.sidebar-hidden .sidebar{
+    opacity:0;
+    transform:translateX(-25px);
+    pointer-events:none;
+}
+
+.sidebar-content{
+    flex:1;
+    min-height:0;
+
+    overflow-y:auto;
+
+    padding:17px 15px 22px;
+}
+
+.sidebar-content::-webkit-scrollbar{
+    width:4px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb{
+    background:#292c31;
+    border-radius:20px;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand{
+    display:flex;
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:20px;
+}
+
+.brand-mark{
+    width:30px;
+    height:30px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:8px;
+
+    background:#f1f1ef;
+    color:#080808;
+
+    font-size:12px;
+    font-weight:900;
+}
+
+.brand-name{
+    font-size:12px;
+    font-weight:850;
+}
+
+.brand-sub{
+    margin-top:2px;
+
+    color:#5c6168;
+
+    font-size:8px;
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.editor-section{
+    margin-top:19px;
+}
+
+.editor-section:first-of-type{
+    margin-top:0;
+}
+
+.section-heading{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:8px;
+
+    color:#72777e;
+
+    font-size:8px;
+    font-weight:800;
+
+    letter-spacing:1.1px;
+
+    text-transform:uppercase;
+}
+
+
+/* =========================================================
+   COVER
+========================================================= */
+
+.cover-upload{
+    position:relative;
+
+    min-height:132px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    overflow:hidden;
+
+    border:1px dashed rgba(255,255,255,.14);
+
+    border-radius:10px;
+
+    background:#0a0c0e;
+
+    transition:.2s;
+    cursor: pointer;
+}
+
+.cover-upload:hover,
+.cover-upload.dragging{
+    border-color:rgba(255,255,255,.28);
+
+    background:#0d0f11;
+}
+
+.cover-upload input{
+    position:absolute;
+    inset:0;
+
+    opacity:0;
+
+    cursor:pointer;
+}
+
+.cover-preview-mini{
+    display:block;
+
+    max-width:52px;
+    max-height:70px;
+
+    margin-bottom:8px;
+
+    object-fit:contain;
+
+    border-radius:4px;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.5);
+}
+
+.upload-icon{
+    width:30px;
+    height:30px;
+
+    display:grid;
+    place-items:center;
+
+    margin-bottom:7px;
+
+    border:1px solid var(--line2);
+
+    border-radius:8px;
+
+    color:#afb3b8;
+}
+
+.upload-icon svg{
+    width:13px;
+    height:13px;
+}
+
+.upload-title{
+    color:#c4c7ca;
+
+    font-size:9px;
+    font-weight:750;
+}
+
+.upload-help{
+    margin-top:4px;
+
+    color:#555a61;
+
+    font-size:7px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.field{
+    margin-bottom:8px;
+}
+
+.field:last-child{
+    margin-bottom:0;
+}
+
+.field > label{
+    display:block;
+
+    margin-bottom:5px;
+
+    color:#aeb2b7;
+
+    font-size:8px;
+    font-weight:650;
+}
+
+.input,
+.textarea{
+    width:100%;
+
+    border:1px solid var(--line);
+
+    border-radius:8px;
+
+    background:var(--field);
+
+    color:#e6e7e5;
+
+    font-size:9px;
+
+    transition:.2s;
+}
+
+.input{
+    height:34px;
+
+    padding:0 9px;
+}
+
+.textarea{
+    min-height:68px;
+
+    padding:8px 9px;
+
+    resize:vertical;
+
+    line-height:1.5;
+}
+
+.textarea.description{
+    min-height:92px;
+}
+
+.input::placeholder,
+.textarea::placeholder{
+    color:#484d53;
+}
+
+.input:focus,
+.textarea:focus{
+    border-color:rgba(255,255,255,.22);
+
+    background:#0c0e10;
+}
+
+
+/* =========================================================
+   FORMAT DETECTOR
+========================================================= */
+
+.format-box{
+    width:100%;
+
+    padding:13px 13px 12px;
+
+    border:1px solid rgba(255,255,255,.075);
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.025),
+            rgba(255,255,255,.008)
+        );
+
+    transition:
+        border-color .2s ease,
+        background .2s ease;
+}
+
+.format-box:hover{
+    border-color:rgba(255,255,255,.12);
+}
+
+.format-box-header{
+    display:flex;
+
+    align-items:center;
+    justify-content:space-between;
+
+    gap:10px;
+}
+
+.format-label-small{
+    display:block;
+
+    margin-bottom:5px;
+
+    color:#62676e;
+
+    font-size:7px;
+    font-weight:800;
+
+    letter-spacing:1.15px;
+}
+
+.format-box-header strong{
+    display:block;
+
+    color:#e4e5e3;
+
+    font-size:11px;
+    font-weight:800;
+}
+
+.format-status{
+    display:flex;
+
+    align-items:center;
+
+    gap:5px;
+
+    padding:5px 7px;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    border-radius:6px;
+
+    color:#62676d;
+
+    font-size:7px;
+    font-weight:750;
+
+    white-space:nowrap;
+}
+
+.format-status span{
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
+    background:#4e5359;
+}
+
+.format-status.ready{
+    color:#adb1b5;
+
+    border-color:rgba(255,255,255,.11);
+}
+
+.format-status.ready span{
+    background:#c5c7c8;
+}
+
+.format-description{
+    margin-top:9px;
+
+    padding-top:9px;
+
+    border-top:1px solid rgba(255,255,255,.055);
+
+    color:#5d6269;
+
+    font-size:7px;
+
+    line-height:1.55;
+}
+
+
+/* =========================================================
+   FILE UPLOAD
+========================================================= */
+
+.file-upload{
+    position:relative;
+
+    min-height:70px;
+
+    display:flex;
+    align-items:center;
+
+    gap:9px;
+
+    padding:9px;
+
+    border:1px dashed rgba(255,255,255,.12);
+
+    border-radius:9px;
+
+    background:#090b0d;
+
+    transition:.2s;
+    cursor: pointer;
+}
+
+.file-upload:hover{
+    border-color:rgba(255,255,255,.23);
+}
+
+.file-upload input{
+    position:absolute;
+    inset:0;
+
+    opacity:0;
+
+    cursor:pointer;
+}
+
+.file-icon{
+    width:33px;
+    height:33px;
+
+    flex:none;
+
+    display:grid;
+    place-items:center;
+
+    border:1px solid var(--line);
+
+    border-radius:8px;
+
+    color:#aeb2b7;
+}
+
+.file-icon svg{
+    width:14px;
+    height:14px;
+}
+
+.file-info{
+    min-width:0;
+}
+
+.file-name{
+    overflow:hidden;
+
+    color:#c6c9cc;
+
+    font-size:8px;
+    font-weight:750;
+
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+.file-help{
+    margin-top:3px;
+
+    color:#555a61;
+
+    font-size:7px;
+}
+
+.file-list{
+    display:block;
+
+    margin-top:6px;
+
+    border:1px solid var(--line);
+
+    border-radius:8px;
+
+    overflow:hidden;
+}
+
+.file-item{
+    min-width:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:8px;
+
+    padding:8px;
+
+    background:#0b0d0f;
+
+    border-bottom:1px solid var(--line);
+}
+
+.file-item:last-child{
+    border-bottom:0;
+}
+
+.file-item-name{
+    min-width:0;
+
+    overflow:hidden;
+
+    color:#aeb2b7;
+
+    font-size:7px;
+
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+.file-item-type{
+    flex:none;
+
+    color:#656a71;
+
+    font-size:6px;
+    font-weight:850;
+
+    letter-spacing:.5px;
+}
+
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.price-row{
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:7px;
+}
+
+
+/* =========================================================
+   SIDEBAR FOOTER
+========================================================= */
+
+.sidebar-footer{
+    flex:none;
+
+    padding:10px 13px 12px;
+
+    background:#0d0f11;
+
+    border-top:1px solid var(--line);
+}
+
+.actions{
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:6px;
+}
+
+.action{
+    height:34px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:6px;
+
+    border:1px solid var(--line);
+
+    border-radius:8px;
+
+    background:#15171a;
+
+    color:#c9ccd0;
+
+    font-size:8px;
+    font-weight:750;
+
+    transition:.18s;
+}
+
+.action:hover{
+    background:#1a1c20;
+
+    border-color:var(--line2);
+}
+
+.action.primary{
+    background:#f1f1ef;
+
+    color:#080808;
+
+    border-color:transparent;
+}
+
+.action.primary:hover{
+    background:#fff;
+}
+
+.action svg{
+    width:11px;
+    height:11px;
+}
+
+.save-status{
+    min-height:14px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    margin-top:5px;
+
+    color:#5d6269;
+
+    font-size:7px;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.preview-area{
+    min-width:0;
+    min-height:0;
+
+    display:flex;
+    flex-direction:column;
+
+    padding:12px;
+
+    overflow:hidden;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.toolbar{
+    height:45px;
+
+    flex:none;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 8px;
+
+    margin-bottom:8px;
+
+    border:1px solid var(--line);
+
+    border-radius:10px;
+
+    background:var(--panel);
+}
+
+.toolbar-left{
+    display:flex;
+    align-items:center;
+
+    gap:8px;
+}
+
+.toolbar-button{
+    height:27px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:6px;
+
+    padding:0 9px;
+
+    border:1px solid var(--line);
+
+    border-radius:7px;
+
+    background:#101215;
+
+    color:#a2a6ab;
+
+    font-size:8px;
+    font-weight:750;
+
+    transition:.18s;
+}
+
+.toolbar-button:hover{
+    color:#eee;
+
+    border-color:var(--line2);
+}
+
+.toolbar-button svg{
+    width:11px;
+    height:11px;
+}
+
+.live{
+    display:flex;
+    align-items:center;
+
+    gap:6px;
+
+    color:#777c83;
+
+    font-size:7px;
+    font-weight:700;
+}
+
+.live-dot{
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
+    background:#b7babc;
+}
+
+
+/* =========================================================
+   WEBSITE
+========================================================= */
+
+.website{
+    flex:1;
+
+    min-width:0;
+    min-height:0;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    border:1px solid var(--line);
+
+    border-radius:12px;
+
+    background:
+        radial-gradient(
+            circle at 50% -15%,
+            rgba(255,255,255,.065),
+            transparent 33%
+        ),
+        #090a0c;
+}
+
+.website::-webkit-scrollbar{
+    width:5px;
+}
+
+.website::-webkit-scrollbar-thumb{
+    background:#292c31;
+    border-radius:20px;
+}
+
+
+/* =========================================================
+   PUBLIC PAGE
+========================================================= */
+
+.page{
+    width:100%;
+}
+
+.page-nav{
+    width:100%;
+    max-width:1120px;
+
+    min-height:60px;
+
+    margin:auto;
+
+    padding:0 30px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border-bottom:1px solid rgba(255,255,255,.055);
+}
+
+.page-brand{
+    max-width:300px;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+    text-overflow:ellipsis;
+
+    color:#ededeb;
+
+    font-size:10px;
+    font-weight:850;
+}
+
+.page-meta{
+    color:#5f646b;
+
+    font-size:7px;
+    font-weight:750;
+
+    letter-spacing:1px;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+    width:100%;
+    max-width:1120px;
+
+    min-height:555px;
+
+    margin:auto;
+
+    padding:60px 30px;
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(180px,340px)
+        minmax(0,1fr);
+
+    align-items:center;
+
+    gap:62px;
+}
+
+.book-wrap{
+    min-width:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+
+/*
+   IMPORTANT:
+   La couverture garde son ratio naturel.
+   Elle n'est plus forcée dans un format fixe.
+*/
+
+.book-cover{
+    display:block;
+
+    width:auto;
+    height:auto;
+
+    max-width:100%;
+    max-height:455px;
+
+    object-fit:contain;
+
+    border-radius:
+        4px 12px 12px 4px;
+
+    background:#141619;
+
+
+    box-shadow:
+        18px 25px 60px rgba(0,0,0,.62);
+
+    transition:
+        transform .3s ease;
+}
+
+.book-cover:hover{
+    transform:translateY(-4px);
+}
+
+.book-cover.empty{
+    width:255px;
+    height:375px;
+
+    display:grid;
+    place-items:center;
+
+    color:#4e535a;
+
+    font-size:8px;
+
+    background:#141619;
+}
+
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.hero-content{
+    min-width:0;
+}
+
+.eyebrow{
+    margin-bottom:12px;
+
+    color:#6c7178;
+
+    font-size:8px;
+    font-weight:850;
+
+    letter-spacing:1.5px;
+}
+
+.book-title{
+    max-width:700px;
+
+    margin-bottom:13px;
+
+    color:#f4f4f2;
+
+    font-size:
+        clamp(39px,5vw,69px);
+
+    line-height:.97;
+
+    letter-spacing:-3.4px;
+
+    overflow-wrap:anywhere;
+}
+
+.book-author{
+    margin-bottom:16px;
+
+    color:#969ba2;
+
+    font-size:9px;
+}
+
+.book-tagline{
+    max-width:590px;
+
+    margin-bottom:21px;
+
+    color:#858a92;
+
+    font-size:10px;
+
+    line-height:1.75;
+}
+
+
+/* =========================================================
+   FORMAT BADGES
+========================================================= */
+
+.format-badges{
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:5px;
+
+    margin-bottom:20px;
+}
+
+.format-badge{
+    padding:5px 7px;
+
+    border:1px solid var(--line);
+
+    border-radius:5px;
+
+    background:#0e1012;
+
+    color:#8d9299;
+
+    font-size:7px;
+    font-weight:800;
+
+    letter-spacing:.5px;
+}
+
+
+/* =========================================================
+   PURCHASE
+========================================================= */
+
+.purchase{
+    display:flex;
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+}
+
+.price{
+    color:#f0f0ee;
+
+    font-size:16px;
+    font-weight:850;
+}
+
+.price small{
+    display:block;
+
+    margin-top:2px;
+
+    color:#5d6269;
+
+    font-size:7px;
+    font-weight:500;
+}
+
+.buy-button{
+    height:37px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:7px;
+
+    padding:0 15px;
+
+    border-radius:8px;
+
+    background:#f2f2f1;
+
+    color:#080808;
+
+    font-size:8px;
+    font-weight:850;
+
+    text-decoration: none;
+    transition:.18s;
+}
+
+.buy-button:hover{
+    background:#fff;
+}
+
+.buy-button svg{
+    width:11px;
+    height:11px;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.about{
+    width:100%;
+    max-width:870px;
+
+    margin:auto;
+
+    padding:72px 30px;
+}
+
+.about-label{
+    margin-bottom:9px;
+
+    color:#656a72;
+
+    font-size:8px;
+    font-weight:850;
+
+    letter-spacing:1.4px;
+
+    text-transform:uppercase;
+}
+
+.about-title{
+    margin-bottom:19px;
+
+    color:#f1f1ef;
+
+    font-size:33px;
+
+    line-height:1;
+
+    letter-spacing:-2px;
+}
+
+.about-description{
+    color:#898e96;
+
+    font-size:10px;
+
+    line-height:1.9;
+
+    white-space:pre-line;
+}
+
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.features{
+    width:100%;
+    max-width:1120px;
+
+    margin:auto;
+
+    padding:
+        0 30px 58px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:8px;
+}
+
+.feature{
+    min-height:112px;
+
+    padding:16px;
+
+    border:1px solid var(--line);
+
+    border-radius:10px;
+
+    background:#0e1013;
+}
+
+.feature-icon{
+    width:26px;
+    height:26px;
+
+    display:grid;
+    place-items:center;
+
+    margin-bottom:10px;
+
+    border:1px solid var(--line);
+
+    border-radius:7px;
+
+    color:#c2c6ca;
+}
+
+.feature-icon svg{
+    width:12px;
+    height:12px;
+}
+
+.feature-title{
+    margin-bottom:4px;
+
+    font-size:8px;
+    font-weight:800;
+}
+
+.feature-text{
+    color:#646970;
+
+    font-size:7px;
+
+    line-height:1.55;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.page-footer{
+    width:100%;
+    max-width:1120px;
+
+    margin:auto;
+
+    padding:21px 30px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border-top:1px solid rgba(255,255,255,.055);
+
+    color:#535860;
+
+    font-size:7px;
+}
+
+
+/* =========================================================
+   SHOW EDITOR
+========================================================= */
+
+.show-editor{
+    position:fixed;
+
+    top:12px;
+    left:12px;
+
+    width:36px;
+    height:36px;
+
+    display:grid;
+    place-items:center;
+
+    z-index:3000;
+
+    border:1px solid var(--line2);
+
+    border-radius:9px;
+
+    background:#111316;
+
+    color:#ddd;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transform:translateX(-6px);
+
+    transition:.2s;
+}
+
+.show-editor svg{
+    width:14px;
+    height:14px;
+}
+
+.app.sidebar-hidden .show-editor{
+    opacity:1;
+
+    pointer-events:auto;
+
+    transform:translateX(0);
+}
+
+.show-editor:hover{
+    background:#191c20;
+}
+
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.overlay{
+    display:none;
+}
+
+
+/* =========================================================
+   LAPTOP
+========================================================= */
+
+@media(max-width:1400px){
+
+    :root{
+        --sidebar:305px;
+    }
+
+    .hero{
+        gap:45px;
+        padding:50px 27px;
+    }
+
+    .book-cover{
+        max-height:415px;
+    }
+}
+
+
+/* =========================================================
+   SMALL LAPTOP
+========================================================= */
+
+@media(max-width:1400px) and (max-height:800px){
+
+    .sidebar-content{
+        padding-top:14px;
+    }
+
+    .brand{
+        margin-bottom:14px;
+    }
+
+    .editor-section{
+        margin-top:13px;
+    }
+
+    .cover-upload{
+        min-height:105px;
+    }
+
+    .field{
+        margin-bottom:6px;
+    }
+
+    .input{
+        height:31px;
+    }
+
+    .textarea{
+        min-height:55px;
+    }
+
+    .textarea.description{
+        min-height:70px;
+    }
+
+    .format-box{
+        padding:10px 11px;
+    }
+
+    .hero{
+        min-height:480px;
+        padding:38px 27px;
+    }
+
+    .book-cover{
+        max-height:365px;
+    }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media(max-width:1050px){
+
+    :root{
+        --sidebar:285px;
+    }
+
+    .hero{
+        grid-template-columns:
+            minmax(160px,250px)
+            minmax(0,1fr);
+
+        gap:30px;
+    }
+
+    .book-cover{
+        max-height:355px;
+    }
+
+    .book-title{
+        letter-spacing:-2.5px;
+    }
+
+    .page-nav,
+    .about,
+    .features,
+    .page-footer{
+        padding-left:22px;
+        padding-right:22px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:768px){
+
+    body{
+        overflow:hidden;
+    }
+
+    .app{
+        display:block;
+    }
+
+    .sidebar{
+        position:fixed;
+
+        top:0;
+        left:0;
+
+        width:min(330px,88vw);
+
+        height:100vh;
+
+        z-index:2000;
+
+        transform:translateX(-100%);
+
+        box-shadow:
+            20px 0 60px rgba(0,0,0,.5);
+    }
+
+    .app.mobile-open .sidebar{
+        transform:translateX(0);
+    }
+
+    .preview-area{
+        width:100%;
+        height:100vh;
+
+        padding:8px;
+    }
+
+    .toolbar{
+        margin-bottom:8px;
+    }
+
+    .toolbar .hide-text{
+        display:none;
+    }
+
+    .live{
+        display:none;
+    }
+
+    .app.mobile-open .overlay{
+        display:block;
+
+        position:fixed;
+
+        inset:0;
+
+        z-index:1900;
+
+        background:rgba(0,0,0,.58);
+    }
+
+    .show-editor{
+        opacity:1;
+
+        pointer-events:auto;
+
+        transform:none;
+    }
+
+    .app.mobile-open .show-editor{
+        opacity:0;
+
+        pointer-events:none;
+    }
+
+    .page-nav{
+        min-height:54px;
+
+        padding:0 17px;
+    }
+
+    .page-meta{
+        display:none;
+    }
+
+    .hero{
+        grid-template-columns:1fr;
+
+        min-height:auto;
+
+        padding:52px 18px;
+
+        gap:38px;
+
+        text-align:center;
+    }
+
+    .hero-content{
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:center;
+    }
+
+    /*
+       Sur mobile la couverture garde son
+       ratio naturel et s'adapte à sa largeur.
+    */
+
+    .book-cover{
+        width:auto;
+
+        max-width:min(78vw,240px);
+
+        max-height:380px;
+    }
+
+    .book-cover.empty{
+        width:220px;
+        height:325px;
+    }
+
+    .book-title{
+        font-size:42px;
+
+        letter-spacing:-2.5px;
+    }
+
+    .book-tagline{
+        max-width:500px;
+    }
+
+    .format-badges{
+        justify-content:center;
+    }
+
+    .purchase{
+        justify-content:center;
+    }
+
+    .about{
+        padding:
+            55px 18px;
+    }
+
+    .about-title{
+        font-size:29px;
+    }
+
+    .features{
+        grid-template-columns:1fr;
+
+        padding:
+            0 18px 45px;
+    }
+
+    .feature{
+        min-height:auto;
+    }
+
+    .page-footer{
+        padding:
+            20px 18px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media(max-width:480px){
+
+    .format-box-header{
+        align-items:flex-start;
+    }
+
+    .format-status{
+        padding:4px 6px;
+
+        font-size:6px;
+    }
+
+    .format-box-header strong{
+        font-size:10px;
+    }
+
+    .book-title{
+        font-size:37px;
+
+        letter-spacing:-2.1px;
+    }
+
+    .book-cover{
+        max-width:72vw;
+
+        max-height:330px;
+    }
+
+    .purchase{
+        width:100%;
+
+        flex-direction:column;
+    }
+
+    .buy-button{
+        width:100%;
+        max-width:240px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media(max-width:360px){
+
+    .format-description{
+        font-size:6.5px;
+    }
+
+    .book-title{
+        font-size:33px;
+    }
+
+    .hero{
+        padding:
+            40px 15px;
+    }
+
+    .about{
+        padding:
+            45px 15px;
+    }
+
+    .features{
+        padding-left:15px;
+        padding-right:15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app" id="app">
+
+
+<!-- =======================================================
+     SIDEBAR
+======================================================= -->
+
+<aside class="sidebar">
+
+<div class="sidebar-content">
+
+
+<div class="brand">
+
+<div class="brand-mark">
+B
+</div>
+
+<div>
+
+<div class="brand-name">
+Bookly
+</div>
+
+<div class="brand-sub">
+Digital Book Store
+</div>
+
+</div>
+
+</div>
+
+
+<!-- COVER -->
+
+<section class="editor-section">
+
+<div class="section-heading">
+<span>Couverture</span>
+<span>01</span>
+</div>
+
+
+<div
+class="cover-upload"
+id="coverUpload"
+>
+
+<input
+id="coverInput"
+type="file"
+accept="image/png,image/jpeg,image/webp"
+>
+
+
+<img
+id="coverPreviewMini"
+class="cover-preview-mini"
+alt=""
+style="display:none;"
+>
+
+
+<div
+id="uploadIcon"
+class="upload-icon"
+>
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.7"
+>
+
+<rect
+x="3"
+y="3"
+width="18"
+height="18"
+rx="3"
+/>
+
+<circle
+cx="8.5"
+cy="8.5"
+r="1.5"
+/>
+
+<path
+d="m21 15-5-5L5 21"
+/>
+
+</svg>
+
+</div>
+
+
+<div class="upload-title">
+Ajouter une couverture
+</div>
+
+<div class="upload-help">
+PNG, JPG ou WEBP
+</div>
+
+</div>
+
+</section>
+
+
+<!-- BOOK -->
+
+<section class="editor-section">
+
+<div class="section-heading">
+<span>Livre numérique</span>
+<span>02</span>
+</div>
+
+
+<!-- FORMAT -->
+
+<div class="field">
+
+<label>
+Format disponible
+</label>
+
+
+<div class="format-box">
+
+<div class="format-box-header">
+
+<div>
+
+<span class="format-label-small">
+FORMAT DÉTECTÉ
+</span>
+
+<strong id="detectedFormat">
+Aucun fichier
+</strong>
+
+</div>
+
+
+<div
+id="formatStatus"
+class="format-status"
+>
+
+<span></span>
+
+En attente
+
+</div>
+
+</div>
+
+
+<div
+id="formatDescription"
+class="format-description"
+>
+Ajoute ton fichier PDF ou EPUB pour
+détecter automatiquement le format.
+</div>
+
+</div>
+
+</div>
+
+
+<!-- FILE -->
+
+<div class="field">
+
+<label>
+Fichiers du livre
+</label>
+
+
+<div
+class="file-upload"
+id="fileUpload"
+>
+
+<input
+id="bookFileInput"
+type="file"
+accept=".pdf,.epub,application/pdf,application/epub+zip"
+multiple
+>
+
+
+<div class="file-icon">
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.7"
+>
+
+<path
+d="M6 3h8l4 4v14H6z"
+/>
+
+<path
+d="M14 3v5h5"
+/>
+
+<path
+d="M9 13h6"
+/>
+
+<path
+d="M9 17h5"
+/>
+
+</svg>
+
+</div>
+
+
+<div class="file-info">
+
+<div
+id="fileName"
+class="file-name"
+>
+Ajouter un fichier
+</div>
+
+<div class="file-help">
+PDF ou EPUB
+</div>
+
+</div>
+
+</div>
+
+
+<div
+id="fileList"
+class="file-list"
+></div>
+
+</div>
+
+</section>
+
+
+<!-- CONTENT -->
+
+<section class="editor-section">
+
+<div class="section-heading">
+<span>Contenu</span>
+<span>03</span>
+</div>
+
+
+<div class="field">
+
+<label for="title">
+Titre
+</label>
+
+<input
+id="title"
+class="input"
+type="text"
+placeholder="Le titre de ton livre"
+>
+
+</div>
+
+
+<div class="field">
+
+<label for="author">
+Auteur
+</label>
+
+<input
+id="author"
+class="input"
+type="text"
+placeholder="Ton nom"
+>
+
+</div>
+
+
+<div class="field">
+
+<label for="tagline">
+Accroche
+</label>
+
+<textarea
+id="tagline"
+class="textarea"
+placeholder="Une courte présentation du livre..."
+></textarea>
+
+</div>
+
+
+<div class="field">
+
+<label for="description">
+Description du livre
+</label>
+
+<textarea
+id="description"
+class="textarea description"
+placeholder="Décris ton livre en détail..."
+></textarea>
+
+</div>
+
+</section>
+
+
+<!-- PAYMENT -->
+
+<section class="editor-section">
+
+<div class="section-heading">
+<span>Vente</span>
+<span>04</span>
+</div>
+
+
+<div class="price-row">
+
+<div class="field">
+
+<label for="price">
+Prix
+</label>
+
+<input
+id="price"
+class="input"
+type="text"
+placeholder="5 000"
+>
+
+</div>
+
+
+<div class="field">
+
+<label for="currency">
+Devise
+</label>
+
+<input
+id="currency"
+class="input"
+type="text"
+value="FCFA"
+>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label for="payment">
+Lien de paiement MyChariow
+</label>
+
+<input
+id="payment"
+class="input"
+type="url"
+placeholder="https://..."
+>
+
+</div>
+
+</section>
+
+</div>
+
+
+<!-- SIDEBAR FOOTER -->
+
+<div class="sidebar-footer">
+
+<div class="actions">
+
+<button
+id="saveButton"
+class="action primary"
+type="button"
+>
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.8"
+>
+
+<path
+d="M5 4h11l3 3v13H5z"
+/>
+
+<path
+d="M8 4v6h8V4"
+/>
+
+<path
+d="M8 20v-6h8v6"
+/>
+
+</svg>
+
+Sauvegarder
+
+</button>
+
+
+<button
+id="exportButton"
+class="action"
+type="button"
+>
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.8"
+>
+
+<path d="M12 3v12"/>
+
+<path
+d="m7 10 5 5 5-5"
+/>
+
+<path d="M4 21h16"/>
+
+</svg>
+
+Exporter
+
+</button>
+
+</div>
+
+
+<div
+id="saveStatus"
+class="save-status"
+>
+Prêt à modifier
+</div>
+
+</div>
+
+</aside>
+
+
+<div
+id="overlay"
+class="overlay"
+></div>
+
+
+<!-- =======================================================
+     MAIN
+======================================================= -->
+
+<main class="preview-area">
+
+
+<div class="toolbar">
+
+<div class="toolbar-left">
+
+<button
+id="hideSidebar"
+class="toolbar-button"
+type="button"
+>
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.8"
+>
+
+<path
+d="M9 5l7 7-7 7"
+/>
+
+</svg>
+
+<span class="hide-text">
+Masquer l'éditeur
+</span>
+
+</button>
+
+
+<div class="live">
+
+<span class="live-dot"></span>
+
+Page en direct
+
+</div>
+
+</div>
+
+</div>
+
+
+<button
+id="showEditor"
+class="show-editor"
+type="button"
+aria-label="Afficher l'éditeur"
+>
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.8"
+>
+
+<path
+d="M15 5l-7 7 7 7"
+/>
+
+</svg>
+
+</button>
+
+
+<!-- =======================================================
+     WEBSITE
+======================================================= -->
+
+<div class="website">
+
+<div class="page">
+
+
+<nav class="page-nav">
+
+<div
+id="pageBrand"
+class="page-brand"
+>
+MON LIVRE
+</div>
+
+
+<div
+id="pageMeta"
+class="page-meta"
+>
+AUCUN FICHIER
+</div>
+
+</nav>
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+
+<div class="book-wrap">
+
+<div
+id="bookCoverEmpty"
+class="book-cover empty"
+>
+Aucune couverture
+</div>
+
+
+<img
+id="bookCover"
+class="book-cover"
+alt="Couverture du livre"
+style="display:none;"
+>
+
+</div>
+
+
+<div class="hero-content">
+
+<div class="eyebrow">
+LIVRE NUMÉRIQUE
+</div>
+
+
+<h1
+id="bookTitle"
+class="book-title"
+>
+Ton livre commence ici.
+</h1>
+
+
+<div
+id="bookAuthor"
+class="book-author"
+>
+Par ton nom
+</div>
+
+
+<div
+id="bookTagline"
+class="book-tagline"
+>
+Une courte présentation de ton livre apparaîtra ici.
+</div>
+
+
+<div
+id="formatBadges"
+class="format-badges">
+</div>
+
+
+<div class="purchase">
+
+<div
+id="bookPrice"
+class="price"
+>
+5 000
+
+<small>
+FCFA · paiement sécurisé
+</small>
+
+</div>
+
+
+<a
+id="buyButton"
+class="buy-button"
+href="#"
+target="_blank"
+rel="noopener noreferrer"
+>
+
+Acheter le livre
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.8"
+>
+
+<path d="M5 12h13"/>
+
+<path
+d="m13 6 6 6-6 6"
+/>
+
+</svg>
+
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- DESCRIPTION UNIQUE -->
+
+<section class="about">
+
+<div class="about-label">
+À propos du livre
+</div>
+
+
+<h2 class="about-title">
+Découvrez le livre.
+</h2>
+
+
+<div
+id="bookDescription"
+class="about-description"
+>
+La description complète de ton livre apparaîtra ici.
+</div>
+
+</section>
+
+
+<!-- FEATURES -->
+
+<section class="features">
+
+
+<article class="feature">
+
+<div class="feature-icon">
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.7"
+>
+
+<path
+d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"
+/>
+
+<path d="M4 5.5v15"/>
+</svg>
+
+</div>
+
+<div class="feature-title">
+Format numérique
+</div>
+
+<div class="feature-text">
+Le format est automatiquement déterminé
+à partir des fichiers ajoutés.
+</div>
+
+</article>
+
+
+<article class="feature">
+
+<div class="feature-icon">
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.7"
+>
+
+<path d="M12 3v12"/>
+
+<path
+d="m7 10 5 5 5-5"
+/>
+
+<path d="M5 20h14"/>
+
+</svg>
+
+</div>
+
+<div class="feature-title">
+Livraison numérique
+</div>
+
+<div class="feature-text">
+Le lecteur reçoit le contenu numérique
+après son achat.
+</div>
+
+</article>
+
+
+<article class="feature">
+
+<div class="feature-icon">
+
+<svg
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="1.7"
+>
+
+<rect
+x="4"
+y="10"
+width="16"
+height="11"
+rx="2"
+/>
+
+<path
+d="M8 10V7a4 4 0 0 1 8 0v3"
+/>
+
+</svg>
+
+</div>
+
+<div class="feature-title">
+Paiement
+</div>
+
+<div class="feature-text">
+Le bouton d'achat redirige vers
+ton lien MyChariow.
+</div>
+
+</article>
+
+</section>
+
+
+<footer class="page-footer">
+
+<span>
+© 2026 · Édition numérique
+</span>
+
+<span>
+Tous droits réservés
+</span>
+
+</footer>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+
+<script>
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const app =
+document.getElementById("app");
+
+const overlay =
+document.getElementById("overlay");
+
+const coverInput =
+document.getElementById("coverInput");
+
+const coverUpload =
+document.getElementById("coverUpload");
+
+const coverPreviewMini =
+document.getElementById("coverPreviewMini");
+
+const uploadIcon =
+document.getElementById("uploadIcon");
+
+const bookFileInput =
+document.getElementById("bookFileInput");
+
+const fileName =
+document.getElementById("fileName");
+
+const fileList =
+document.getElementById("fileList");
+
+const detectedFormat =
+document.getElementById("detectedFormat");
+
+const formatDescription =
+document.getElementById("formatDescription");
+
+const formatStatus =
+document.getElementById("formatStatus");
+
+const saveStatus =
+document.getElementById("saveStatus");
+
+const bookCover =
+document.getElementById("bookCover");
+
+const bookCoverEmpty =
+document.getElementById("bookCoverEmpty");
+
+const formatBadges =
+document.getElementById("formatBadges");
+
+
+const fields = {
+
+title:
+document.getElementById("title"),
+
+author:
+document.getElementById("author"),
+
+tagline:
+document.getElementById("tagline"),
+
+description:
+document.getElementById("description"),
+
+price:
+document.getElementById("price"),
+
+currency:
+document.getElementById("currency"),
+
+payment:
+document.getElementById("payment")
+
+};
+
+
+const output = {
+
+brand:
+document.getElementById("pageBrand"),
+
+meta:
+document.getElementById("pageMeta"),
+
+title:
+document.getElementById("bookTitle"),
+
+author:
+document.getElementById("bookAuthor"),
+
+tagline:
+document.getElementById("bookTagline"),
+
+description:
+document.getElementById("bookDescription"),
+
+price:
+document.getElementById("bookPrice"),
+
+payment:
+document.getElementById("buyButton")
+
+};
+
+
+const defaults = {
+
+title:
+"Ton livre commence ici.",
+
+author:
+"Par ton nom",
+
+tagline:
+"Une courte présentation de ton livre apparaîtra ici.",
+
+description:
+"La description complète de ton livre apparaîtra ici.",
+
+price:
+"5 000",
+
+currency:
+"FCFA",
+
+payment:
+""
+
+};
+
+
+let selectedFiles = [];
+
+let currentFormat = null;
+
+let coverData = "";
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+function escapeHTML(value){
+
+return String(value)
+
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   FORMAT DETECTION
+========================================================= */
+
+function detectBookFormat(files){
+
+const hasPDF =
+files.some(file =>
+file.name
+.toLowerCase()
+.endsWith(".pdf")
+);
+
+const hasEPUB =
+files.some(file =>
+file.name
+.toLowerCase()
+.endsWith(".epub")
+);
+
+
+if(hasPDF && hasEPUB){
+
+currentFormat =
+"PDF + EPUB";
+
+detectedFormat.textContent =
+"PDF + EPUB";
+
+formatDescription.textContent =
+"Deux formats numériques disponibles.";
+
+setFormatReady();
+
+return;
+}
+
+
+if(hasPDF){
+
+currentFormat =
+"PDF";
+
+detectedFormat.textContent =
+"PDF";
+
+formatDescription.textContent =
+"Document PDF disponible.";
+
+setFormatReady();
+
+return;
+}
+
+
+if(hasEPUB){
+
+currentFormat =
+"EPUB";
+
+detectedFormat.textContent =
+"EPUB";
+
+formatDescription.textContent =
+"Livre numérique au format EPUB.";
+
+setFormatReady();
+
+return;
+}
+
+
+currentFormat =
+null;
+
+detectedFormat.textContent =
+"Aucun fichier";
+
+formatDescription.textContent =
+"Ajoute ton fichier PDF ou EPUB pour détecter automatiquement le format.";
+
+formatStatus.classList.remove("ready");
+
+formatStatus.innerHTML =
+"<span></span> En attente";
+
+}
+
+
+/* =========================================================
+   FORMAT READY
+========================================================= */
+
+function setFormatReady(){
+
+formatStatus.classList.add("ready");
+
+formatStatus.innerHTML =
+"<span></span> Prêt";
+
+updateFormatBadges();
+
+}
+
+
+/* =========================================================
+   FORMAT BADGES
+========================================================= */
+
+function updateFormatBadges(){
+
+formatBadges.innerHTML = "";
+
+if(!currentFormat)
+return;
+
+let formats = [];
+
+if(currentFormat === "PDF"){
+
+formats = ["PDF"];
+
+}
+
+else if(currentFormat === "EPUB"){
+
+formats = ["EPUB"];
+
+}
+
+else{
+
+formats = [
+"PDF",
+"EPUB"
+
+];
+
+}
+
+
+formats.forEach(format => {
+
+const badge =
+document.createElement("span");
+
+badge.className =
+"format-badge";
+
+badge.textContent =
+format;
+
+formatBadges.appendChild(
+badge
+
+);
+
+
+});
+
+
+output.meta.textContent =
+currentFormat;
+
+}
+
+
+/* =========================================================
+   UPDATE PAGE
+========================================================= */
+
+function updatePage(){
+
+const title =
+fields.title.value.trim()
+|| defaults.title;
+
+const author =
+fields.author.value.trim()
+|| defaults.author;
+
+const tagline =
+fields.tagline.value.trim()
+|| defaults.tagline;
+
+const description =
+fields.description.value.trim()
+|| defaults.description;
+
+const price =
+fields.price.value.trim()
+|| defaults.price;
+
+const currency =
+fields.currency.value.trim()
+|| defaults.currency;
+
+const payment =
+fields.payment.value.trim();
+
+
+output.brand.textContent =
+title.toUpperCase();
+
+output.title.textContent =
+title;
+
+output.author.textContent =
+author;
+
+output.tagline.textContent =
+tagline;
+
+output.description.textContent =
+description;
+
+
+output.price.innerHTML =
+`
+${escapeHTML(price)}
+
+<small>
+${escapeHTML(currency)}
+· paiement sécurisé
+</small>
+`;
+
+
+output.payment.href =
+payment || "#";
+
+if(currentFormat){
+
+output.meta.textContent =
+currentFormat;
+
+}
+
+else{
+
+output.meta.textContent =
+"AUCUN FICHIER";
+
+}
+
+}
+
+
+/* =========================================================
+   LIVE EDITING
+========================================================= */
+
+Object
+.values(fields)
+.forEach(field => {
+
+field.addEventListener(
+"input",
+() => {
+
+updatePage();
+
+saveStatus.textContent =
+"Modifications non sauvegardées";
+
+}
+);
+
+});
+
+
+/* =========================================================
+   COVER
+========================================================= */
+
+function loadCover(file){
+
+if(!file)
+return;
+
+
+if(!file.type.startsWith("image/")){
+
+alert(
+"Veuillez sélectionner une image."
+);
+
+return;
+}
+
+
+const reader =
+new FileReader();
+
+
+reader.onload =
+event => {
+
+coverData =
+event.target.result;
+
+
+bookCover.src =
+coverData;
+
+bookCover.style.display =
+"block";
+
+bookCoverEmpty.style.display =
+"none";
+
+
+coverPreviewMini.src =
+coverData;
+
+coverPreviewMini.style.display =
+"block";
+
+uploadIcon.style.display =
+"none";
+
+
+saveStatus.textContent =
+"Couverture modifiée";
+
+};
+
+
+reader.readAsDataURL(file);
+}
+
+
+coverInput.addEventListener(
+"change",
+event => {
+
+loadCover(
+event.target.files[0]
+);
+
+}
+);
+
+
+/* =========================================================
+   COVER DRAG
+========================================================= */
+
+["dragenter","dragover"]
+.forEach(type => {
+
+coverUpload.addEventListener(
+type,
+event => {
+
+event.preventDefault();
+
+coverUpload.classList.add(
+"dragging"
+);
+
+}
+);
+
+});
+
+
+["dragleave","drop"]
+.forEach(type => {
+
+coverUpload.addEventListener(
+type,
+event => {
+
+event.preventDefault();
+
+coverUpload.classList.remove(
+"dragging"
+);
+
+}
+);
+
+});
+
+
+coverUpload.addEventListener(
+"drop",
+event => {
+
+loadCover(
+event.dataTransfer.files[0]
+);
+
+}
+);
+
+
+/* =========================================================
+   BOOK FILES
+========================================================= */
+
+bookFileInput.addEventListener(
+"change",
+event => {
+
+const files =
+Array.from(
+event.target.files
+);
+
+
+selectedFiles =
+files.filter(file => {
+
+const name =
+file.name.toLowerCase();
+
+return (
+name.endsWith(".pdf") ||
+name.endsWith(".epub")
+);
+
+});
+
+
+renderFiles();
+
+detectBookFormat(
+selectedFiles
+);
+
+updatePage();
+
+saveStatus.textContent =
+selectedFiles.length
+? `${selectedFiles.length} fichier(s) ajouté(s)`
+: "Aucun fichier ajouté";
+
+}
+);
+
+
+/* =========================================================
+   RENDER FILES
+========================================================= */
+
+function renderFiles(){
+
+fileList.innerHTML = "";
+
+
+if(!selectedFiles.length){
+
+fileList.style.display =
+"none";
+
+fileName.textContent =
+"Ajouter un fichier";
+
+return;
+}
+
+
+fileList.style.display =
+"block";
+
+
+fileName.textContent =
+selectedFiles.length === 1
+? selectedFiles[0].name
+: `${selectedFiles.length} fichiers sélectionnés`;
+
+
+selectedFiles.forEach(file => {
+
+const item =
+document.createElement("div");
+
+item.className =
+"file-item";
+
+
+const name =
+document.createElement("div");
+
+name.className =
+"file-item-name";
+
+name.textContent =
+file.name;
+
+
+const type =
+document.createElement("div");
+
+type.className =
+"file-item-type";
+
+type.textContent =
+file.name
+.split(".")
+.pop()
+.toUpperCase();
+
+
+item.appendChild(name);
+
+item.appendChild(type);
+
+fileList.appendChild(item);
+
+});
+
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+document
+.getElementById("hideSidebar")
+.addEventListener(
+"click",
+() => {
+
+if(window.innerWidth <= 768){
+
+app.classList.add(
+"mobile-open"
+);
+
+}
+
+else{
+
+app.classList.add(
+"sidebar-hidden"
+);
+
+}
+
+}
+);
+
+
+/* =========================================================
+   SHOW EDITOR
+========================================================= */
+
+document
+.getElementById("showEditor")
+.addEventListener(
+"click",
+() => {
+
+if(window.innerWidth <= 768){
+
+app.classList.add(
+"mobile-open"
+);
+
+}
+
+else{
+
+app.classList.remove(
+"sidebar-hidden"
+);
+
+}
+
+}
+);
+
+
+/* =========================================================
+   MOBILE OVERLAY
+========================================================= */
+
+overlay.addEventListener(
+"click",
+() => {
+
+app.classList.remove(
+"mobile-open"
+);
+
+}
+);
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+document
+.getElementById("saveButton")
+.addEventListener(
+"click",
+() => {
+
+const data = {
+
+title:
+fields.title.value,
+
+author:
+fields.author.value,
+
+tagline:
+fields.tagline.value,
+
+description:
+fields.description.value,
+
+price:
+fields.price.value,
+
+currency:
+fields.currency.value,
+
+payment:
+fields.payment.value,
+
+format:
+currentFormat,
+
+cover:
+coverData
+
+};
+
+
+try{
+
+localStorage.setItem(
+"bookly-mvp",
+JSON.stringify(data)
+);
+
+saveStatus.textContent =
+"Projet sauvegardé";
+
+}catch(error){
+
+saveStatus.textContent =
+"Impossible de sauvegarder";
+
+}
+
+}
+);
+
+
+/* =========================================================
+   LOAD
+========================================================= */
+
+function loadSaved(){
+
+const saved =
+localStorage.getItem(
+"bookly-mvp"
+);
+
+if(!saved){
+
+updatePage();
+
+return;
+}
+
+
+try{
+
+const data =
+JSON.parse(saved);
+
+
+fields.title.value =
+data.title || "";
+
+fields.author.value =
+data.author || "";
+
+fields.tagline.value =
+data.tagline || "";
+
+fields.description.value =
+data.description || "";
+
+fields.price.value =
+data.price || "";
+
+fields.currency.value =
+data.currency || "FCFA";
+
+fields.payment.value =
+data.payment || "";
+
+
+coverData =
+data.cover || "";
+
+
+if(coverData){
+
+bookCover.src =
+coverData;
+
+bookCover.style.display =
+"block";
+
+bookCoverEmpty.style.display =
+"none";
+
+coverPreviewMini.src =
+coverData;
+
+coverPreviewMini.style.display =
+"block";
+
+uploadIcon.style.display =
+"none";
+}
+
+
+updatePage();
+
+
+if(data.format){
+
+currentFormat =
+data.format;
+
+detectedFormat.textContent =
+data.format;
+
+formatDescription.textContent =
+data.format === "PDF"
+? "Document PDF disponible."
+: data.format === "EPUB"
+? "Livre numérique au format EPUB."
+: "Deux formats numériques disponibles.";
+
+setFormatReady();
+}
+
+
+saveStatus.textContent =
+"Projet chargé";
+
+}catch(error){
+
+console.warn(
+"Impossible de charger le projet."
+);
+
+}
+
+}
+
+
+/* =========================================================
+   EXPORT
+========================================================= */
+
+document
+.getElementById("exportButton")
+.addEventListener(
+"click",
+() => {
+
+const html =
+generatePublicHTML();
+
+
+const blob =
+new Blob(
+[html],
+{
+type:
+"text/html;charset=utf-8"
+}
+);
+
+
+const url =
+URL.createObjectURL(
+blob
+);
+
+
+const link =
+document.createElement("a");
+
+link.href =
+url;
+
+link.download =
+"ebook-store.html";
+
+document.body.appendChild(
+link
+);
+
+link.click();
+
+link.remove();
+
+
+setTimeout(
+() => {
+
+URL.revokeObjectURL(
+url
+);
+
+},
+500
+);
+
+
+saveStatus.textContent =
+"Page exportée";
+
+}
+);
+
+
+/* =========================================================
+   GENERATE PUBLIC HTML
+========================================================= */
+
+function generatePublicHTML(){
+
+const title =
+fields.title.value.trim()
+|| defaults.title;
+
+const author =
+fields.author.value.trim()
+|| defaults.author;
+
+const tagline =
+fields.tagline.value.trim()
+|| defaults.tagline;
+
+const description =
+fields.description.value.trim()
+|| defaults.description;
+
+const price =
+fields.price.value.trim()
+|| defaults.price;
+
+const currency =
+fields.currency.value.trim()
+|| defaults.currency;
+
+const payment =
+fields.payment.value.trim()
+|| "#";
+
+const format =
+currentFormat
+|| "Aucun fichier";
+
+
+let badges = "";
+
+if(format === "PDF"){
+
+badges =
+"<span>PDF</span>";
+
+}
+
+else if(format === "EPUB"){
+
+badges =
+"<span>EPUB</span>";
+
+}
+
+else if(format === "PDF + EPUB"){
+
+badges =
+`
+<span>PDF</span>
+<span>EPUB</span>
+`;
+
+}
+
+
+const cover =
+coverData
+? `<img class="cover" src="${coverData}" alt="">`
+: `<div class="cover empty">Aucune couverture</div>`;
+
+
+return `<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1"
+>
+
+<title>${escapeHTML(title)}</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+min-height:100vh;
+
+background:#08090b;
+
+color:#f2f2f0;
+
+font-family:
+Inter,
+system-ui,
+sans-serif;
+}
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+nav{
+max-width:1120px;
+
+min-height:68px;
+
+margin:auto;
+
+padding:0 25px;
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+border-bottom:
+1px solid rgba(255,255,255,.07);
+}
+
+.logo{
+font-size:10px;
+font-weight:850;
+}
+
+.meta{
+color:#646970;
+
+font-size:7px;
+font-weight:800;
+
+letter-spacing:1px;
+}
+
+.hero{
+max-width:1120px;
+
+min-height:650px;
+
+margin:auto;
+
+padding:75px 25px;
+
+display:grid;
+
+grid-template-columns:
+minmax(190px,360px)
+minmax(0,1fr);
+
+align-items:center;
+
+gap:70px;
+}
+
+.cover-wrap{
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.cover{
+display:block;
+
+width:auto;
+height:auto;
+
+max-width:100%;
+max-height:510px;
+
+object-fit:contain;
+
+border-radius:
+4px 13px 13px 4px;
+
+box-shadow:
+20px 28px 70px
+rgba(0,0,0,.65);
+}
+
+.cover.empty{
+width:280px;
+height:420px;
+
+display:grid;
+place-items:center;
+
+background:#15171a;
+
+color:#555;
+
+font-size:8px;
+}
+
+.eyebrow{margin-bottom:13px;color:#747981;font-size:8px;font-weight:850;letter-spacing:1.5px}
+h1{max-width:700px;margin-bottom:15px;font-size:clamp(43px,6vw,77px);line-height:.95;letter-spacing:-4px}
+.author{margin-bottom:17px;color:#9ba0a6;font-size:10px}
+.tagline{max-width:600px;margin-bottom:21px;color:#92979f;font-size:12px;line-height:1.8}
+.formats{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:25px}
+.formats span{padding:5px 7px;border:1px solid rgba(255,255,255,.1);border-radius:5px;background:#0e1012;color:#90959c;font-size:7px;font-weight:800}
+.purchase{display:flex;align-items:center;flex-wrap:wrap;gap:13px}
+.price{font-size:19px;font-weight:850}
+.price small{display:block;margin-top:2px;color:#62676e;font-size:7px;font-weight:500}
+.buy{height:40px;display:flex;align-items:center;justify-content:center;padding:0 17px;border-radius:8px;background:#f2f2f1;color:#080808;font-size:8px;font-weight:850}
+.about{max-width:850px;margin:auto;padding:90px 25px}
+.label{margin-bottom:10px;color:#666b73;font-size:8px;font-weight:850;letter-spacing:1.5px;text-transform:uppercase}
+h2{margin-bottom:20px;font-size:37px;line-height:1;letter-spacing:-2px}
+.description{color:#92979f;font-size:12px;line-height:1.9;white-space:pre-line}
+footer{max-width:1120px;margin:auto;padding:24px 25px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.07);color:#555a62;font-size:7px}
+@media(max-width:700px){
+nav{padding:0 18px}.meta{display:none}
+.hero{grid-template-columns:1fr;min-height:auto;padding:55px 18px;gap:42px;text-align:center}
+.hero-content{display:flex;flex-direction:column;align-items:center}
+.cover{max-width:78vw;max-height:380px}.cover.empty{width:220px;height:330px}
+h1{font-size:43px;letter-spacing:-2.5px}.tagline{max-width:500px}
+.formats{justify-content:center}.purchase{justify-content:center}
+.about{padding:60px 18px}h2{font-size:31px}footer{padding:20px 18px}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+${escapeHTML(title).toUpperCase()}
+</div>
+
+<div class="meta">
+${escapeHTML(format)}
+</div>
+
+</nav>
+
+
+<section class="hero">
+
+<div class="cover-wrap">
+
+${cover}
+
+</div>
+
+
+<div class="hero-content">
+
+<div class="eyebrow">
+LIVRE NUMÉRIQUE
+</div>
+
+<h1>
+${escapeHTML(title)}
+</h1>
+
+<div class="author">
+${escapeHTML(author)}
+</div>
+
+<div class="tagline">
+${escapeHTML(tagline)}
+</div>
+
+<div class="formats">
+${badges}
+</div>
+
+<div class="purchase">
+
+<div class="price">
+
+${escapeHTML(price)}
+
+<small>
+${escapeHTML(currency)}
+· paiement sécurisé
+</small>
+
+</div>
+
+<a
+class="buy"
+href="${escapeHTML(payment)}"
+target="_blank"
+rel="noopener noreferrer"
+>
+Acheter le livre
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section class="about">
+
+<div class="label">
+À propos du livre
+</div>
+
+<h2>
+Découvrez le livre.
+</h2>
+
+<div class="description">
+${escapeHTML(description)}
+</div>
+
+</section>
+
+
+<footer>
+
+<span>
+© 2026 · Édition numérique
+</span>
+
+<span>
+Tous droits réservés
+</span>
+
+</footer>
+
+</body>
+
+</html>`;}
+
+
+
+
+/* =========================================================
+   RESPONSIVE SIDEBAR
+========================================================= */
+
+window.addEventListener(
+"resize",
+() => {
+
+if(window.innerWidth > 768){
+
+app.classList.remove(
+"mobile-open"
+);
+
+}
+
+}
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+loadSaved();
+
+updatePage();
+
+</script>
+
+</body>
+</html>
