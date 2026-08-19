@@ -1,0 +1,2002 @@
+     1→<!DOCTYPE html>
+     2→<html lang="fr">
+     3→<head>
+     4→<meta charset="UTF-8">
+     5→<meta name="viewport" content="width=device-width, initial-scale=1.0">
+     6→
+     7→<title>Bookly — Digital Book Store</title>
+     8→
+     9→<style>
+    10→:root{
+    11→    --bg:#070809;
+    12→    --panel:#0d0f11;
+    13→    --panel2:#101214;
+    14→    --field:#090b0d;
+    15→
+    16→    --text:#f2f2f0;
+    17→    --text2:#b1b5ba;
+    18→    --muted:#777c83;
+    19→    --muted2:#555a61;
+    20→
+    21→    --line:rgba(255,255,255,.075);
+    22→    --line2:rgba(255,255,255,.13);
+    23→
+    24→    --sidebar:320px;
+    25→}
+    26→
+    27→*{
+    28→    box-sizing:border-box;
+    29→    margin:0;
+    30→    padding:0;
+    31→}
+    32→
+    33→html,
+    34→body{
+    35→    width:100%;
+    36→    height:100%;
+    37→}
+    38→
+    39→body{
+    40→    overflow:hidden;
+    41→
+    42→    background:
+    43→        radial-gradient(
+    44→            circle at 70% -20%,
+    45→            rgba(255,255,255,.055),
+    46→            transparent 35%
+    47→        ),
+    48→        var(--bg);
+    49→
+    50→    color:var(--text);
+    51→
+    52→    font-family:
+    53→        Inter,
+    54→        ui-sans-serif,
+    55→        system-ui,
+    56→        -apple-system,
+    57→        BlinkMacSystemFont,
+    58→        "Segoe UI",
+    59→        sans-serif;
+    60→}
+    61→
+    62→button,
+    63→input,
+    64→textarea{
+    65→    font:inherit;
+    66→}
+    67→
+    68→button{
+    69→    cursor:pointer;
+    70→}
+    71→
+    72→input,
+    73→textarea{
+    74→    outline:none;
+    75→}
+    76→
+    77→
+    78→/* =========================================================
+    79→   APP
+    80→========================================================= */
+    81→
+    82→.app{
+    83→    width:100%;
+    84→    height:100vh;
+    85→
+    86→    display:grid;
+    87→
+    88→    grid-template-columns:
+    89→        var(--sidebar)
+    90→        minmax(0,1fr);
+    91→
+    92→    overflow:hidden;
+    93→
+    94→    transition:grid-template-columns .28s ease;
+    95→}
+    96→
+    97→.app.sidebar-hidden{
+    98→    grid-template-columns:
+    99→        0
+   100→        minmax(0,1fr);
+   101→}
+   102→
+   103→
+   104→/* =========================================================
+   105→   SIDEBAR
+   106→========================================================= */
+   107→
+   108→.sidebar{
+   109→    width:var(--sidebar);
+   110→    min-width:0;
+   111→    height:100vh;
+   112→
+   113→    display:flex;
+   114→    flex-direction:column;
+   115→
+   116→    overflow:hidden;
+   117→
+   118→    background:
+   119→        linear-gradient(
+   120→            180deg,
+   121→            rgba(255,255,255,.018),
+   122→            transparent 40%
+   123→        ),
+   124→        var(--panel);
+   125→
+   126→    border-right:1px solid var(--line);
+   127→
+   128→    transition:
+   129→        transform .28s ease,
+   130→        opacity .2s ease;
+   131→}
+   132→
+   133→.app.sidebar-hidden .sidebar{
+   134→    opacity:0;
+   135→    transform:translateX(-25px);
+   136→    pointer-events:none;
+   137→}
+   138→
+   139→.sidebar-content{
+   140→    flex:1;
+   141→    min-height:0;
+   142→
+   143→    overflow-y:auto;
+   144→
+   145→    padding:17px 15px 22px;
+   146→}
+   147→
+   148→.sidebar-content::-webkit-scrollbar{
+   149→    width:4px;
+   150→}
+   151→
+   152→.sidebar-content::-webkit-scrollbar-thumb{
+   153→    background:#292c31;
+   154→    border-radius:20px;
+   155→}
+   156→
+   157→
+   158→/* =========================================================
+   159→   BRAND
+   160→========================================================= */
+   161→
+   162→.brand{
+   163→    display:flex;
+   164→    align-items:center;
+   165→
+   166→    gap:10px;
+   167→
+   168→    margin-bottom:20px;
+   169→}
+   170→
+   171→.brand-mark{
+   172→    width:30px;
+   173→    height:30px;
+   174→
+   175→    display:grid;
+   176→    place-items:center;
+   177→
+   178→    border-radius:8px;
+   179→
+   180→    background:#f1f1ef;
+   181→    color:#080808;
+   182→
+   183→    font-size:12px;
+   184→    font-weight:900;
+   185→}
+   186→
+   187→.brand-name{
+   188→    font-size:12px;
+   189→    font-weight:850;
+   190→}
+   191→
+   192→.brand-sub{
+   193→    margin-top:2px;
+   194→
+   195→    color:#5c6168;
+   196→
+   197→    font-size:8px;
+   198→}
+   199→
+   200→
+   201→/* =========================================================
+   202→   SECTIONS
+   203→========================================================= */
+   204→
+   205→.editor-section{
+   206→    margin-top:19px;
+   207→}
+   208→
+   209→.editor-section:first-of-type{
+   210→    margin-top:0;
+   211→}
+   212→
+   213→.section-heading{
+   214→    display:flex;
+   215→    align-items:center;
+   216→    justify-content:space-between;
+   217→
+   218→    margin-bottom:8px;
+   219→
+   220→    color:#72777e;
+   221→
+   222→    font-size:8px;
+   223→    font-weight:800;
+   224→
+   225→    letter-spacing:1.1px;
+   226→
+   227→    text-transform:uppercase;
+   228→}
+   229→
+   230→
+   231→/* =========================================================
+   232→   COVER
+   233→========================================================= */
+   234→
+   235→.cover-upload{
+   236→    position:relative;
+   237→
+   238→    min-height:132px;
+   239→
+   240→    display:flex;
+   241→    flex-direction:column;
+   242→    align-items:center;
+   243→    justify-content:center;
+   244→
+   245→    overflow:hidden;
+   246→
+   247→    border:1px dashed rgba(255,255,255,.14);
+   248→
+   249→    border-radius:10px;
+   250→
+   251→    background:#0a0c0e;
+   252→
+   253→    transition:.2s;
+   254→}
+   255→
+   256→.cover-upload:hover,
+   257→.cover-upload.dragging{
+   258→    border-color:rgba(255,255,255,.28);
+   259→
+   260→    background:#0d0f11;
+   261→}
+   262→
+   263→.cover-upload input{
+   264→    position:absolute;
+   265→    inset:0;
+   266→
+   267→    opacity:0;
+   268→
+   269→    cursor:pointer;
+   270→}
+   271→
+   272→.cover-preview-mini{
+   273→    display:none;
+   274→
+   275→    max-width:52px;
+   276→    max-height:70px;
+   277→
+   278→    margin-bottom:8px;
+   279→
+   280→    object-fit:contain;
+   281→
+   282→    border-radius:4px;
+   283→
+   284→    box-shadow:
+   285→        0 10px 25px rgba(0,0,0,.5);
+   286→}
+   287→
+   288→.upload-icon{
+   289→    width:30px;
+   290→    height:30px;
+   291→
+   292→    display:grid;
+   293→    place-items:center;
+   294→
+   295→    margin-bottom:7px;
+   296→
+   297→    border:1px solid var(--line2);
+   298→
+   299→    border-radius:8px;
+   300→
+   301→    color:#afb3b8;
+   302→}
+   303→
+   304→.upload-icon svg{
+   305→    width:13px;
+   306→    height:13px;
+   307→}
+   308→
+   309→.upload-title{
+   310→    color:#c4c7ca;
+   311→
+   312→    font-size:9px;
+   313→    font-weight:750;
+   314→}
+   315→
+   316→.upload-help{
+   317→    margin-top:4px;
+   318→
+   319→    color:#555a61;
+   320→
+   321→    font-size:7px;
+   322→}
+   323→
+   324→
+   325→/* =========================================================
+   326→   FORM
+   327→========================================================= */
+   328→
+   329→.field{
+   330→    margin-bottom:8px;
+   331→}
+   332→
+   333→.field:last-child{
+   334→    margin-bottom:0;
+   335→}
+   336→
+   337→.field > label{
+   338→    display:block;
+   339→
+   340→    margin-bottom:5px;
+   341→
+   342→    color:#aeb2b7;
+   343→
+   344→    font-size:8px;
+   345→    font-weight:650;
+   346→}
+   347→
+   348→.input,
+   349→.textarea{
+   350→    width:100%;
+   351→
+   352→    border:1px solid var(--line);
+   353→
+   354→    border-radius:8px;
+   355→
+   356→    background:var(--field);
+   357→
+   358→    color:#e6e7e5;
+   359→
+   360→    font-size:9px;
+   361→
+   362→    transition:.2s;
+   363→}
+   364→
+   365→.input{
+   366→    height:34px;
+   367→
+   368→    padding:0 9px;
+   369→}
+   370→
+   371→.textarea{
+   372→    min-height:68px;
+   373→
+   374→    padding:8px 9px;
+   375→
+   376→    resize:vertical;
+   377→
+   378→    line-height:1.5;
+   379→}
+   380→
+   381→.textarea.description{
+   382→    min-height:92px;
+   383→}
+   384→
+   385→.input::placeholder,
+   386→.textarea::placeholder{
+   387→    color:#484d53;
+   388→}
+   389→
+   390→.input:focus,
+   391→.textarea:focus{
+   392→    border-color:rgba(255,255,255,.22);
+   393→
+   394→    background:#0c0e10;
+   395→}
+   396→
+   397→
+   398→/* =========================================================
+   399→   FORMAT DETECTOR
+   400→========================================================= */
+   401→
+   402→.format-box{
+   403→    width:100%;
+   404→
+   405→    padding:13px 13px 12px;
+   406→
+   407→    border:1px solid rgba(255,255,255,.075);
+   408→
+   409→    border-radius:10px;
+   410→
+   411→    background:
+   412→        linear-gradient(
+   413→            135deg,
+   414→            rgba(255,255,255,.025),
+   415→            rgba(255,255,255,.008)
+   416→        );
+   417→
+   418→    transition:
+   419→        border-color .2s ease,
+   420→        background .2s ease;
+   421→}
+   422→
+   423→.format-box:hover{
+   424→    border-color:rgba(255,255,255,.12);
+   425→}
+   426→
+   427→.format-box-header{
+   428→    display:flex;
+   429→
+   430→    align-items:center;
+   431→    justify-content:space-between;
+   432→
+   433→    gap:10px;
+   434→}
+   435→
+   436→.format-label-small{
+   437→    display:block;
+   438→
+   439→    margin-bottom:5px;
+   440→
+   441→    color:#62676e;
+   442→
+   443→    font-size:7px;
+   444→    font-weight:800;
+   445→
+   446→    letter-spacing:1.15px;
+   447→}
+   448→
+   449→.format-box-header strong{
+   450→    display:block;
+   451→
+   452→    color:#e4e5e3;
+   453→
+   454→    font-size:11px;
+   455→    font-weight:800;
+   456→}
+   457→
+   458→.format-status{
+   459→    display:flex;
+   460→
+   461→    align-items:center;
+   462→
+   463→    gap:5px;
+   464→
+   465→    padding:5px 7px;
+   466→
+   467→    border:1px solid rgba(255,255,255,.07);
+   468→
+   469→    border-radius:6px;
+   470→
+   471→    color:#62676d;
+   472→
+   473→    font-size:7px;
+   474→    font-weight:750;
+   475→
+   476→    white-space:nowrap;
+   477→}
+   478→
+   479→.format-status span{
+   480→    width:5px;
+   481→    height:5px;
+   482→
+   483→    border-radius:50%;
+   484→
+   485→    background:#4e5359;
+   486→}
+   487→
+   488→.format-status.ready{
+   489→    color:#adb1b5;
+   490→
+   491→    border-color:rgba(255,255,255,.11);
+   492→}
+   493→
+   494→.format-status.ready span{
+   495→    background:#c5c7c8;
+   496→}
+   497→
+   498→.format-description{
+   499→    margin-top:9px;
+   500→
+   501→    padding-top:9px;
+   502→
+   503→    border-top:1px solid rgba(255,255,255,.055);
+   504→
+   505→    color:#5d6269;
+   506→
+   507→    font-size:7px;
+   508→
+   509→    line-height:1.55;
+   510→}
+   511→
+   512→
+   513→/* =========================================================
+   514→   FILE UPLOAD
+   515→========================================================= */
+   516→
+   517→.file-upload{
+   518→    position:relative;
+   519→
+   520→    min-height:70px;
+   521→
+   522→    display:flex;
+   523→    align-items:center;
+   524→
+   525→    gap:9px;
+   526→
+   527→    padding:9px;
+   528→
+   529→    border:1px dashed rgba(255,255,255,.12);
+   530→
+   531→    border-radius:9px;
+   532→
+   533→    background:#090b0d;
+   534→
+   535→    transition:.2s;
+   536→}
+   537→
+   538→.file-upload:hover{
+   539→    border-color:rgba(255,255,255,.23);
+   540→}
+   541→
+   542→.file-upload input{
+   543→    position:absolute;
+   544→    inset:0;
+   545→
+   546→    opacity:0;
+   547→
+   548→    cursor:pointer;
+   549→}
+   550→
+   551→.file-icon{
+   552→    width:33px;
+   553→    height:33px;
+   554→
+   555→    flex:none;
+   556→
+   557→    display:grid;
+   558→    place-items:center;
+   559→
+   560→    border:1px solid var(--line);
+   561→
+   562→    border-radius:8px;
+   563→
+   564→    color:#aeb2b7;
+   565→}
+   566→
+   567→.file-icon svg{
+   568→    width:14px;
+   569→    height:14px;
+   570→}
+   571→
+   572→.file-info{
+   573→    min-width:0;
+   574→}
+   575→
+   576→.file-name{
+   577→    overflow:hidden;
+   578→
+   579→    color:#c6c9cc;
+   580→
+   581→    font-size:8px;
+   582→    font-weight:750;
+   583→
+   584→    white-space:nowrap;
+   585→    text-overflow:ellipsis;
+   586→}
+   587→
+   588→.file-help{
+   589→    margin-top:3px;
+   590→
+   591→    color:#555a61;
+   592→
+   593→    font-size:7px;
+   594→}
+   595→
+   596→.file-list{
+   597→    display:none;
+   598→
+   599→    margin-top:6px;
+   600→
+   601→    border:1px solid var(--line);
+   602→
+   603→    border-radius:8px;
+   604→
+   605→    overflow:hidden;
+   606→}
+   607→
+   608→.file-item{
+   609→    min-width:0;
+   610→
+   611→    display:flex;
+   612→
+   613→    align-items:center;
+   614→
+   615→    justify-content:space-between;
+   616→
+   617→    gap:8px;
+   618→
+   619→    padding:8px;
+   620→
+   621→    background:#0b0d0f;
+   622→
+   623→    border-bottom:1px solid var(--line);
+   624→}
+   625→
+   626→.file-item:last-child{
+   627→    border-bottom:0;
+   628→}
+   629→
+   630→.file-item-name{
+   631→    min-width:0;
+   632→
+   633→    overflow:hidden;
+   634→
+   635→    color:#aeb2b7;
+   636→
+   637→    font-size:7px;
+   638→
+   639→    white-space:nowrap;
+   640→    text-overflow:ellipsis;
+   641→}
+   642→
+   643→.file-item-type{
+   644→    flex:none;
+   645→
+   646→    color:#656a71;
+   647→
+   648→    font-size:6px;
+   649→    font-weight:850;
+   650→
+   651→    letter-spacing:.5px;
+   652→}
+   653→
+   654→
+   655→/* =========================================================
+   656→   PRICE
+   657→========================================================= */
+   658→
+   659→.price-row{
+   660→    display:grid;
+   661→
+   662→    grid-template-columns:
+   663→        1fr 1fr;
+   664→
+   665→    gap:7px;
+   666→}
+   667→
+   668→
+   669→/* =========================================================
+   670→   SIDEBAR FOOTER
+   671→========================================================= */
+   672→
+   673→.sidebar-footer{
+   674→    flex:none;
+   675→
+   676→    padding:10px 13px 12px;
+   677→
+   678→    background:#0d0f11;
+   679→
+   680→    border-top:1px solid var(--line);
+   681→}
+   682→
+   683→.actions{
+   684→    display:grid;
+   685→
+   686→    grid-template-columns:
+   687→        1fr 1fr;
+   688→
+   689→    gap:6px;
+   690→}
+   691→
+   692→.action{
+   693→    height:34px;
+   694→
+   695→    display:flex;
+   696→    align-items:center;
+   697→    justify-content:center;
+   698→
+   699→    gap:6px;
+   700→
+   701→    border:1px solid var(--line);
+   702→
+   703→    border-radius:8px;
+   704→
+   705→    background:#15171a;
+   706→
+   707→    color:#c9ccd0;
+   708→
+   709→    font-size:8px;
+   710→    font-weight:750;
+   711→
+   712→    transition:.18s;
+   713→}
+   714→
+   715→.action:hover{
+   716→    background:#1a1c20;
+   717→
+   718→    border-color:var(--line2);
+   719→}
+   720→
+   721→.action.primary{
+   722→    background:#f1f1ef;
+   723→
+   724→    color:#080808;
+   725→
+   726→    border-color:transparent;
+   727→}
+   728→
+   729→.action.primary:hover{
+   730→    background:#fff;
+   731→}
+   732→
+   733→.action svg{
+   734→    width:11px;
+   735→    height:11px;
+   736→}
+   737→
+   738→.save-status{
+   739→    min-height:14px;
+   740→
+   741→    display:flex;
+   742→
+   743→    align-items:center;
+   744→    justify-content:center;
+   745→
+   746→    margin-top:5px;
+   747→
+   748→    color:#5d6269;
+   749→
+   750→    font-size:7px;
+   751→}
+   752→
+   753→
+   754→/* =========================================================
+   755→   MAIN
+   756→========================================================= */
+   757→
+   758→.preview-area{
+   759→    min-width:0;
+   760→    min-height:0;
+   761→
+   762→    display:flex;
+   763→    flex-direction:column;
+   764→
+   765→    padding:12px;
+   766→
+   767→    overflow:hidden;
+   768→}
+   769→
+   770→
+   771→/* =========================================================
+   772→   TOOLBAR
+   773→========================================================= */
+   774→
+   775→.toolbar{
+   776→    height:45px;
+   777→
+   778→    flex:none;
+   779→
+   780→    display:flex;
+   781→    align-items:center;
+   782→    justify-content:space-between;
+   783→
+   784→    padding:0 8px;
+   785→
+   786→    margin-bottom:8px;
+   787→
+   788→    border:1px solid var(--line);
+   789→
+   790→    border-radius:10px;
+   791→
+   792→    background:var(--panel);
+   793→}
+   794→
+   795→.toolbar-left{
+   796→    display:flex;
+   797→    align-items:center;
+   798→
+   799→    gap:8px;
+   800→}
+   801→
+   802→.toolbar-button{
+   803→    height:27px;
+   804→
+   805→    display:flex;
+   806→    align-items:center;
+   807→    justify-content:center;
+   808→
+   809→    gap:6px;
+   810→
+   811→    padding:0 9px;
+   812→
+   813→    border:1px solid var(--line);
+   814→
+   815→    border-radius:7px;
+   816→
+   817→    background:#101215;
+   818→
+   819→    color:#a2a6ab;
+   820→
+   821→    font-size:8px;
+   822→    font-weight:750;
+   823→
+   824→    transition:.18s;
+   825→}
+   826→
+   827→.toolbar-button:hover{
+   828→    color:#eee;
+   829→
+   830→    border-color:var(--line2);
+   831→}
+   832→
+   833→.toolbar-button svg{
+   834→    width:11px;
+   835→    height:11px;
+   836→}
+   837→
+   838→.live{
+   839→    display:flex;
+   840→    align-items:center;
+   841→
+   842→    gap:6px;
+   843→
+   844→    color:#777c83;
+   845→
+   846→    font-size:7px;
+   847→    font-weight:700;
+   848→}
+   849→
+   850→.live-dot{
+   851→    width:5px;
+   852→    height:5px;
+   853→
+   854→    border-radius:50%;
+   855→
+   856→    background:#b7babc;
+   857→}
+   858→
+   859→
+   860→/* =========================================================
+   861→   WEBSITE
+   862→========================================================= */
+   863→
+   864→.website{
+   865→    flex:1;
+   866→
+   867→    min-width:0;
+   868→    min-height:0;
+   869→
+   870→    overflow-y:auto;
+   871→    overflow-x:hidden;
+   872→
+   873→    border:1px solid var(--line);
+   874→
+   875→    border-radius:12px;
+   876→
+   877→    background:
+   878→        radial-gradient(
+   879→            circle at 50% -15%,
+   880→            rgba(255,255,255,.065),
+   881→            transparent 33%
+   882→        ),
+   883→        #090a0c;
+   884→}
+   885→
+   886→.website::-webkit-scrollbar{
+   887→    width:5px;
+   888→}
+   889→
+   890→.website::-webkit-scrollbar-thumb{
+   891→    background:#292c31;
+   892→    border-radius:20px;
+   893→}
+   894→
+   895→
+   896→/* =========================================================
+   897→   PUBLIC PAGE
+   898→========================================================= */
+   899→
+   900→.page{
+   901→    width:100%;
+   902→}
+   903→
+   904→.page-nav{
+   905→    width:100%;
+   906→    max-width:1120px;
+   907→
+   908→    min-height:60px;
+   909→
+   910→    margin:auto;
+   911→
+   912→    padding:0 30px;
+   913→
+   914→    display:flex;
+   915→    align-items:center;
+   916→    justify-content:space-between;
+   917→
+   918→    border-bottom:1px solid rgba(255,255,255,.055);
+   919→}
+   920→
+   921→.page-brand{
+   922→    max-width:300px;
+   923→
+   924→    overflow:hidden;
+   925→
+   926→    white-space:nowrap;
+   927→    text-overflow:ellipsis;
+   928→
+   929→    color:#ededeb;
+   930→
+   931→    font-size:10px;
+   932→    font-weight:850;
+   933→}
+   934→
+   935→.page-meta{
+   936→    color:#5f646b;
+   937→
+   938→    font-size:7px;
+   939→    font-weight:750;
+   940→
+   941→    letter-spacing:1px;
+   942→}
+   943→
+   944→
+   945→/* =========================================================
+   946→   HERO
+   947→========================================================= */
+   948→
+   949→.hero{
+   950→    width:100%;
+   951→    max-width:1120px;
+   952→
+   953→    min-height:555px;
+   954→
+   955→    margin:auto;
+   956→
+   957→    padding:60px 30px;
+   958→
+   959→    display:grid;
+   960→
+   961→    grid-template-columns:
+   962→        minmax(180px,340px)
+   963→        minmax(0,1fr);
+   964→
+   965→    align-items:center;
+   966→
+   967→    gap:62px;
+   968→}
+   969→
+   970→.book-wrap{
+   971→    min-width:0;
+   972→
+   973→    display:flex;
+   974→    align-items:center;
+   975→    justify-content:center;
+   976→}
+   977→
+   978→
+   979→/*
+   980→   IMPORTANT:
+   981→   La couverture garde son ratio naturel.
+   982→   Elle n'est plus forcée dans un format fixe.
+   983→*/
+   984→
+   985→.book-cover{
+   986→    display:block;
+   987→
+   988→    width:auto;
+   989→    height:auto;
+   990→
+   991→    max-width:100%;
+   992→    max-height:455px;
+   993→
+   994→    object-fit:contain;
+   995→
+   996→    border-radius:
+   997→        4px 12px 12px 4px;
+   998→
+   999→    background:#141619;
+  1000→
+  1001→    box-shadow:
+  1002→        18px 25px 60px rgba(0,0,0,.62);
+  1003→
+  1004→    transition:
+  1005→        transform .3s ease;
+  1006→}
+  1007→
+  1008→.book-cover:hover{
+  1009→    transform:translateY(-4px);
+  1010→}
+  1011→
+  1012→.book-cover.empty{
+  1013→    width:255px;
+  1014→    height:375px;
+  1015→
+  1016→    display:grid;
+  1017→    place-items:center;
+  1018→
+  1019→    color:#4e535a;
+  1020→
+  1021→    font-size:8px;
+  1022→
+  1023→    background:#141619;
+  1024→}
+  1025→
+  1026→
+  1027→/* =========================================================
+  1028→   HERO CONTENT
+  1029→========================================================= */
+  1030→
+  1031→.hero-content{
+  1032→    min-width:0;
+  1033→}
+  1034→
+  1035→.eyebrow{
+  1036→    margin-bottom:12px;
+  1037→
+  1038→    color:#6c7178;
+  1039→
+  1040→    font-size:8px;
+  1041→    font-weight:850;
+  1042→
+  1043→    letter-spacing:1.5px;
+  1044→}
+  1045→
+  1046→.book-title{
+  1047→    max-width:700px;
+  1048→
+  1049→    margin-bottom:13px;
+  1050→
+  1051→    color:#f4f4f2;
+  1052→
+  1053→    font-size:
+  1054→        clamp(39px,5vw,69px);
+  1055→
+  1056→    line-height:.97;
+  1057→
+  1058→    letter-spacing:-3.4px;
+  1059→
+  1060→    overflow-wrap:anywhere;
+  1061→}
+  1062→
+  1063→.book-author{
+  1064→    margin-bottom:16px;
+  1065→
+  1066→    color:#969ba2;
+  1067→
+  1068→    font-size:9px;
+  1069→}
+  1070→
+  1071→.book-tagline{
+  1072→    max-width:590px;
+  1073→
+  1074→    margin-bottom:21px;
+  1075→
+  1076→    color:#858a92;
+  1077→
+  1078→    font-size:10px;
+  1079→
+  1080→    line-height:1.75;
+  1081→}
+  1082→
+  1083→
+  1084→/* =========================================================
+  1085→   FORMAT BADGES
+  1086→========================================================= */
+  1087→
+  1088→.format-badges{
+  1089→    display:flex;
+  1090→
+  1091→    flex-wrap:wrap;
+  1092→
+  1093→    gap:5px;
+  1094→
+  1095→    margin-bottom:20px;
+  1096→}
+  1097→
+  1098→.format-badge{
+  1099→    padding:5px 7px;
+  1100→
+  1101→    border:1px solid var(--line);
+  1102→
+  1103→    border-radius:5px;
+  1104→
+  1105→    background:#0e1012;
+  1106→
+  1107→    color:#8d9299;
+  1108→
+  1109→    font-size:7px;
+  1110→    font-weight:800;
+  1111→
+  1112→    letter-spacing:.5px;
+  1113→}
+  1114→
+  1115→
+  1116→/* =========================================================
+  1117→   PURCHASE
+  1118→========================================================= */
+  1119→
+  1120→.purchase{
+  1121→    display:flex;
+  1122→    align-items:center;
+  1123→
+  1124→    flex-wrap:wrap;
+  1125→
+  1126→    gap:12px;
+  1127→}
+  1128→
+  1129→.price{
+  1130→    color:#f0f0ee;
+  1131→
+  1132→    font-size:16px;
+  1133→    font-weight:850;
+  1134→}
+  1135→
+  1136→.price small{
+  1137→    display:block;
+  1138→
+  1139→    margin-top:2px;
+  1140→
+  1141→    color:#5d6269;
+  1142→
+  1143→    font-size:7px;
+  1144→    font-weight:500;
+  1145→}
+  1146→
+  1147→.buy-button{
+  1148→    height:37px;
+  1149→
+  1150→    display:flex;
+  1151→    align-items:center;
+  1152→    justify-content:center;
+  1153→
+  1154→    gap:7px;
+  1155→
+  1156→    padding:0 15px;
+  1157→
+  1158→    border-radius:8px;
+  1159→
+  1160→    background:#f2f2f1;
+  1161→
+  1162→    color:#080808;
+  1163→
+  1164→    font-size:8px;
+  1165→    font-weight:850;
+  1166→
+  1167→    transition:.18s;
+  1168→}
+  1169→
+  1170→.buy-button:hover{
+  1171→    background:#fff;
+  1172→}
+  1173→
+  1174→.buy-button svg{
+  1175→    width:11px;
+  1176→    height:11px;
+  1177→}
+  1178→
+  1179→
+  1180→/* =========================================================
+  1181→   DESCRIPTION
+  1182→========================================================= */
+  1183→
+  1184→.about{
+  1185→    width:100%;
+  1186→    max-width:870px;
+  1187→
+  1188→    margin:auto;
+  1189→
+  1190→    padding:72px 30px;
+  1191→}
+  1192→
+  1193→.about-label{
+  1194→    margin-bottom:9px;
+  1195→
+  1196→    color:#656a72;
+  1197→
+  1198→    font-size:8px;
+  1199→    font-weight:850;
+  1200→
+  1201→    letter-spacing:1.4px;
+  1202→
+  1203→    text-transform:uppercase;
+  1204→}
+  1205→
+  1206→.about-title{
+  1207→    margin-bottom:19px;
+  1208→
+  1209→    color:#f1f1ef;
+  1210→
+  1211→    font-size:33px;
+  1212→
+  1213→    line-height:1;
+  1214→
+  1215→    letter-spacing:-2px;
+  1216→}
+  1217→
+  1218→.about-description{
+  1219→    color:#898e96;
+  1220→
+  1221→    font-size:10px;
+  1222→
+  1223→    line-height:1.9;
+  1224→
+  1225→    white-space:pre-line;
+  1226→}
+  1227→
+  1228→
+  1229→/* =========================================================
+  1230→   FEATURES
+  1231→========================================================= */
+  1232→
+  1233→.features{
+  1234→    width:100%;
+  1235→    max-width:1120px;
+  1236→
+  1237→    margin:auto;
+  1238→
+  1239→    padding:
+  1240→        0 30px 58px;
+  1241→
+  1242→    display:grid;
+  1243→
+  1244→    grid-template-columns:
+  1245→        repeat(3,minmax(0,1fr));
+  1246→
+  1247→    gap:8px;
+  1248→}
+  1249→
+  1250→.feature{
+  1251→    min-height:112px;
+  1252→
+  1253→    padding:16px;
+  1254→
+  1255→    border:1px solid var(--line);
+  1256→
+  1257→    border-radius:10px;
+  1258→
+  1259→    background:#0e1013;
+  1260→}
+  1261→
+  1262→.feature-icon{
+  1263→    width:26px;
+  1264→    height:26px;
+  1265→
+  1266→    display:grid;
+  1267→    place-items:center;
+  1268→
+  1269→    margin-bottom:10px;
+  1270→
+  1271→    border:1px solid var(--line);
+  1272→
+  1273→    border-radius:7px;
+  1274→
+  1275→    color:#c2c6ca;
+  1276→}
+  1277→
+  1278→.feature-icon svg{
+  1279→    width:12px;
+  1280→    height:12px;
+  1281→}
+  1282→
+  1283→.feature-title{
+  1284→    margin-bottom:4px;
+  1285→
+  1286→    font-size:8px;
+  1287→    font-weight:800;
+  1288→}
+  1289→
+  1290→.feature-text{
+  1291→    color:#646970;
+  1292→
+  1293→    font-size:7px;
+  1294→
+  1295→    line-height:1.55;
+  1296→}
+  1297→
+  1298→
+  1299→/* =========================================================
+  1300→   FOOTER
+  1301→========================================================= */
+  1302→
+  1303→.page-footer{
+  1304→    width:100%;
+  1305→    max-width:1120px;
+  1306→
+  1307→    margin:auto;
+  1308→
+  1309→    padding:21px 30px;
+  1310→
+  1311→    display:flex;
+  1312→    align-items:center;
+  1313→    justify-content:space-between;
+  1314→
+  1315→    border-top:1px solid rgba(255,255,255,.055);
+  1316→
+  1317→    color:#535860;
+  1318→
+  1319→    font-size:7px;
+  1320→}
+  1321→
+  1322→
+  1323→/* =========================================================
+  1324→   SHOW EDITOR
+  1325→========================================================= */
+  1326→
+  1327→.show-editor{
+  1328→    position:fixed;
+  1329→
+  1330→    top:12px;
+  1331→    left:12px;
+  1332→
+  1333→    width:36px;
+  1334→    height:36px;
+  1335→
+  1336→    display:grid;
+  1337→    place-items:center;
+  1338→
+  1339→    z-index:3000;
+  1340→
+  1341→    border:1px solid var(--line2);
+  1342→
+  1343→    border-radius:9px;
+  1344→
+  1345→    background:#111316;
+  1346→
+  1347→    color:#ddd;
+  1348→
+  1349→    opacity:0;
+  1350→
+  1351→    pointer-events:none;
+  1352→
+  1353→    transform:translateX(-6px);
+  1354→
+  1355→    transition:.2s;
+  1356→}
+  1357→
+  1358→.show-editor svg{
+  1359→    width:14px;
+  1360→    height:14px;
+  1361→}
+  1362→
+  1363→.app.sidebar-hidden .show-editor{
+  1364→    opacity:1;
+  1365→
+  1366→    pointer-events:auto;
+  1367→
+  1368→    transform:translateX(0);
+  1369→}
+  1370→
+  1371→.show-editor:hover{
+  1372→    background:#191c20;
+  1373→}
+  1374→
+  1375→
+  1376→/* =========================================================
+  1377→   OVERLAY
+  1378→========================================================= */
+  1379→
+  1380→.overlay{
+  1381→    display:none;
+  1382→}
+  1383→
+  1384→
+  1385→/* =========================================================
+  1386→   LAPTOP
+  1387→========================================================= */
+  1388→
+  1389→@media(max-width:1400px){
+  1390→
+  1391→    :root{
+  1392→        --sidebar:305px;
+  1393→    }
+  1394→
+  1395→    .hero{
+  1396→        gap:45px;
+  1397→        padding:50px 27px;
+  1398→    }
+  1399→
+  1400→    .book-cover{
+  1401→        max-height:415px;
+  1402→    }
+  1403→}
+  1404→
+  1405→
+  1406→/* =========================================================
+  1407→   SMALL LAPTOP
+  1408→========================================================= */
+  1409→
+  1410→@media(max-width:1400px) and (max-height:800px){
+  1411→
+  1412→    .sidebar-content{
+  1413→        padding-top:14px;
+  1414→    }
+  1415→
+  1416→    .brand{
+  1417→        margin-bottom:14px;
+  1418→    }
+  1419→
+  1420→    .editor-section{
+  1421→        margin-top:13px;
+  1422→    }
+  1423→
+  1424→    .cover-upload{
+  1425→        min-height:105px;
+  1426→    }
+  1427→
+  1428→    .field{
+  1429→        margin-bottom:6px;
+  1430→    }
+  1431→
+  1432→    .input{
+  1433→        height:31px;
+  1434→    }
+  1435→
+  1436→    .textarea{
+  1437→        min-height:55px;
+  1438→    }
+  1439→
+  1440→    .textarea.description{
+  1441→        min-height:70px;
+  1442→    }
+  1443→
+  1444→    .format-box{
+  1445→        padding:10px 11px;
+  1446→    }
+  1447→
+  1448→    .hero{
+  1449→        min-height:480px;
+  1450→        padding:38px 27px;
+  1451→    }
+  1452→
+  1453→    .book-cover{
+  1454→        max-height:365px;
+  1455→    }
+  1456→}
+  1457→
+  1458→
+  1459→/* =========================================================
+  1460→   TABLET
+  1461→========================================================= */
+  1462→
+  1463→@media(max-width:1050px){
+  1464→
+  1465→    :root{
+  1466→        --sidebar:285px;
+  1467→    }
+  1468→
+  1469→    .hero{
+  1470→        grid-template-columns:
+  1471→            minmax(160px,250px)
+  1472→            minmax(0,1fr);
+  1473→
+  1474→        gap:30px;
+  1475→    }
+  1476→
+  1477→    .book-cover{
+  1478→        max-height:355px;
+  1479→    }
+  1480→
+  1481→    .book-title{
+  1482→        letter-spacing:-2.5px;
+  1483→    }
+  1484→
+  1485→    .page-nav,
+  1486→    .about,
+  1487→    .features,
+  1488→    .page-footer{
+  1489→        padding-left:22px;
+  1490→        padding-right:22px;
+  1491→    }
+  1492→}
+  1493→
+  1494→
+  1495→/* =========================================================
+  1496→   MOBILE
+  1497→========================================================= */
+  1498→
+  1499→@media(max-width:768px){
+  1500→
+  1501→    body{
+  1502→        overflow:hidden;
+  1503→    }
+  1504→
+  1505→    .app{
+  1506→        display:block;
+  1507→    }
+  1508→
+  1509→    .sidebar{
+  1510→        position:fixed;
+  1511→
+  1512→        top:0;
+  1513→        left:0;
+  1514→
+  1515→        width:min(330px,88vw);
+  1516→
+  1517→        height:100vh;
+  1518→
+  1519→        z-index:2000;
+  1520→
+  1521→        transform:translateX(-100%);
+  1522→
+  1523→        box-shadow:
+  1524→            20px 0 60px rgba(0,0,0,.5);
+  1525→    }
+  1526→
+  1527→    .app.mobile-open .sidebar{
+  1528→        transform:translateX(0);
+  1529→    }
+  1530→
+  1531→    .preview-area{
+  1532→        width:100%;
+  1533→        height:100vh;
+  1534→
+  1535→        padding:8px;
+  1536→    }
+  1537→
+  1538→    .toolbar{
+  1539→        margin-bottom:8px;
+  1540→    }
+  1541→
+  1542→    .toolbar .hide-text{
+  1543→        display:none;
+  1544→    }
+  1545→
+  1546→    .live{
+  1547→        display:none;
+  1548→    }
+  1549→
+  1550→    .app.mobile-open .overlay{
+  1551→        display:block;
+  1552→
+  1553→        position:fixed;
+  1554→
+  1555→        inset:0;
+  1556→
+  1557→        z-index:1900;
+  1558→
+  1559→        background:rgba(0,0,0,.58);
+  1560→    }
+  1561→
+  1562→    .show-editor{
+  1563→        opacity:1;
+  1564→
+  1565→        pointer-events:auto;
+  1566→
+  1567→        transform:none;
+  1568→    }
+  1569→
+  1570→    .app.mobile-open .show-editor{
+  1571→        opacity:0;
+  1572→
+  1573→        pointer-events:none;
+  1574→    }
+  1575→
+  1576→    .page-nav{
+  1577→        min-height:54px;
+  1578→
+  1579→        padding:0 17px;
+  1580→    }
+  1581→
+  1582→    .page-meta{
+  1583→        display:none;
+  1584→    }
+  1585→
+  1586→    .hero{
+  1587→        grid-template-columns:1fr;
+  1588→
+  1589→        min-height:auto;
+  1590→
+  1591→        padding:52px 18px;
+  1592→
+  1593→        gap:38px;
+  1594→
+  1595→        text-align:center;
+  1596→    }
+  1597→
+  1598→    .hero-content{
+  1599→        display:flex;
+  1600→
+  1601→        flex-direction:column;
+  1602→
+  1603→        align-items:center;
+  1604→    }
+  1605→
+  1606→    /*
+  1607→       Sur mobile la couverture garde son
+  1608→       ratio naturel et s'adapte à sa largeur.
+  1609→    */
+  1610→
+  1611→    .book-cover{
+  1612→        width:auto;
+  1613→
+  1614→        max-width:min(78vw,240px);
+  1615→
+  1616→        max-height:380px;
+  1617→    }
+  1618→
+  1619→    .book-cover.empty{
+  1620→        width:220px;
+  1621→        height:325px;
+  1622→    }
+  1623→
+  1624→    .book-title{
+  1625→        font-size:42px;
+  1626→
+  1627→        letter-spacing:-2.5px;
+  1628→    }
+  1629→
+  1630→    .book-tagline{
+  1631→        max-width:500px;
+  1632→    }
+  1633→
+  1634→    .format-badges{
+  1635→        justify-content:center;
+  1636→    }
+  1637→
+  1638→    .purchase{
+  1639→        justify-content:center;
+  1640→    }
+  1641→
+  1642→    .about{
+  1643→        padding:
+  1644→            55px 18px;
+  1645→    }
+  1646→
+  1647→    .about-title{
+  1648→        font-size:29px;
+  1649→    }
+  1650→
+  1651→    .features{
+  1652→        grid-template-columns:1fr;
+  1653→
+  1654→        padding:
+  1655→            0 18px 45px;
+  1656→    }
+  1657→
+  1658→    .feature{
+  1659→        min-height:auto;
+  1660→    }
+  1661→
+  1662→    .page-footer{
+  1663→        padding:
+  1664→            20px 18px;
+  1665→    }
+  1666→}
+  1667→
+  1668→
+  1669→/* =========================================================
+  1670→   SMALL MOBILE
+  1671→========================================================= */
+  1672→
+  1673→@media(max-width:480px){
+  1674→
+  1675→    .format-box-header{
+  1676→        align-items:flex-start;
+  1677→    }
+  1678→
+  1679→    .format-status{
+  1680→        padding:4px 6px;
+  1681→
+  1682→        font-size:6px;
+  1683→    }
+  1684→
+  1685→    .format-box-header strong{
+  1686→        font-size:10px;
+  1687→    }
+  1688→
+  1689→    .book-title{
+  1690→        font-size:37px;
+  1691→
+  1692→        letter-spacing:-2.1px;
+  1693→    }
+  1694→
+  1695→    .book-cover{
+  1696→        max-width:72vw;
+  1697→
+  1698→        max-height:330px;
+  1699→    }
+  1700→
+  1701→    .purchase{
+  1702→        width:100%;
+  1703→
+  1704→        flex-direction:column;
+  1705→    }
+  1706→
+  1707→    .buy-button{
+  1708→        width:100%;
+  1709→        max-width:240px;
+  1710→    }
+  1711→}
+  1712→
+  1713→
+  1714→/* =========================================================
+  1715→   VERY SMALL MOBILE
+  1716→========================================================= */
+  1717→
+  1718→@media(max-width:360px){
+  1719→
+  1720→    .format-description{
+  1721→        font-size:6.5px;
+  1722→    }
+  1723→
+  1724→    .book-title{
+  1725→        font-size:33px;
+  1726→    }
+  1727→
+  1728→    .hero{
+  1729→        padding:
+  1730→            40px 15px;
+  1731→    }
+  1732→
+  1733→    .about{
+  1734→        padding:
+  1735→            45px 15px;
+  1736→    }
+  1737→
+  1738→    .features{
+  1739→        padding-left:15px;
+  1740→        padding-right:15px;
+  1741→    }
+  1742→}
+  1743→</style>
+  1744→</head>
+  1745→
+  1746→
+  1747→<body>
+  1748→
+  1749→<div class="app" id="app">
+  1750→
+  1751→
+  1752→<!-- =======================================================
+  1753→     SIDEBAR
+  1754→======================================================= -->
+  1755→
+  1756→<aside class="sidebar">
+  1757→
+  1758→<div class="sidebar-content">
+  1759→
+  1760→
+  1761→<div class="brand">
+  1762→
+  1763→<div class="brand-mark">
+  1764→B
+  1765→</div>
+  1766→
+  1767→<div>
+  1768→
+  1769→<div class="brand-name">
+  1770→Bookly
+  1771→</div>
+  1772→
+  1773→<div class="brand-sub">
+  1774→Digital Book Store
+  1775→</div>
+  1776→
+  1777→</div>
+  1778→
+  1779→</div>
+  1780→
+  1781→
+  1782→<!-- COVER -->
+  1783→
+  1784→<section class="editor-section">
+  1785→
+  1786→<div class="section-heading">
+  1787→<span>Couverture</span>
+  1788→<span>01</span>
+  1789→</div>
+  1790→
+  1791→
+  1792→<div
+  1793→class="cover-upload"
+  1794→id="coverUpload"
+  1795→>
+  1796→
+  1797→<input
+  1798→id="coverInput"
+  1799→type="file"
+  1800→accept="image/png,image/jpeg,image/webp"
+  1801→>
+  1802→
+  1803→
+  1804→<img
+  1805→id="coverPreviewMini"
+  1806→class="cover-preview-mini"
+  1807→alt=""
+  1808→>
+  1809→
+  1810→
+  1811→<div
+  1812→id="uploadIcon"
+  1813→class="upload-icon"
+  1814→>
+  1815→
+  1816→<svg
+  1817→viewBox="0 0 24 24"
+  1818→fill="none"
+  1819→stroke="currentColor"
+  1820→stroke-width="1.7"
+  1821→>
+  1822→
+  1823→<rect
+  1824→x="3"
+  1825→y="3"
+  1826→width="18"
+  1827→height="18"
+  1828→rx="3"
+  1829→/>
+  1830→
+  1831→<circle
+  1832→cx="8.5"
+  1833→cy="8.5"
+  1834→r="1.5"
+  1835→/>
+  1836→
+  1837→<path
+  1838→d="m21 15-5-5L5 21"
+  1839→/>
+  1840→
+  1841→</svg>
+  1842→
+  1843→</div>
+  1844→
+  1845→
+  1846→<div class="upload-title">
+  1847→Ajouter une couverture
+  1848→</div>
+  1849→
+  1850→<div class="upload-help">
+  1851→PNG, JPG ou WEBP
+  1852→</div>
+  1853→
+  1854→</div>
+  1855→
+  1856→</section>
+  1857→
+  1858→
+  1859→<!-- BOOK -->
+  1860→
+  1861→<section class="editor-section">
+  1862→
+  1863→<div class="section-heading">
+  1864→<span>Livre numérique</span>
+  1865→<span>02</span>
+  1866→</div>
+  1867→
+  1868→
+  1869→<!-- FORMAT -->
+  1870→
+  1871→<div class="field">
+  1872→
+  1873→<label>
+  1874→Format disponible
+  1875→</label>
+  1876→
+  1877→
+  1878→<div class="format-box">
+  1879→
+  1880→<div class="format-box-header">
+  1881→
+  1882→<div>
+  1883→
+  1884→<span class="format-label-small">
+  1885→FORMAT DÉTECTÉ
+  1886→</span>
+  1887→
+  1888→<strong id="detectedFormat">
+  1889→Aucun fichier
+  1890→</strong>
+  1891→
+  1892→</div>
+  1893→
+  1894→
+  1895→<div
+  1896→id="formatStatus"
+  1897→class="format-status"
+  1898→>
+  1899→
+  1900→<span></span>
+  1901→
+  1902→En attente
+  1903→
+  1904→</div>
+  1905→
+  1906→</div>
+  1907→
+  1908→
+  1909→<div
+  1910→id="formatDescription"
+  1911→class="format-description"
+  1912→>
+  1913→Ajoute ton fichier PDF ou EPUB pour
+  1914→détecter automatiquement le format.
+  1915→</div>
+  1916→
+  1917→</div>
+  1918→
+  1919→</div>
+  1920→
+  1921→
+  1922→<!-- FILE -->
+  1923→
+  1924→<div class="field">
+  1925→
+  1926→<label>
+  1927→Fichiers du livre
+  1928→</label>
+  1929→
+  1930→
+  1931→<div
+  1932→class="file-upload"
+  1933→id="fileUpload"
+  1934→>
+  1935→
+  1936→<input
+  1937→id="bookFileInput"
+  1938→type="file"
+  1939→accept=".pdf,.epub,application/pdf,application/epub+zip"
+  1940→multiple
+  1941→>
+  1942→
+  1943→
+  1944→<div class="file-icon">
+  1945→
+  1946→<svg
+  1947→viewBox="0 0 24 24"
+  1948→fill="none"
+  1949→stroke="currentColor"
+  1950→stroke-width="1.7"
+  1951→>
+  1952→
+  1953→<path
+  1954→d="M6 3h8l4 4v14H6z"
+  1955→/>
+  1956→
+  1957→<path
+  1958→d="M14 3v5h5"
+  1959→/>
+  1960→
+  1961→<path
+  1962→d="M9 13h6"
+  1963→/>
+  1964→
+  1965→<path
+  1966→d="M9 17h5"
+  1967→/>
+  1968→
+  1969→</svg>
+  1970→
+  1971→</div>
+  1972→
+  1973→
+  1974→<div class="file-info">
+  1975→
+  1976→<div
+  1977→id="fileName"
+  1978→class="file-name"
+  1979→>
+  1980→Ajouter un fichier
+  1981→</div>
+  1982→
+  1983→<div class="file-help">
+  1984→PDF ou EPUB
+  1985→</div>
+  1986→
+  1987→</div>
+  1988→
+  1989→</div>
+  1990→
+  1991→
+  1992→<div
+  1993→id="fileList"
+  1994→class="file-list"
+  1995→></div>
+  1996→
+  1997→</div>
+  1998→
+  1999→</section>
+  2000→
+
+[showing lines 1-2000 of 4192; use offset=2001 with limit to continue reading]
