@@ -52,6 +52,9 @@ model Book {
   isActive    Boolean  @default(true)
   slug        String   @unique // URL-friendly identifier pour la page publique
   
+  // Relations
+  orders      Order[]
+  
   // Métadonnées
   downloadCount Int    @default(0) // Nombre de téléchargements
   viewCount     Int    @default(0) // Nombre de vues
