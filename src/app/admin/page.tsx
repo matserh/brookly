@@ -2,17 +2,20 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { BookOpen, Lock, Eye, EyeOff, LogIn, Shield, Settings, BarChart3, Users, FileText, ArrowLeft } from 'lucide-react'
+import { BookOpen, Lock, Eye, EyeOff, LogIn, Shield, Settings, BarChart3, Users, FileText, ArrowLeft, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-// Configuration admin (en production, utiliser des variables d'environnement)
+// Configuration admin sécurisée
 const ADMIN_CONFIG = {
-  username: 'admin',
-  password: 'brookly2024' // À changer en production !
+  username: 'booklydanbookstorm',
+  password: 'HkqBrJG2aviNjLR8blIH' // Mot de passe sécurisé à conserver dans un gestionnaire de mots de passe
 }
+
+// Phrase d'accroche pour le panneau admin
+const ADMIN_TAGLINE = "Le changement commence par une seule décision. Faites aujourd'hui le premier pas vers la réussite."
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -28,156 +31,155 @@ export default function AdminPage() {
     setIsLoading(true)
     setError('')
 
-    // Simuler un délai de vérification
-    await new Promise(resolve => setTimeout(resolve, 800))
+    await new Promise(resolve => setTimeout(resolve, 600))
 
     if (username === ADMIN_CONFIG.username && password === ADMIN_CONFIG.password) {
       setIsAuthenticated(true)
-      localStorage.setItem('admin_auth', 'true')
-      localStorage.setItem('admin_time', Date.now().toString())
+      localStorage.setItem('brookly_admin_auth', 'true')
+      localStorage.setItem('brookly_admin_time', Date.now().toString())
     } else {
       setError('Identifiants incorrects')
       setIsLoading(false)
     }
   }
 
-  // Vérifier si déjà authentifié
+  // Vérifier session existante (24h)
   if (typeof window !== 'undefined') {
-    const auth = localStorage.getItem('admin_auth')
-    const time = localStorage.getItem('admin_time')
+    const auth = localStorage.getItem('brookly_admin_auth')
+    const time = localStorage.getItem('brookly_admin_time')
     if (auth === 'true' && time && (Date.now() - parseInt(time)) < 24 * 60 * 60 * 1000) {
-      // Session valide (24h)
       if (!isAuthenticated) setIsAuthenticated(true)
     }
   }
 
   const handleLogout = () => {
     setIsAuthenticated(false)
-    localStorage.removeItem('admin_auth')
-    localStorage.removeItem('admin_time')
+    localStorage.removeItem('brookly_admin_auth')
+    localStorage.removeItem('brookly_admin_time')
     setUsername('')
     setPassword('')
   }
 
-  // Formulaire de connexion
+  // Page de connexion
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1f3c] to-[#061020] flex items-center justify-center p-4">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl"></div>
-        </div>
-
-        <Card className="w-full max-w-md relative bg-gradient-to-br from-[#1a365d]/90 to-[#0d1f3c]/90 backdrop-blur-xl border border-white/10 shadow-2xl">
-          <CardHeader className="text-center space-y-4 pb-2">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center">
-              <Shield className="w-8 h-8 text-black" />
+      <div className="min-h-screen bg-[#0a1628] flex items-center justify-center p-4">
+        <div className="w-full max-w-sm space-y-6">
+          {/* Logo */}
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-[#facc15]/10 rounded-xl">
+              <Shield className="w-6 h-6 text-[#facc15]" />
             </div>
-            <CardTitle className="text-2xl text-white">Administration</CardTitle>
-            <CardDescription className="text-blue-200">
-              Connectez-vous pour accéder au panneau de gestion
-            </CardDescription>
-          </CardHeader>
+            <h1 className="text-xl font-bold text-white">Brookly Admin</h1>
+            <p className="text-sm text-gray-500">Espace de gestion du livre</p>
+          </div>
 
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="username" className="text-gray-300">Nom d'utilisateur</Label>
-                <div className="relative">
+          {/* Formulaire */}
+          <Card className="bg-[#0d1f3c] border-white/5">
+            <CardContent className="p-6 space-y-4">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username" className="text-gray-400 text-sm">Identifiant</Label>
                   <Input
                     id="username"
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Entrez votre identifiant"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-gray-500 focus:border-yellow-500"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-[#facc15]"
                     required
                   />
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-300">Mot de passe</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Entrez votre mot de passe"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-gray-500 focus:border-yellow-500 pr-10"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {error && (
-                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
-
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-bold py-3"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
-                    Connexion...
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-gray-400 text-sm">Mot de passe</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Entrez votre mot de passe"
+                      className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-[#facc15] pr-10"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
-                ) : (
-                  <>
-                    <LogIn className="w-4 h-4 mr-2" />
-                    Se connecter
-                  </>
-                )}
-              </Button>
-            </form>
+                </div>
 
-            <div className="mt-6 pt-6 border-t border-white/10 text-center">
-              <Button 
-                variant="ghost" 
-                onClick={() => router.push('/')}
-                className="text-gray-400 hover:text-white"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Retour au site
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+                {error && (
+                  <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-2 rounded-lg text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-[#facc15] hover:bg-[#eab308] text-black font-medium py-2.5"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                      Vérification...
+                    </div>
+                  ) : (
+                    <>
+                      <LogIn size={16} className="mr-2" />
+                      Se connecter
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Lien retour */}
+          <Button 
+            variant="ghost" 
+            onClick={() => router.push('/')}
+            className="w-full text-gray-500 hover:text-white"
+          >
+            <ArrowLeft size={14} className="mr-2" />
+            Retour au site public
+          </Button>
+        </div>
       </div>
     )
   }
 
-  // Dashboard Admin (après connexion)
+  // Dashboard Admin
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1f3c] to-[#061020]">
+    <div className="min-h-screen bg-[#0a1628]">
       {/* Header */}
-      <header className="bg-[#0a1628]/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <BookOpen className="w-8 h-8 text-yellow-400" />
-              <div>
-                <h1 className="font-bold text-white">Brookly Admin</h1>
-                <p className="text-xs text-gray-400">Gestion du livre</p>
-              </div>
-            </div>
-            
+      <header className="bg-[#0a1628] border-b border-white/5 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-[#facc15] font-bold">7</span>
+            <span className="font-semibold text-white">Admin</span>
+            <span className="text-xs text-gray-500 bg-white/5 px-2 py-0.5 rounded">Brookly</span>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <a 
+              href="/" 
+              target="_blank" 
+              className="text-xs text-gray-500 hover:text-white flex items-center gap-1"
+            >
+              Voir le site
+              <ExternalLink size={12} />
+            </a>
             <Button 
               variant="ghost" 
+              size="sm"
               onClick={handleLogout}
-              className="text-gray-400 hover:text-red-400"
+              className="text-gray-500 hover:text-red-400"
             >
               Déconnexion
             </Button>
@@ -185,102 +187,104 @@ export default function AdminPage() {
         </div>
       </header>
 
-      {/* Dashboard Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Content */}
+      <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+        
+        {/* Tagline */}
+        <div className="bg-gradient-to-r from-[#facc15]/10 to-transparent border-l-2 border-[#facc15] p-4 rounded-r-lg">
+          <p className="text-sm text-gray-300 italic">{ADMIN_TAGLINE}</p>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: BookOpen, label: "Ventes totales", value: "127", color: "from-blue-500 to-blue-600" },
-            { icon: Users, label: "Acheteurs", value: "89", color: "from-green-500 to-green-600" },
-            { icon: BarChart3, label: "Revenus", value: "381 000 FCFA", color: "from-yellow-500 to-yellow-600" },
-            { icon: FileText, label: "Taux conversion", value: "12.4%", color: "from-purple-500 to-purple-600" }
+            { label: "Ventes", value: "0", icon: BarChart3 },
+            { label: "Revenus", value: "0 FCFA", icon: Users },
+            { label: "Visites", value: "---", icon: BookOpen },
+            { label: "Conversion", value: "---", icon: Settings },
           ].map((stat, idx) => (
-            <Card key={idx} className="bg-white/5 backdrop-blur-sm border-white/10">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-400">{stat.label}</p>
-                    <p className="text-2xl font-bold mt-1">{stat.value}</p>
-                  </div>
-                  <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center`}>
-                    <stat.icon className="w-6 h-6 text-white" />
-                  </div>
+            <Card key={idx} className="bg-white/[0.03] border-white/5">
+              <CardContent className="p-4 flex items-center gap-3">
+                <stat.icon size={18} className="text-[#facc15]" />
+                <div>
+                  <p className="text-xl font-bold text-white">{stat.value}</p>
+                  <p className="text-xs text-gray-500">{stat.label}</p>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Main Grid */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Livre Info */}
-          <Card className="bg-white/5 backdrop-blur-sm border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Settings className="w-5 h-5 text-yellow-400" />
+        {/* Grid principal */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          
+          {/* Infos livre */}
+          <Card className="bg-white/[0.03] border-white/5">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
+                <Settings size={16} className="text-[#facc15]" />
                 Informations du livre
               </CardTitle>
-              <CardDescription>Gérez les détails de votre livre</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Titre</label>
-                  <Input defaultValue="Les 7 Habitudes de la Réussite" className="bg-white/5 border-white/20" />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="text-xs text-gray-500">Titre</label>
+                  <Input defaultValue="Les 7 Habitudes de la Réussite" className="bg-white/5 border-white/10 text-sm h-9" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Auteur</label>
-                  <Input defaultValue="Votre Nom" className="bg-white/5 border-white/20" />
+                <div className="space-y-1.5">
+                  <label className="text-xs text-gray-500">Auteur</label>
+                  <Input defaultValue="Votre Nom" className="bg-white/5 border-white/10 text-sm h-9" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Prix (FCFA)</label>
-                  <Input defaultValue="3000" type="number" className="bg-white/5 border-white/20" />
+                <div className="space-y-1.5">
+                  <label className="text-xs text-gray-500">Prix promo (FCFA)</label>
+                  <Input defaultValue="3000" type="number" className="bg-white/5 border-white/10 text-sm h-9" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Prix normal</label>
-                  <Input defaultValue="7000" type="number" className="bg-white/5 border-white/20" />
+                <div className="space-y-1.5">
+                  <label className="text-xs text-gray-500">Prix normal (FCFA)</label>
+                  <Input defaultValue="7000" type="number" className="bg-white/5 border-white/10 text-sm h-9" />
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <label className="text-sm text-gray-400">Lien de paiement MyChariow</label>
-                <Input placeholder="https://pay.mychariow.com/..." className="bg-white/5 border-white/20" />
-                <p className="text-xs text-yellow-400">⚠️ Lien non configuré - Les achats ne fonctionneront pas</p>
+              <div className="space-y-1.5">
+                <label className="text-xs text-gray-500">Lien de paiement MyChariow</label>
+                <Input placeholder="https://pay.mychariow.com/..." className="bg-white/5 border-white/10 text-sm h-9" />
+                <p className="text-xs text-[#facc15]/70">⚠️ Non configuré — Les achats sont désactivés</p>
               </div>
 
-              <Button className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
+              <Button className="w-full bg-white/10 hover:bg-white/20 text-white text-sm h-9 mt-2">
                 Sauvegarder les modifications
               </Button>
             </CardContent>
           </Card>
 
           {/* Fichiers */}
-          <Card className="bg-white/5 backdrop-blur-sm border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <FileText className="w-5 h-5 text-yellow-400" />
-                Gestion des fichiers
+          <Card className="bg-white/[0.03] border-white/5">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
+                <FileText size={16} className="text-[#facc15]" />
+                Fichiers du livre
               </CardTitle>
-              <CardDescription>PDF, EPUB et couverture</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* PDF Upload */}
-              <div className="border-2 border-dashed border-white/20 rounded-xl p-6 text-center hover:border-yellow-500/50 transition-colors cursor-pointer">
-                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="font-medium text-white">Livre PDF</p>
-                <p className="text-sm text-gray-400 mt-1">56 pages • 7 chapitres</p>
-                <Button variant="outline" size="sm" className="mt-3 border-white/20 text-white hover:bg-white/10">
-                  Changer le fichier
+            <CardContent className="space-y-4">
+              
+              {/* PDF */}
+              <div className="border border-dashed border-white/10 rounded-lg p-4 text-center hover:border-[#facc15]/30 transition-colors cursor-pointer">
+                <FileText size={24} className="mx-auto mb-2 text-gray-500" />
+                <p className="text-sm font-medium text-white">Livre PDF</p>
+                <p className="text-xs text-gray-500">56 pages • 7 chapitres • ~2MB</p>
+                <Button variant="outline" size="sm" className="mt-2 border-white/20 text-xs h-7">
+                  Choisir un fichier
                 </Button>
               </div>
 
-              {/* Cover Upload */}
-              <div className="border-2 border-dashed border-white/20 rounded-xl p-6 text-center hover:border-yellow-500/50 transition-colors cursor-pointer">
-                <div className="w-24 h-32 mx-auto mb-3 bg-gradient-to-br from-[#1a365d] to-[#0d1f3c] rounded-lg flex items-center justify-center overflow-hidden">
-                  <span className="text-xs text-center px-2 text-gray-400">Couverture<br/>actuelle</span>
+              {/* Couverture */}
+              <div className="border border-dashed border-white/10 rounded-lg p-4 text-center hover:border-[#facc15]/30 transition-colors cursor-pointer">
+                <div className="w-20 h-28 mx-auto mb-2 bg-[#1a365d] rounded overflow-hidden flex items-center justify-center">
+                  <span className="text-[10px] text-gray-500 text-center px-1">Couverture<br/>actuelle</span>
                 </div>
-                <p className="font-medium text-white">Image de couverture</p>
-                <Button variant="outline" size="sm" className="mt-3 border-white/20 text-white hover:bg-white/10">
+                <p className="text-sm font-medium text-white">Image de couverture</p>
+                <Button variant="outline" size="sm" className="mt-2 border-white/20 text-xs h-7">
                   Changer l'image
                 </Button>
               </div>
@@ -288,53 +292,24 @@ export default function AdminPage() {
           </Card>
         </div>
 
-        {/* Recent Orders */}
-        <Card className="bg-white/5 backdrop-blur-sm border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Users className="w-5 h-5 text-yellow-400" />
-              Commandes récentes
+        {/* Commandes (vide pour l'instant) */}
+        <Card className="bg-white/[0.03] border-white/5">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
+              <Users size={16} className="text-[#facc15]" />
+              Commandes
             </CardTitle>
+            <CardDescription className="text-xs">Les commandes apparaîtront ici une fois le paiement configuré</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="pb-3 text-sm font-medium text-gray-400">Client</th>
-                    <th className="pb-3 text-sm font-medium text-gray-400">Email</th>
-                    <th className="pb-3 text-sm font-medium text-gray-400">Montant</th>
-                    <th className="pb-3 text-sm font-medium text-gray-400">Statut</th>
-                    <th className="pb-3 text-sm font-medium text-gray-400">Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {[
-                    { name: "Marie K.", email: "marie@email.com", amount: "3000 FCFA", status: "Complété", date: "19/08/2024" },
-                    { name: "Ahmed B.", email: "ahmed@email.com", amount: "3000 FCFA", status: "Complété", date: "19/08/2024" },
-                    { name: "Fatou D.", email: "fatou@email.com", amount: "3000 FCFA", status: "En attente", date: "18/08/2024" },
-                  ].map((order, idx) => (
-                    <tr key={idx} className="hover:bg-white/5">
-                      <td className="py-3 text-white">{order.name}</td>
-                      <td className="py-3 text-gray-400">{order.email}</td>
-                      <td className="py-3 text-white font-medium">{order.amount}</td>
-                      <td className="py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          order.status === 'Complété' 
-                            ? 'bg-green-500/20 text-green-400' 
-                            : 'bg-yellow-500/20 text-yellow-400'
-                        }`}>
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="py-3 text-gray-400">{order.date}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="text-center py-12 text-gray-500">
+              <BookOpen size={32} className="mx-auto mb-3 opacity-30" />
+              <p className="text-sm">Aucune commande pour le moment</p>
+              <p className="text-xs mt-1">Configurez le lien MyChariow pour commencer à vendre</p>
             </div>
           </CardContent>
         </Card>
+
       </main>
     </div>
   )

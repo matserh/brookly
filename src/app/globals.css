@@ -1,35 +1,33 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Custom Theme Variables for Brookly - Les 7 Habitudes de la Réussite */
+/* Theme minimaliste - Inspiré de la couverture du livre */
 :root {
   --background: #0a1628;
   --foreground: #ffffff;
-  --card: rgba(26, 54, 93, 0.5);
+  --card: rgba(255, 255, 255, 0.03);
   --card-foreground: #ffffff;
   --popover: #0d1f3c;
   --popover-foreground: #ffffff;
-  --primary: #facc15; /* Yellow-400 - matching book cover */
+  --primary: #facc15;
   --primary-foreground: #000000;
-  --secondary: rgba(255, 255, 255, 0.1);
+  --secondary: rgba(255, 255, 255, 0.05);
   --secondary-foreground: #ffffff;
-  --muted: rgba(148, 163, 184, 0.5);
+  --muted: rgba(148, 163, 184, 0.4);
   --muted-foreground: #94a3b8;
-  --accent: rgba(250, 204, 21, 0.1);
+  --accent: rgba(250, 204, 21, 0.08);
   --accent-foreground: #facc15;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.1);
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.06);
   --ring: #facc15;
-  --radius: 0.75rem;
+  --radius: 0.625rem;
 
-  /* Custom colors */
-  --color-blue-dark: #0a1628;
-  --color-blue-medium: #1a365d;
-  --color-blue-light: #2d4a7c;
-  --color-yellow-primary: #facc15;
-  --color-yellow-secondary: #eab308;
+  /* Couleurs personnalisées */
+  --color-deep-blue: #0a1628;
+  --color-medium-blue: #1a365d;
+  --color-accent-yellow: #facc15;
 }
 
 * {
@@ -39,132 +37,70 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Custom scrollbar */
+/* Scrollbar minimaliste */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--color-blue-light);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* Selection color */
+/* Selection */
 ::selection {
-  background: rgba(250, 204, 21, 0.3);
+  background: rgba(250, 204, 21, 0.2);
   color: white;
 }
 
-/* Focus styles */
+/* Focus */
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
-/* Animations */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }
 
-@keyframes glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(250, 204, 21, 0.6); }
+/* Animations subtiles */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+/* Button styles */
+.btn-primary {
+  @apply bg-[#facc15] hover:bg-[#eab308] text-black font-medium transition-all duration-200;
 }
 
-.animate-glow {
-  animation: glow 2s ease-in-out infinite;
+.btn-primary:active {
+  transform: scale(0.98);
 }
 
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(250, 204, 21, 0.1), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+/* Card hover */
+.card-subtle {
+  @apply bg-white/[0.03] border-white/5 hover:bg-white/[0.05] hover:border-white/10 transition-all duration-200;
 }
 
-/* Gradient text utility */
-.text-gradient {
-  background: linear-gradient(135deg, var(--primary) 0%, #fef08a 50%, var(--primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glass morphism effect */
-.glass {
-  background: rgba(26, 54, 93, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Button hover effects */
-.btn-premium {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.btn-premium::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.btn-premium:hover::before {
-  left: 100%;
-}
-
-/* Card hover effect */
-.card-hover {
-  transition: all 0.3s ease;
-}
-
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(250, 204, 21, 0.1);
-}
-
-/* Responsive typography */
-@media (max-width: 640px) {
+/* Responsive */
+@media (max-width: 768px) {
   html {
-    font-size: 14px;
-  }
-}
-
-@media (min-width: 1536px) {
-  html {
-    font-size: 18px;
+    font-size: 15px;
   }
 }
