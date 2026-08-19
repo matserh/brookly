@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -29,4 +26,58 @@ model Post {
   authorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Bookly - Digital Book Store Schema
+model Book {
+  id          String   @id @default(cuid())
+  title       String
+  author      String
+  tagline      String?
+  description String   @default("")
+  price       Float
+  currency    String   @default("FCFA")
+  paymentUrl  String?  // Lien de paiement (MyChariow, etc.)
+  coverImage  String?  // URL ou base64 de la couverture
+  
+  // Format disponible
+  hasPDF      Boolean  @default(false)
+  hasEPUB     Boolean  @default(false)
+  
+  // Chemins des fichiers stockés
+  pdfPath     String?  // Chemin vers le fichier PDF
+  epubPath    String?  // Chemin vers le fichier EPUB
+  
+  // Statut
+  isActive    Boolean  @default(true)
+  slug        String   @unique // URL-friendly identifier pour la page publique
+  
+  // Métadonnées
+  downloadCount Int    @default(0) // Nombre de téléchargements
+  viewCount     Int    @default(0) // Nombre de vues
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Commandes de vente (pour suivre les achats)
+model Order {
+  id          String   @id @default(cuid())
+  bookId      String
+  buyerEmail  String?
+  buyerName   String?
+  pricePaid   Float
+  currency    String   @default("FCFA")
+  status      String   @default("pending") // pending, completed, failed, refunded
+  paymentRef  String?  // Référence de paiement externe
+  
+  // Téléchargement
+  downloadUrl    String?  // URL temporaire de téléchargement
+  downloadExpires DateTime? // Expiration du lien de téléchargement
+  downloadCount  Int     @default(0) // Nombre de fois téléchargé (limite)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  book        Book     @relation(fields: [bookId], references: [id])
 }
