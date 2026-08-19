@@ -1,0 +1,1 @@
+{"$schema": "https://openapi.vercel.sh/vercel.json", "buildCommand": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/", "outputDirectory": ".next/standalone", "framework": "nextjs"}
