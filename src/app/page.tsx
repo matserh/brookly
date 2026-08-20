@@ -51,10 +51,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#0a1628]/80 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 md:h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-yellow-400" />
-            <span className="font-bold text-base sm:text-lg tracking-tight">
-              LES <span className="text-yellow-400">7</span> HABITUDES
-            </span>
+            <Image src="/logo-brookly.svg" alt="Brookly" width={120} height={30} className="h-7 w-auto sm:h-8" />
           </div>
           
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white">
@@ -433,10 +430,9 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-gray-300">
             <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-yellow-400" />
-              <span className="font-medium">Les 7 Habitudes de la Réussite</span>
+              <Image src="/logo-brookly.svg" alt="Brookly" width={80} height={20} className="h-5 w-auto opacity-80" />
             </div>
-            <span>© 2026 Tous droits réservés</span>
+            <span>© 2026 Brookly - Tous droits réservés</span>
           </div>
         </div>
       </footer>

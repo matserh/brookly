@@ -6,7 +6,7 @@ import {
   BookOpen, Lock, Eye, EyeOff, LogIn, Shield, Settings, 
   BarChart3, Users, ArrowLeft, ExternalLink, Upload, Save, 
   CheckCircle, Image, PenLine, CreditCard, Package, LogOut,
-  Sparkles, ChevronRight, AlertCircle
+  Sparkles, ChevronRight, AlertCircle, Plus, Trash2, GripVertical
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -29,7 +29,7 @@ export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const [saved, setSaved] = useState(false)
-  const [activeSection, setActiveSection] = useState<'book' | 'payment' | 'cover'>('book')
+  const [activeSection, setActiveSection] = useState<'book' | 'habits' | 'cover' | 'payment'>('book')
 
   // États pour les données du livre
   const [bookData, setBookData] = useState({
@@ -41,6 +41,20 @@ export default function AdminPage() {
     description: "Découvrez les secrets qui distinguent les personnes qui réussissent de celles qui restent bloquées dans leurs objectifs.",
     paymentLink: ""
   })
+
+  // État pour les habitudes/chapitres
+  const [chaptersList, setChaptersList] = useState([
+    { id: 1, title: "Être Proactif", desc: "Prenez la responsabilité de votre vie au lieu de subir les événements" },
+    { id: 2, title: "Commencer par la fin en tête", desc: "Définissez clairement votre vision et vos objectifs de vie" },
+    { id: 3, title: "Placer les priorités en premier", desc: "Organisez votre temps autour de ce qui compte vraiment" },
+    { id: 4, title: "Penser Gagnant-Gagnant", desc: "Créez des relations mutuellement bénéfiques et durables" },
+    { id: 5, title: "Comprendre avant d'être compris", desc: "Écoutez vraiment les autres avant de vouloir vous faire comprendre" },
+    { id: 6, title: "Synergiser", desc: "Combinez vos forces pour créer mieux que seul" },
+    { id: 7, title: "Aiguisez l'outil", desc: "Renouvelez continuellement vos capacités physiques, mentales et spirituelles" }
+  ])
+
+  // Nouvelle habitude
+  const [newHabit, setNewHabit] = useState({ title: "", desc: "" })
 
   // Vérifier session existante au chargement
   useEffect(() => {
@@ -81,6 +95,23 @@ export default function AdminPage() {
   const handleSave = () => {
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+  }
+
+  // Gestion des habitudes
+  const addHabit = () => {
+    if (newHabit.title.trim() && newHabit.desc.trim()) {
+      const newId = chaptersList.length > 0 ? Math.max(...chaptersList.map(h => h.id)) + 1 : 1
+      setChaptersList([...chaptersList, { id: newId, title: newHabit.title.trim(), desc: newHabit.desc.trim() }])
+      setNewHabit({ title: "", desc: "" })
+    }
+  }
+
+  const removeHabit = (id: number) => {
+    setChaptersList(chaptersList.filter(h => h.id !== id))
+  }
+
+  const updateHabit = (id: number, field: 'title' | 'desc', value: string) => {
+    setChaptersList(chaptersList.map(h => h.id === id ? { ...h, [field]: value } : h))
   }
 
   // Page de connexion - Design premium
@@ -271,16 +302,11 @@ export default function AdminPage() {
         {/* Welcome banner */}
         <div className="relative bg-gradient-to-r from-yellow-500/10 via-yellow-500/5 to-transparent border border-yellow-500/20 rounded-2xl p-6 overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-          <div className="relative flex items-start gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-yellow-500/20">
-              <Sparkles className="w-6 h-6 text-black" />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-bold text-white mb-1">Bienvenue dans l'espace de gestion</h2>
-              <p className="text-sm text-gray-300 leading-relaxed">
-                Gérez les informations de votre livre, la couverture et configurez le paiement. Les modifications sont appliquées instantanément sur le site public.
-              </p>
-            </div>
+          <div className="relative">
+            <h2 className="text-lg font-bold text-white mb-1">Bienvenue dans l'espace de gestion</h2>
+            <p className="text-sm text-gray-300 leading-relaxed">
+              Gérez les informations de votre livre, les habitudes et configurez le paiement. Les modifications sont appliquées instantanément sur le site public.
+            </p>
           </div>
         </div>
 
@@ -288,6 +314,7 @@ export default function AdminPage() {
         <div className="flex gap-2 p-1 bg-white/[0.03] rounded-xl border border-white/5 overflow-x-auto scrollbar-hide">
           {[
             { id: 'book' as const, icon: BookOpen, label: 'Informations' },
+            { id: 'habits' as const, icon: Sparkles, label: 'Habitudes' },
             { id: 'cover' as const, icon: Image, label: 'Couverture' },
             { id: 'payment' as const, icon: CreditCard, label: 'Paiement' }
           ].map((tab) => (
@@ -484,6 +511,108 @@ export default function AdminPage() {
               </CardContent>
             </Card>
           </div>
+        )}
+
+        {activeSection === 'habits' && (
+          <Card className="bg-white/[0.03] backdrop-blur-sm border-white/5">
+            <CardHeader className="pb-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl flex items-center justify-center">
+                    <Sparkles size={18} className="text-yellow-400" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base font-semibold text-white">
+                      Gestion des habitudes
+                    </CardTitle>
+                    <CardDescription className="text-xs text-gray-400 mt-0.5">
+                      {chaptersList.length} habitude{chaptersList.length > 1 ? 's' : ''} configurée{chaptersList.length > 1 ? 's' : ''}
+                    </CardDescription>
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              
+              {/* Liste des habitudes */}
+              <div className="space-y-3">
+                {chaptersList.map((habit, index) => (
+                  <div 
+                    key={habit.id}
+                    className="group bg-white/[0.03] border border-white/10 rounded-xl p-4 hover:border-yellow-500/30 transition-all"
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Numéro */}
+                      <div className="w-8 h-8 bg-gradient-to-br from-yellow-400/20 to-yellow-600/20 rounded-lg flex items-center justify-center shrink-0 text-sm font-bold text-yellow-400">
+                        {index + 1}
+                      </div>
+                      
+                      {/* Contenu éditable */}
+                      <div className="flex-1 space-y-2 min-w-0">
+                        <Input 
+                          value={habit.title}
+                          onChange={(e) => updateHabit(habit.id, 'title', e.target.value)}
+                          className="bg-white/[0.05] border-white/10 text-white text-sm h-9 font-medium focus:border-yellow-400/50"
+                          placeholder="Titre de l'habitude"
+                        />
+                        <Input 
+                          value={habit.desc}
+                          onChange={(e) => updateHabit(habit.id, 'desc', e.target.value)}
+                          className="bg-white/[0.05] border-white/10 text-gray-300 text-xs h-8 focus:border-yellow-400/50"
+                          placeholder="Description courte..."
+                        />
+                      </div>
+
+                      {/* Bouton supprimer */}
+                      <button
+                        onClick={() => removeHabit(habit.id)}
+                        className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100 shrink-0"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Ajouter une habitude */}
+              <div className="border border-dashed border-white/10 rounded-xl p-4 hover:border-yellow-500/30 transition-colors">
+                <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <Plus size={12} className="text-yellow-400" />
+                  Ajouter une habitude
+                </p>
+                <div className="space-y-3">
+                  <Input 
+                    value={newHabit.title}
+                    onChange={(e) => setNewHabit({...newHabit, title: e.target.value})}
+                    placeholder="Titre de la nouvelle habitude"
+                    className="bg-white/[0.05] border-white/10 text-white text-sm h-10 focus:border-yellow-400/50"
+                    onKeyDown={(e) => e.key === 'Enter' && addHabit()}
+                  />
+                  <Input 
+                    value={newHabit.desc}
+                    onChange={(e) => setNewHabit({...newHabit, desc: e.target.value})}
+                    placeholder="Description courte..."
+                    className="bg-white/[0.05] border-white/10 text-gray-300 text-sm h-10 focus:border-yellow-400/50"
+                    onKeyDown={(e) => e.key === 'Enter' && addHabit()}
+                  />
+                  <Button 
+                    onClick={addHabit}
+                    disabled={!newHabit.title.trim() || !newHabit.desc.trim()}
+                    className="w-full bg-white/5 hover:bg-yellow-400/10 text-white hover:text-yellow-400 border border-white/10 hover:border-yellow-500/30 h-10 text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <Plus size={16} className="mr-2" />
+                    Ajouter cette habitude
+                  </Button>
+                </div>
+              </div>
+
+              {/* Info */}
+              <p className="text-xs text-gray-500 text-center">
+                Appuyez sur Entrée ou cliquez sur le bouton pour ajouter. Aucune limite de nombre.
+              </p>
+            </CardContent>
+          </Card>
         )}
 
         {activeSection === 'cover' && (
