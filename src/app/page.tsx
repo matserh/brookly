@@ -284,18 +284,19 @@ export default function LandingPage() {
               </div>
 
               {/* BOUTON D'ACHAT UNIQUE */}
-              <Button 
-                size="lg"
-                className="w-full max-w-md mx-auto bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-5 rounded-xl shadow-xl shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-200 hover:scale-[1.02] block"
-                onClick={() => {
-                  // TODO: Remplacer par le vrai lien MyChariow
-                  alert('Lien MyChariow bientot disponible')
-                }}
-              >
-                <Download className="w-5 h-5 mr-2 sm:mr-3" />
-                OBTENIR LE LIVRE
-                <ArrowRight className="w-5 h-5 ml-2 sm:ml-3" />
-              </Button>
+              <div className="w-full max-w-lg mx-auto">
+                <Button 
+                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg py-4 sm:py-5 rounded-xl shadow-xl shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2 sm:gap-3"
+                  onClick={() => {
+                    // TODO: Remplacer par le vrai lien MyChariow
+                    alert('Lien MyChariow bientot disponible')
+                  }}
+                >
+                  <Download className="w-5 h-5 shrink-0" />
+                  <span className="whitespace-nowrap">OBTENIR LE LIVRE</span>
+                  <ArrowRight className="w-5 h-5 shrink-0" />
+                </Button>
+              </div>
 
               <p className="text-xs text-gray-600">
                 Paiement securise via MyChariow
