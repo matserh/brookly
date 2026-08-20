@@ -131,20 +131,27 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right - Book Cover HORIZONTAL sans fond */}
+            {/* Right - Book Cover HORIZONTAL avec ANIMATION */}
             <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
               <div className="relative group">
                 
-                {/* Livre horizontal - SANS FOND */}
+                {/* Effet de brillance animée */}
+                <div className="absolute inset-0 rounded-[1.5rem] overflow-hidden z-10 pointer-events-none">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
+                </div>
+                
+                {/* Livre horizontal - ANIMATION FLOTTEMENT */}
                 <div className="
                   relative
                   w-[280px] sm:w-[340px] md:w-[400px] lg:w-[480px] xl:w-[520px]
                   aspect-[3/2]
                   rounded-[1.5rem] overflow-hidden
-                  transform transition-transform duration-500 group-hover:scale-[1.02]
+                  animate-float
+                  shadow-2xl shadow-yellow-500/20
+                  transform transition-all duration-500 group-hover:scale-[1.05] group-hover:shadow-yellow-500/40
                 ">
                   
-                  {/* Image couverture horizontale - zoom pour cacher bords */}
+                  {/* Image couverture horizontale */}
                   <Image 
                     src="/cover.jpg" 
                     alt="Les 7 Habitudes de la Réussite"
@@ -283,18 +290,32 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              {/* BOUTON D'ACHAT UNIQUE */}
+              {/* BOUTON D'ACHAT UNIQUE - ANIME */}
               <div className="w-full max-w-lg mx-auto">
                 <Button 
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg py-4 sm:py-5 rounded-xl shadow-xl shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2 sm:gap-3"
+                  className="
+                    w-full 
+                    bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 
+                    hover:from-yellow-500 hover:via-yellow-400 hover:to-yellow-500
+                    text-black font-bold text-base sm:text-lg py-4 sm:py-5 rounded-xl 
+                    shadow-xl shadow-yellow-500/40 hover:shadow-yellow-500/60 
+                    transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]
+                    flex items-center justify-center gap-2 sm:gap-3
+                    animate-pulse-glow
+                    relative overflow-hidden
+                    group/btn
+                  "
                   onClick={() => {
                     // TODO: Remplacer par le vrai lien MyChariow
                     alert('Lien MyChariow bientot disponible')
                   }}
                 >
-                  <Download className="w-5 h-5 shrink-0" />
-                  <span className="whitespace-nowrap">OBTENIR LE LIVRE</span>
-                  <ArrowRight className="w-5 h-5 shrink-0" />
+                  {/* Effet de shine au survol */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 ease-out rounded-xl"></span>
+                  
+                  <Download className="w-5 h-5 shrink-0 relative z-10" />
+                  <span className="whitespace-nowrap relative z-10">OBTENIR LE LIVRE</span>
+                  <ArrowRight className="w-5 h-5 shrink-0 relative z-10 group-hover/btn:translate-x-1 transition-transform" />
                 </Button>
               </div>
 
