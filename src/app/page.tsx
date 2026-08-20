@@ -15,10 +15,6 @@ const BOOK = {
   specialPrice: 3000,
   currency: "FCFA",
   
-  // Dimensions réelles d'un PDF/livre (ratio A5 approximatif)
-  // A5 = 148 x 210mm → ratio 1:1.416
-  coverRatio: 210 / 148, // hauteur / largeur
-  
   description: {
     hook: "Découvrez les secrets qui distinguent les personnes qui réussissent de celles qui restent bloquées dans leurs objectifs.",
     body1: "Dans « Les 7 Habitudes des Personnes qui Réussissent », vous apprendrez les comportements et les méthodes adoptés par les entrepreneurs, les leaders, les étudiants performants et les personnes qui accomplissent leurs rêves.",
@@ -38,35 +34,6 @@ const BOOK = {
   ]
 }
 
-// Composant Livre avec proportions PDF réelles
-function BookCover({ className = "" }: { className?: string }) {
-  return (
-    <div className={`relative ${className}`}>
-      {/* Container avec ombre de livre réel */}
-      <div className="relative w-full h-full bg-gradient-to-br from-[#1a365d] to-[#0d1f3c] rounded-sm shadow-2xl overflow-hidden border border-white/10">
-        
-        {/* Image de couverture - remplit tout l'espace */}
-        <Image 
-          src="/cover.jpg" 
-          alt="Les 7 Habitudes de la Réussite"
-          fill
-          className="object-cover"
-          priority
-        />
-        
-        {/* Légère ombre intérieure pour effet profondeur */}
-        <div className="absolute inset-0 shadow-inner pointer-events-none"></div>
-        
-        {/* Reflet subtil (comme un vrai livre brillant) */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none"></div>
-      </div>
-      
-      {/* Ombre portée réaliste sous le livre */}
-      <div className="absolute -bottom-2 left-4 right-4 h-4 bg-black/30 blur-lg rounded-full"></div>
-    </div>
-  )
-}
-
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -79,7 +46,7 @@ export default function LandingPage() {
         <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]"></div>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation - SANS BOUTON ACHAT */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#0a1628]/80 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 md:h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -89,15 +56,11 @@ export default function LandingPage() {
             </span>
           </div>
           
+          {/* Navigation simple sans bouton achat */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
             <a href="#livre" className="hover:text-white transition-colors">Le Livre</a>
             <a href="#contenu" className="hover:text-white transition-colors">Contenu</a>
-            <Button 
-              onClick={() => document.getElementById('achat')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-lg text-sm"
-            >
-              Acheter — {BOOK.specialPrice.toLocaleString()} {BOOK.currency}
-            </Button>
+            <a href="#achat" className="hover:text-yellow-400 transition-colors text-yellow-400">Acheter</a>
           </div>
 
           <button 
@@ -113,27 +76,19 @@ export default function LandingPage() {
           <div className="md:hidden bg-[#0a1628]/95 backdrop-blur-xl border-t border-white/5 p-4 space-y-3">
             <a href="#livre" className="block text-gray-300 py-2" onClick={() => setMobileMenuOpen(false)}>Le Livre</a>
             <a href="#contenu" className="block text-gray-300 py-2" onClick={() => setMobileMenuOpen(false)}>Contenu</a>
-            <Button 
-              className="w-full bg-yellow-400 text-black font-semibold"
-              onClick={() => {
-                document.getElementById('achat')?.scrollIntoView({ behavior: 'smooth' })
-                setMobileMenuOpen(false)
-              }}
-            >
-              Acheter — {BOOK.specialPrice.toLocaleString()} {BOOK.currency}
-            </Button>
+            <a href="#achat" className="block text-yellow-400 py-2 font-medium" onClick={() => setMobileMenuOpen(false)}>Acheter le livre</a>
           </div>
         )}
       </nav>
 
-      {/* ===== HERO SECTION ===== */}
+      {/* ===== HERO SECTION - SANS BOUTON D'ACHAT ===== */}
       <section className="relative min-h-screen flex items-center pt-20 pb-12 md:pt-24 md:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
           
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             
             {/* Left - Content */}
-            <div className="space-y-5 lg:space-y-6 order-2 lg:order-1">
+            <div className="space-y-6 lg:space-y-8 order-2 lg:order-1">
               
               {/* Title */}
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-[1.1] tracking-tight">
@@ -164,50 +119,63 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              {/* Price + CTA */}
-              <div className="space-y-3 pt-2">
+              {/* Prix seulement - PAS de bouton ici */}
+              <div className="space-y-2 pt-2">
                 <div className="flex items-baseline gap-3">
                   <span className="text-gray-500 line-through text-base sm:text-lg">{BOOK.regularPrice.toLocaleString()}</span>
                   <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-yellow-400">{BOOK.specialPrice.toLocaleString()}</span>
                   <span className="text-base sm:text-lg text-gray-300">{BOOK.currency}</span>
                 </div>
-
-                <Button 
-                  size="lg"
-                  onClick={() => document.getElementById('achat')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg shadow-yellow-500/25 w-full sm:w-auto"
-                >
-                  <Lock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                  Obtenir le Livre
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-                </Button>
-
                 <p className="text-xs sm:text-sm text-gray-500">
-                  Paiement sécurisé • Accès immédiat
+                  Offre de lancement • {BOOK.chapters} chapitres • {BOOK.pages} pages
                 </p>
               </div>
             </div>
 
-            {/* Right - BOOK COVER avec proportions PDF exactes */}
+            {/* Right - LIVRE BIEN AFFICHÉ */}
             <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-              
-              {/* 
-                Proportions réelles d'un livre/PDF:
-                - Mobile: comme un livre tenu en main (~140x200px visuel)
-                - Tablet: taille intermédiaire (~200x284px)  
-                - Desktop: grand format (~280x396px)
-                
-                Ratio constant: 1:1.416 (format A5/book)
-              */}
               <div className="
-                w-[180px] sm:w-[220px] md:w-[260px] lg:w-[300px] xl:w-[340px]
-                aspect-[1/1.416]
                 relative
+                w-[240px] sm:w-[280px] md:w-[320px] lg:w-[360px] xl:w-[400px]
               ">
-                <BookCover className="w-full h-full" />
+                {/* Container du livre avec ombre réaliste */}
+                <div className="relative">
+                  
+                  {/* Ombre sous le livre */}
+                  <div className="absolute -bottom-3 left-4 right-4 h-6 bg-black/40 blur-xl rounded-full"></div>
+                  
+                  {/* Le livre lui-même - proportions A5 parfaites */}
+                  <div className="relative aspect-[2/3] w-full bg-gradient-to-br from-[#1e3a5f] to-[#0d1f3c] rounded shadow-2xl overflow-hidden border border-white/10">
+                    
+                    {/* Image de couverture - couvre TOUT l'espace */}
+                    <Image 
+                      src="/cover.jpg" 
+                      alt="Les 7 Habitudes de la Réussite"
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 640px) 240px, (max-width: 768px) 280px, (max-width: 1024px) 320px, (max-width: 1280px) 360px, 400px"
+                    />
+                    
+                    {/* Overlay subtil pour profondeur */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+                  </div>
+                </div>
+                
+                /* Info sous le livre */
+                <div className="mt-4 text-center space-y-1">
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-medium">eBook PDF</p>
+                  <p className="text-sm text-gray-400">{BOOK.chapters} chapitres • {BOOK.pages} pages</p>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Scroll indicator vers le CTA */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden lg:flex flex-col items-center gap-2">
+          <span className="text-xs text-gray-500">Défiler pour acheter</span>
+          <ArrowRight className="w-4 h-4 text-yellow-400 rotate-90" />
         </div>
       </section>
 
@@ -257,8 +225,6 @@ export default function LandingPage() {
                     </h3>
                     <p className="text-gray-500 text-xs sm:text-sm truncate">{chapter.desc}</p>
                   </div>
-                  
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover:text-yellow-400 opacity-0 group-hover:opacity-100 transition-all shrink-0" />
                 </CardContent>
               </Card>
             ))}
@@ -266,45 +232,49 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== CTA SECTION ===== */}
-      <section id="achat" className="py-16 sm:py-20 md:py-24 relative">
-        <div className="absolute inset-0 bg-gradient-to-t from-yellow-900/10 via-transparent to-transparent"></div>
+      {/* ===== LE SEUL ET UNIQUE BOUTON D'ACHAT ===== */}
+      <section id="achat" className="py-20 sm:py-28 md:py-32 relative">
+        <div className="absolute inset-0 bg-gradient-to-t from-yellow-900/15 via-transparent to-transparent"></div>
         
         <div className="relative max-w-2xl sm:max-w-3xl mx-auto px-4 sm:px-6">
-          <Card className="bg-gradient-to-br from-[#1a365d]/80 to-[#0d1f3c]/80 backdrop-blur-xl border border-yellow-500/20 overflow-hidden">
+          <Card className="bg-gradient-to-br from-[#1a365d]/90 to-[#0d1f3c]/90 backdrop-blur-xl border-2 border-yellow-500/30 overflow-hidden shadow-2xl shadow-yellow-500/10">
             
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent"></div>
+            {/* Top glow line */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent"></div>
             
-            <CardContent className="p-6 sm:p-8 md:p-12 text-center space-y-6 sm:space-y-8">
+            <CardContent className="p-8 sm:p-10 md:p-14 text-center space-y-8">
               
+              {/* Header */}
               <div className="space-y-3">
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black">
-                  Commencez votre transformation aujourd'hui
+                  Obtenez le livre maintenant
                 </h2>
-                <p className="text-gray-400 text-sm sm:text-base">
-                  Le guide complet pour atteindre vos objectifs et réaliser vos rêves.
+                <p className="text-gray-400 text-base sm:text-lg max-w-md mx-auto">
+                  Commencez votre transformation dès aujourd'hui.
                 </p>
               </div>
 
+              {/* Prix */}
               <div className="space-y-2">
                 <div className="flex items-center justify-center gap-3 text-base sm:text-lg">
                   <span className="text-gray-500 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
-                  <span className="bg-green-500/15 text-green-400 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold">
+                  <span className="bg-green-500/15 text-green-400 px-3 py-1 rounded-full text-sm font-bold">
                     -57%
                   </span>
                 </div>
                 
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-4xl sm:text-5xl lg:text-6xl font-black text-yellow-400">
+                  <span className="text-5xl sm:text-6xl lg:text-7xl font-black text-yellow-400">
                     {BOOK.specialPrice.toLocaleString()}
                   </span>
-                  <span className="text-lg sm:text-xl lg:text-2xl text-gray-300">{BOOK.currency}</span>
+                  <span className="text-xl sm:text-2xl lg:text-3xl text-gray-300 font-medium">{BOOK.currency}</span>
                 </div>
                 
-                <p className="text-gray-500 text-xs sm:text-sm">Paiement unique • Accès à vie • Téléchargement immédiat</p>
+                <p className="text-gray-500 text-sm">Paiement unique • Accès immédiat à vie</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 max-w-md mx-auto text-left text-xs sm:text-sm">
+              {/* Inclus */}
+              <div className="grid grid-cols-2 gap-3 max-w-md mx-auto text-left text-sm">
                 {[
                   "Livre PDF complet (56 pages)",
                   "Compatible mobile & tablette",
@@ -314,26 +284,28 @@ export default function LandingPage() {
                   "Support dédié"
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-gray-300">
-                    <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400 shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
 
+              {/* LE SEUL BOUTON D'ACHAT */}
               <Button 
                 size="lg"
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg px-8 py-4 sm:py-5 rounded-xl shadow-xl shadow-yellow-500/25 hover:shadow-yellow-500/40 transition-all duration-200"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg sm:text-xl px-10 py-5 sm:py-6 rounded-xl shadow-xl shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-200 hover:scale-[1.02]"
                 onClick={() => {
+                  // TODO: Remplacer par le vrai lien MyChariow
                   alert('Lien MyChariow bientôt disponible')
                 }}
               >
-                <Download className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+                <Download className="w-6 h-6 mr-3" />
                 OBTENIR LE LIVRE MAINTENANT
-                <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 ml-2 sm:ml-3" />
+                <ArrowRight className="w-6 h-6 ml-3" />
               </Button>
 
               <p className="text-xs text-gray-600">
-                Sécurisé • Lien MyChariow bientôt disponible
+                Paiement sécurisé via MyChariow
               </p>
             </CardContent>
           </Card>
