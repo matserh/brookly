@@ -373,7 +373,7 @@ export default function LandingPage() {
                   <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center max-w-sm">
                     <p className="text-xs text-gray-300 leading-relaxed">
                       <strong className="text-white">Garantie satisfaction :</strong> Si le livre ne correspond pas à vos attentes, contactez-nous sous 48h à 
-                      <a href="mailto:aeronscriptlab@gmail.com" className="text-yellow-400 hover:text-yellow-300 underline ml-1">aeronscriptlab@gmail.com</a>
+                      <a href="mailto:aeronscriptlabs@gmail.com" className="text-yellow-400 hover:text-yellow-300 underline ml-1">aeronscriptlabs@gmail.com</a>
                     </p>
                   </div>
                 </div>
