@@ -225,3 +225,12 @@ html {
     box-shadow: 0 0 35px rgba(250, 204, 21, 0.5), 0 15px 50px rgba(250, 204, 21, 0.3);
   }
 }
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

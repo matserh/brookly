@@ -217,7 +217,7 @@ export default function AdminPage() {
 
   // Dashboard Admin - Design premium complet
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1f3c] to-[#0a1628]">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1f3c] to-[#0a1628] overflow-x-hidden">
       
       {/* Background effects */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -285,7 +285,7 @@ export default function AdminPage() {
         </div>
 
         {/* Navigation tabs */}
-        <div className="flex gap-2 p-1 bg-white/[0.03] rounded-xl border border-white/5 w-fit">
+        <div className="flex gap-2 p-1 bg-white/[0.03] rounded-xl border border-white/5 overflow-x-auto scrollbar-hide">
           {[
             { id: 'book' as const, icon: BookOpen, label: 'Informations' },
             { id: 'cover' as const, icon: Image, label: 'Couverture' },
@@ -295,7 +295,7 @@ export default function AdminPage() {
               key={tab.id}
               onClick={() => setActiveSection(tab.id)}
               className={`
-                flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap shrink-0
                 ${activeSection === tab.id 
                   ? 'bg-yellow-400/10 text-yellow-400 border border-yellow-500/30' 
                   : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'}
@@ -309,7 +309,7 @@ export default function AdminPage() {
 
         {/* Content based on active tab */}
         {activeSection === 'book' && (
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Main form */}
             <Card className="lg:col-span-2 bg-white/[0.03] backdrop-blur-sm border-white/5 hover:border-white/10 transition-colors">
