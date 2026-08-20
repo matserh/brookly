@@ -427,7 +427,7 @@ export default function LandingPage() {
               <BookOpen className="w-4 h-4 text-yellow-400" />
               <span className="font-medium">Les 7 Habitudes de la Réussite</span>
             </div>
-            <span>© 2024 Tous droits réservés</span>
+            <span>© 2026 Tous droits réservés</span>
           </div>
         </div>
       </footer>
