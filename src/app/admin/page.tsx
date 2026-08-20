@@ -511,13 +511,18 @@ export default function AdminPage() {
                 <div className="space-y-2">
                   <label className="text-xs text-gray-300 font-semibold uppercase tracking-wider flex items-center gap-2">
                     <BookOpen size={12} className="text-yellow-400" />
-                    Description principale
+                    Description (hook)
                   </label>
                   <Textarea 
-                    value={bookData.description}
-                    onChange={(e) => setBookDataState({...bookData, description: e.target.value})}
+                    value={typeof bookData.description === 'string' ? bookData.description : bookData.description?.hook || ''}
+                    onChange={(e) => setBookDataState({
+                      ...bookData, 
+                      description: typeof bookData.description === 'string' 
+                        ? e.target.value 
+                        : { ...bookData.description, hook: e.target.value }
+                    })}
                     className="bg-white/[0.05] border-white/10 text-white min-h-[110px] resize-none focus:border-yellow-400/50 rounded-xl transition-all"
-                    placeholder="Description détaillée du livre..."
+                    placeholder="Description courte qui accroche..."
                   />
                 </div>
 
