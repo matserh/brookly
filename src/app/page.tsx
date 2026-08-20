@@ -131,38 +131,31 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right - Book Cover */}
+            {/* Right - Book Cover HORIZONTAL sans fond */}
             <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
               <div className="relative group">
                 
-                {/* Glow effect under book */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[85%] h-8 bg-yellow-500/15 blur-2xl rounded-full group-hover:bg-yellow-500/25 transition-all duration-500"></div>
-                
-                {/* Book container - A5 proportions */}
+                {/* Livre horizontal - SANS FOND */}
                 <div className="
                   relative
-                  w-[220px] sm:w-[260px] md:w-[300px] lg:w-[340px]
-                  aspect-[2/3]
-                  rounded-lg overflow-hidden
-                  shadow-2xl shadow-black/60
-                  border border-white/10
+                  w-[280px] sm:w-[340px] md:w-[400px] lg:w-[480px] xl:w-[520px]
+                  aspect-[3/2]
                   transform transition-transform duration-500 group-hover:scale-[1.02]
-                  bg-[#0d1f3c]
                 ">
                   
-                  {/* Cover image - shows COMPLETE image */}
+                  {/* Image couverture horizontale */}
                   <Image 
                     src="/cover.jpg" 
                     alt="Les 7 Habitudes de la Réussite"
                     fill
                     className="object-contain"
                     priority
-                    sizes="(max-width: 640px) 220px, (max-width: 768px) 260px, (max-width: 1024px) 300px, 340px"
+                    sizes="(max-width: 640px) 280px, (max-width: 768px) 340px, (max-width: 1024px) 400px, (max-width: 1280px) 480px, 520px"
                   />
                 </div>
 
                 {/* Book info below */}
-                <div className="mt-5 text-center">
+                <div className="mt-4 text-center">
                   <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">eBook PDF</p>
                   <p className="text-sm text-gray-400 mt-1">{BOOK.chapters} chapitres - {BOOK.pages} pages</p>
                 </div>
