@@ -304,101 +304,77 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== CTA SECTION - DESIGN PREMIUM ===== */}
-      <section id="achat" className="py-16 sm:py-20 md:py-28 lg:py-32 relative overflow-hidden">
-        {/* Background effets */}
+      {/* ===== CTA SECTION - DESIGN COMPACT & PROFESSIONNEL ===== */}
+      <section id="achat" className="py-14 sm:py-18 lg:py-20 relative overflow-hidden">
+        {/* Background effet subtil */}
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] bg-yellow-500/10 rounded-full blur-[150px]"></div>
-          <div className="absolute bottom-0 right-0 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] bg-blue-500/10 rounded-full blur-[100px]"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] lg:w-[600px] lg:h-[600px] bg-yellow-500/8 rounded-full blur-[120px]"></div>
         </div>
         
-        <div className="relative max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-6">
           
-          {/* Carte principale */}
-          <div className="relative bg-gradient-to-br from-[#1a365d]/95 via-[#0d1f3c]/95 to-[#1a365d]/95 backdrop-blur-2xl border-2 border-yellow-500/30 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-yellow-500/20">
+          {/* Carte principale - compacte */}
+          <div className="relative bg-gradient-to-br from-[#1a365d]/95 via-[#0d1f3c]/95 to-[#1a365d]/95 backdrop-blur-xl border border-yellow-500/25 rounded-2xl overflow-hidden shadow-lg shadow-yellow-500/10">
             
-            {/* Décoration top */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
-            <div className="absolute top-0 left-0 w-32 h-32 sm:w-40 sm:h-40 bg-yellow-400/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-40 h-40 sm:w-60 sm:h-60 bg-blue-400/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+            {/* Ligne décorative top */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-yellow-400/60 to-transparent"></div>
             
-            <div className="relative z-10 p-6 sm:p-10 md:p-12 lg:p-16">
+            <div className="relative z-10 p-5 sm:p-7 lg:p-8">
               
-              {/* Grid layout responsive */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Layout compact : 3/5 gauche, 2/5 droite sur desktop */}
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 items-center">
                 
-                {/* Left - Info & Prix */}
-                <div className="space-y-8 text-left">
+                {/* Left - Info & Prix (3 colonnes) */}
+                <div className="lg:col-span-3 space-y-4 text-left">
                   
-                  {/* Badge offre spéciale */}
-                  <div className="inline-flex items-center gap-2 bg-green-500/15 border border-green-500/30 text-green-400 px-4 py-2 rounded-full text-sm font-bold">
-                    <CheckCircle className="w-4 h-4" />
-                    OFFRE SPÉCIALE DE LANCEMENT
-                  </div>
-                  
-                  <div>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
-                      Commencez votre
-                      <br />
-                      <span className="text-yellow-400">transformation</span>
-                      <br />
-                      dès aujourd'hui
+                  {/* Badge + Titre en ligne */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-1">
+                    <span className="inline-flex items-center gap-1.5 bg-green-500/15 border border-green-500/30 text-green-400 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap w-fit">
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      OFFRE SPÉCIALE
+                    </span>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black leading-tight">
+                      Commencez votre <span className="text-yellow-400">transformation</span>
                     </h2>
-                    <p className="text-gray-300 text-base sm:text-lg leading-relaxed">
-                      Rejoignez des milliers de personnes qui ont transformé leur vie.
-                    </p>
+                  </div>
+                  
+                  <p className="text-gray-300 text-sm">
+                    Rejoignez des milliers de personnes qui ont transformé leur vie.
+                  </p>
+
+                  {/* Prix en ligne compact */}
+                  <div className="flex items-baseline gap-2 flex-wrap pt-1">
+                    <span className="text-lg text-gray-400 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
+                    <span className="bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full text-xs font-bold">
+                      -{Math.round(((BOOK.regularPrice - BOOK.specialPrice) / BOOK.regularPrice) * 100)}%
+                    </span>
+                    <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-yellow-400 ml-1">
+                      {BOOK.specialPrice.toLocaleString()}
+                    </span>
+                    <span className="text-base sm:text-lg lg:text-xl text-white font-semibold">{BOOK.currency}</span>
                   </div>
 
-                  {/* Prix */}
-                  <div className="space-y-3">
-                    <div className="flex items-baseline gap-3">
-                      <span className="text-2xl text-gray-400 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
-                      <span className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm font-bold">
-                        -{Math.round(((BOOK.regularPrice - BOOK.specialPrice) / BOOK.regularPrice) * 100)}%
-                      </span>
-                    </div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-6xl sm:text-7xl font-black text-yellow-400">
-                        {BOOK.specialPrice.toLocaleString()}
-                      </span>
-                      <span className="text-2xl sm:text-3xl text-white font-semibold">{BOOK.currency}</span>
-                    </div>
-                    <p className="text-sm text-gray-400">Paiement unique - Accès immédiat à vie</p>
-                  </div>
-
-                  {/* Liste inclus */}
-                  <div className="space-y-3">
+                  {/* Liste inclus - grille 2x2 compacte */}
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 pt-1">
                     {[
-                      { icon: BookOpen, text: `Livre PDF (${BOOK.chaptersList.length} chapitres)` },
+                      { icon: BookOpen, text: `PDF (${BOOK.chaptersList.length} chap.)` },
                       { icon: Download, text: "Téléchargement instantané" },
                       { icon: CheckCircle, text: "Accès illimité à vie" },
                       { icon: CheckCircle, text: "Compatible tous appareils" }
                     ].map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-3 text-white">
-                        <item.icon className="w-5 h-5 text-yellow-400 shrink-0" />
-                        <span className="text-sm sm:text-base">{item.text}</span>
+                      <div key={idx} className="flex items-center gap-2 text-white">
+                        <item.icon className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
+                        <span className="text-xs sm:text-sm">{item.text}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Right - Bouton CTA & Garantie */}
-                <div className="flex flex-col items-center justify-center space-y-6">
+                {/* Right - Bouton CTA (2 colonnes) */}
+                <div className="lg:col-span-2 flex flex-col items-center justify-center space-y-3 lg:pl-6 lg:border-l border-white/10">
                   
-                  {/* Bouton principal */}
-                  <Button 
-                    className="
-                      w-full max-w-sm
-                      bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 
-                      hover:from-yellow-500 hover:via-yellow-400 hover:to-yellow-500
-                      text-black font-black text-lg sm:text-xl py-6 sm:py-7 rounded-2xl 
-                      shadow-2xl shadow-yellow-500/40 hover:shadow-yellow-500/60 
-                      transition-all duration-300 hover:scale-[1.05] active:scale-[0.98]
-                      flex flex-col items-center justify-center gap-2
-                      animate-pulse-glow
-                      relative overflow-hidden
-                      group/btn
-                    "
+                  {/* Bouton principal - COMPACT SANS DÉBORDEMENT */}
+                  <button
                     onClick={() => {
                       if (BOOK.paymentLink) {
                         window.open(BOOK.paymentLink, '_blank')
@@ -406,28 +382,36 @@ export default function LandingPage() {
                         alert('Lien de paiement bientôt disponible')
                       }
                     }}
+                    className="
+                      w-full max-w-[280px]
+                      bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 
+                      hover:from-yellow-500 hover:via-yellow-400 hover:to-yellow-500
+                      text-black font-black text-base sm:text-lg 
+                      py-3.5 sm:py-4 px-6 rounded-xl 
+                      shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 
+                      transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]
+                      flex items-center justify-center gap-2.5
+                      relative overflow-hidden group/btn
+                    "
                   >
-                    {/* Shine effect */}
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 ease-out rounded-2xl"></span>
-                    
-                    <Download className="w-7 h-7 relative z-10" />
-                    <span className="whitespace-nowrap relative z-10 text-xl">OBTENIR LE LIVRE</span>
-                    <ArrowRight className="w-6 h-6 relative z-10 group-hover/btn:translate-x-2 transition-transform" />
-                  </Button>
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 rounded-xl"></span>
+                    <Download className="w-5 h-5 relative z-10" />
+                    <span className="whitespace-nowrap relative z-10">OBTENIR LE LIVRE</span>
+                  </button>
 
-                  {/* Trust badges */}
-                  <div className="flex items-center gap-4 text-xs text-gray-400">
+                  {/* Trust badges - compact */}
+                  <div className="flex items-center gap-2.5 text-xs text-gray-400">
                     <Lock className="w-3 h-3" />
                     <span>Paiement sécurisé</span>
-                    <span>|</span>
+                    <span className="text-gray-600">•</span>
                     <span>Livraison instantanée</span>
                   </div>
 
-                  {/* Mini garantie */}
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center max-w-sm">
-                    <p className="text-xs text-gray-300 leading-relaxed">
-                      <strong className="text-white">Garantie satisfaction :</strong> Si le livre ne correspond pas à vos attentes, contactez-nous sous 48h à 
-                      <a href="mailto:aeronscriptlabs@gmail.com" className="text-yellow-400 hover:text-yellow-300 underline ml-1">aeronscriptlabs@gmail.com</a>
+                  {/* Garantie - compacte */}
+                  <div className="bg-white/5 border border-white/10 rounded-lg p-2.5 text-center max-w-[280px]">
+                    <p className="text-[11px] text-gray-300 leading-relaxed">
+                      <strong className="text-white">Garantie satisfaction</strong> : Contactez-nous sous 48h à{' '}
+                      <a href="mailto:aeronscriptlabs@gmail.com" className="text-yellow-400 hover:text-yellow-300 underline">aeronscriptlabs@gmail.com</a>
                     </p>
                   </div>
                 </div>
