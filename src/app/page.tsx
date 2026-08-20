@@ -159,15 +159,27 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              {/* Prix */}
-              <div className="space-y-2 pt-2">
-                <div className="flex items-baseline gap-3">
-                  <span className="text-gray-400 line-through text-base sm:text-lg">{BOOK.regularPrice.toLocaleString()}</span>
-                  <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-yellow-400">{BOOK.specialPrice.toLocaleString()}</span>
-                  <span className="text-base sm:text-lg text-white">{BOOK.currency}</span>
+              {/* Prix - Multi-devises */}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-baseline gap-3 flex-wrap">
+                  <span className="text-gray-400 line-through text-base sm:text-lg">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-300">
-                  Offre de lancement - {BOOK.chaptersList.length} chapitres
+                
+                {/* Prix principal FCFA */}
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-yellow-400">{BOOK.specialPrice.toLocaleString()}</span>
+                  <span className="text-base sm:text-lg text-white font-semibold">{BOOK.currency}</span>
+                </div>
+
+                {/* Équivalents internationaux */}
+                <div className="flex items-center gap-3 text-sm pt-1">
+                  <span className="text-gray-300">≈</span>
+                  <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg text-blue-200 font-medium">~4.57 €</span>
+                  <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg text-green-200 font-medium">~$5.00 USD</span>
+                </div>
+
+                <p className="text-xs sm:text-sm text-gray-400">
+                  Offre de lancement internationale - {BOOK.chaptersList.length} chapitres
                 </p>
               </div>
             </div>
@@ -344,16 +356,32 @@ export default function LandingPage() {
                     Rejoignez des milliers de personnes qui ont transformé leur vie.
                   </p>
 
-                  {/* Prix en ligne compact */}
-                  <div className="flex items-baseline gap-2 flex-wrap pt-1">
-                    <span className="text-lg text-gray-400 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
-                    <span className="bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full text-xs font-bold">
-                      -{Math.round(((BOOK.regularPrice - BOOK.specialPrice) / BOOK.regularPrice) * 100)}%
-                    </span>
-                    <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-yellow-400 ml-1">
-                      {BOOK.specialPrice.toLocaleString()}
-                    </span>
-                    <span className="text-base sm:text-lg lg:text-xl text-white font-semibold">{BOOK.currency}</span>
+                  {/* Prix en ligne compact - Multi-devises */}
+                  <div className="space-y-2 pt-1">
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <span className="text-lg text-gray-400 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
+                      <span className="bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full text-xs font-bold">
+                        -{Math.round(((BOOK.regularPrice - BOOK.specialPrice) / BOOK.regularPrice) * 100)}%
+                      </span>
+                    </div>
+                    
+                    {/* Prix principal + devises */}
+                    <div className="flex items-baseline gap-3 flex-wrap">
+                      <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-yellow-400">
+                        {BOOK.specialPrice.toLocaleString()}
+                      </span>
+                      <span className="text-base sm:text-lg lg:text-xl text-white font-semibold">{BOOK.currency}</span>
+                      
+                      {/* Équivalents compacts */}
+                      <span className="text-xs text-blue-300 hidden sm:inline">(~€5)</span>
+                      <span className="text-xs text-green-300 hidden sm:inline">(~$5)</span>
+                    </div>
+
+                    {/* Badge international */}
+                    <div className="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-300 px-2 py-0.5 rounded text-xs w-fit">
+                      <span>🌍</span>
+                      <span>Paiement international accepté</span>
+                    </div>
                   </div>
 
                   {/* Liste inclus - grille 2x2 compacte */}
@@ -444,8 +472,8 @@ export default function LandingPage() {
                 a: "Le livre est au format PDF, compatible avec tous les appareils : smartphone, tablette, ordinateur."
               },
               {
-                q: `Le prix est vraiment à ${BOOK.specialPrice.toLocaleString()} ${BOOK.currency} ?`,
-                a: `Oui ! C'est une offre spéciale de lancement. Le prix normal est de ${BOOK.regularPrice.toLocaleString()} ${BOOK.currency}.`
+                q: `Quel est le prix et les devises acceptées ?`,
+                a: `Le prix promo est de ${BOOK.specialPrice.toLocaleString()} ${BOOK.currency} (environ 4.57 € ou $5 USD). Nous acceptons les paiements internationaux via carte bancaire et mobile money.`
               }
             ].map((faq, idx) => (
               <Card key={idx} className="bg-white/[0.03] border-white/10 hover:bg-white/[0.05] transition-colors">
