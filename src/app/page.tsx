@@ -63,24 +63,26 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   // État dynamique - chargé depuis l'API (partagé pour tous)
   const [bookData, setBookData] = useState<BookData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
 
-  // Charger les données depuis l'API
+  // Éviter hydration mismatch - ne charger qu'après montage client
   useEffect(() => {
+    setMounted(true)
+    
+    // Charger les données depuis l'API uniquement côté client
     fetch('/api/book-data')
       .then(res => res.json())
       .then(data => {
         setBookData(data)
-        setLoading(false)
       })
       .catch(err => {
         console.error('Erreur chargement:', err)
-        setLoading(false)
       })
   }, [])
 
   // Utiliser les données chargées ou un fallback
-  const BOOK = bookData || DEFAULT_BOOK
+  // Pendant le SSR ou avant montage, utiliser DEFAULT_BOOK
+  const BOOK = mounted ? (bookData || DEFAULT_BOOK) : DEFAULT_BOOK
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1f3c] to-[#061020] text-white">

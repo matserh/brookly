@@ -16,11 +16,9 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { type BookData, type Habit } from '@/lib/book-store'
 
-// Configuration admin sécurisée
-const ADMIN_CONFIG = {
-  username: 'booklydanbookstorm',
-  password: 'HkqBrJG2aviNjLR8blIH'
-}
+// ⚠️ SÉCURITÉ: Les identifiants ne sont PLUS stockés ici
+// Ils sont maintenant côté serveur dans /api/auth (variables d'environnement)
+// Le client n'a JAMAIS accès aux vrais identifiants
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -33,6 +31,7 @@ export default function AdminPage() {
   const [saved, setSaved] = useState(false)
   const [activeSection, setActiveSection] = useState<'book' | 'habits' | 'cover' | 'payment'>('book')
   const [resetConfirm, setResetConfirm] = useState(false)
+  const [authToken, setAuthToken] = useState<string | null>(null)
 
   // États pour les données du livre - chargés depuis le store
   const [bookData, setBookData] = useState<BookData>({
@@ -71,37 +70,82 @@ export default function AdminPage() {
     }
   }, [])
 
-  // Vérifier session existante au chargement
+  // Vérifier session existante au chargement (avec token)
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const auth = localStorage.getItem('brookly_admin_auth')
+      const savedToken = localStorage.getItem('brookly_admin_token')
       const time = localStorage.getItem('brookly_admin_time')
-      if (auth === 'true' && time && (Date.now() - parseInt(time)) < 24 * 60 * 60 * 1000) {
-        setIsAuthenticated(true)
+      
+      if (savedToken && time && (Date.now() - parseInt(time)) < 24 * 60 * 60 * 1000) {
+        // Vérifier si le token est toujours valide côté serveur
+        fetch('/api/auth', {
+          headers: { 'Authorization': `Bearer ${savedToken}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.valid) {
+            setAuthToken(savedToken)
+            setIsAuthenticated(true)
+          } else {
+            // Token invalide, nettoyer
+            localStorage.removeItem('brookly_admin_token')
+            localStorage.removeItem('brookly_admin_time')
+          }
+        })
+        .catch(() => {
+          // En cas d'erreur, permettre la reconnexion
+        })
       }
     }
   }, [])
 
+  // Connexion via API sécurisée (identifiants JAMAIS exposés au client)
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
 
-    await new Promise(resolve => setTimeout(resolve, 800))
+    try {
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
 
-    if (username === ADMIN_CONFIG.username && password === ADMIN_CONFIG.password) {
-      setIsAuthenticated(true)
-      localStorage.setItem('brookly_admin_auth', 'true')
-      localStorage.setItem('brookly_admin_time', Date.now().toString())
-    } else {
-      setError('Identifiants incorrects')
-      setIsLoading(false)
+      const data = await response.json()
+
+      if (data.success && data.token) {
+        // Stocker le token de session
+        setAuthToken(data.token)
+        setIsAuthenticated(true)
+        localStorage.setItem('brookly_admin_token', data.token)
+        localStorage.setItem('brookly_admin_time', Date.now().toString())
+      } else {
+        setError(data.error || 'Identifiants incorrects')
+      }
+    } catch (err) {
+      setError('Erreur de connexion au serveur')
     }
+
+    setIsLoading(false)
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (authToken) {
+      // Invalider le token côté serveur
+      try {
+        await fetch('/api/auth', {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        })
+      } catch (e) {
+        // Continuer même si erreur
+      }
+    }
+    
     setIsAuthenticated(false)
-    localStorage.removeItem('brookly_admin_auth')
+    setAuthToken(null)
+    localStorage.removeItem('brookly_admin_token')
     localStorage.removeItem('brookly_admin_time')
     setUsername('')
     setPassword('')
