@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { BookOpen, CheckCircle, ArrowRight, Menu, X, Download } from 'lucide-react'
+import { BookOpen, CheckCircle, ArrowRight, Menu, X, Download, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
@@ -24,13 +24,13 @@ const BOOK = {
   },
   
   chaptersList: [
-    { num: 1, title: "Être Proactif", desc: "Prenez le contrôle de votre vie" },
-    { num: 2, title: "Commencer par la fin en tête", desc: "Définissez votre vision" },
-    { num: 3, title: "Prioriser les priorités", desc: "Gérez votre temps efficacement" },
-    { num: 4, title: "Penser Gagnant-Gagnant", desc: "Créez des relations positives" },
-    { num: 5, title: "Comprendre d'abord", desc: "Écoutez activement" },
-    { num: 6, title: "Synergiser", desc: "Travaillez ensemble pour plus" },
-    { num: 7, title: "Aiguisez la tranchante", desc: "Renouvelez-vous continuellement" }
+    { num: 1, title: "Être Proactif", desc: "Prenez la responsabilité de votre vie au lieu de subir les événements" },
+    { num: 2, title: "Commencer par la fin en tête", desc: "Définissez clairement votre vision et vos objectifs de vie" },
+    { num: 3, title: "Placer les priorités en premier", desc: "Organisez votre temps autour de ce qui compte vraiment" },
+    { num: 4, title: "Penser Gagnant-Gagnant", desc: "Créez des relations mutuellement bénéfiques et durables" },
+    { num: 5, title: "Comprendre avant d'être compris", desc: "Écoutez vraiment les autres avant de vouloir vous faire comprendre" },
+    { num: 6, title: "Synergiser", desc: "Combinez vos forces pour créer mieux que seul" },
+    { num: 7, title: "Aiguisez l'outil", desc: "Renouvelez continuellement vos capacités physiques, mentales et spirituelles" }
   ]
 }
 
@@ -197,133 +197,192 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== CHAPTERS SECTION ===== */}
-      <section id="contenu" className="py-16 sm:py-20 md:py-24 relative bg-gradient-to-b from-transparent via-blue-950/20 to-transparent">
-        <div className="max-w-3xl sm:max-w-4xl mx-auto px-4 sm:px-6">
+      {/* ===== CHAPTERS SECTION - DESIGN PREMIUM ===== */}
+      <section id="contenu" className="py-20 sm:py-28 md:py-32 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/10 to-transparent"></div>
+        
+        <div className="relative max-w-4xl sm:max-w-5xl mx-auto px-4 sm:px-6">
           
-          <div className="mb-10 sm:mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">
-              Les 7 Habitudes en détail
+          {/* Header amélioré */}
+          <div className="text-center mb-14 sm:mb-16 md:mb-20">
+            <span className="inline-block text-xs uppercase tracking-[0.25em] text-yellow-400 font-semibold mb-3">Programme complet</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
+              Les 7 Habitudes qui
+              <br />
+              <span className="text-yellow-400">transforment votre vie</span>
             </h2>
-            <p className="text-white text-sm sm:text-base">
-              {BOOK.chapters} chapitres - {BOOK.pages} pages
+            <p className="text-gray-300 text-base sm:text-lg max-w-2xl mx-auto">
+              Une méthode éprouvée, étape par étape, pour atteindre vos objectifs et réaliser vos rêves
             </p>
           </div>
 
-          <div className="grid gap-2 sm:gap-3">
+          {/* Grille de chapitres - Design premium */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {BOOK.chaptersList.map((chapter, idx) => (
-              <Card key={idx} className="group bg-white/[0.03] border-white/10 hover:bg-white/[0.06] hover:border-yellow-500/30 transition-all duration-200">
-                <CardContent className="p-3 sm:p-4 md:p-5 flex items-center gap-3 sm:gap-4">
-                  
-                  <div className="w-9 h-9 sm:w-11 sm:h-11 shrink-0 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 group-hover:from-yellow-400 group-hover:to-yellow-500 rounded-lg sm:rounded-xl flex items-center justify-center text-sm sm:text-lg font-bold text-yellow-400 group-hover:text-black transition-all duration-200">
+              <div 
+                key={idx} 
+                className="group relative bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/10 hover:border-yellow-500/40 rounded-2xl p-5 sm:p-6 md:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/10 hover:-translate-y-1"
+              >
+                {/* Numéro décoratif en arrière-plan */}
+                <div className="absolute top-4 right-4 sm:top-6 sm:right-6 text-5xl sm:text-6xl font-black text-white/[0.03] group-hover:text-yellow-400/10 transition-colors">
+                  {chapter.num}
+                </div>
+                
+                <div className="flex items-start gap-4 relative z-10">
+                  {/* Numéro visible */}
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center text-lg sm:text-xl font-black text-black shadow-lg shadow-yellow-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                     {chapter.num}
                   </div>
                   
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-white group-hover:text-yellow-400 transition-colors">
+                  <div className="flex-1 min-w-0 pt-1">
+                    <h3 className="font-bold text-base sm:text-lg lg:text-xl text-white mb-2 group-hover:text-yellow-400 transition-colors">
                       {chapter.title}
                     </h3>
-                    <p className="text-gray-300 text-xs sm:text-sm truncate">{chapter.desc}</p>
+                    <p className="text-gray-300 text-sm leading-relaxed">{chapter.desc}</p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
+          </div>
+
+          {/* Note bas de section */}
+          <div className="text-center mt-12 sm:mt-16">
+            <p className="text-sm text-gray-300">
+              <span className="inline-flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                Formation complète de <span className="text-white font-medium">56 pages</span> avec exercices pratiques
+              </span>
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ===== CTA SECTION - SEUL BOUTON D'ACHAT ===== */}
-      <section id="achat" className="py-20 sm:py-28 md:py-32 relative">
-        <div className="absolute inset-0 bg-gradient-to-t from-yellow-900/15 via-transparent to-transparent"></div>
+      {/* ===== CTA SECTION - DESIGN PREMIUM ===== */}
+      <section id="achat" className="py-24 sm:py-32 md:py-40 relative overflow-hidden">
+        {/* Background effets */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-yellow-500/10 rounded-full blur-[150px]"></div>
+          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px]"></div>
+        </div>
         
-        <div className="relative max-w-2xl sm:max-w-3xl mx-auto px-4 sm:px-6">
-          <Card className="bg-gradient-to-br from-[#1a365d]/90 to-[#0d1f3c]/90 backdrop-blur-xl border-2 border-yellow-500/30 overflow-hidden shadow-2xl shadow-yellow-500/10">
+        <div className="relative max-w-4xl sm:max-w-5xl mx-auto px-4 sm:px-6">
+          
+          {/* Carte principale */}
+          <div className="relative bg-gradient-to-br from-[#1a365d]/95 via-[#0d1f3c]/95 to-[#1a365d]/95 backdrop-blur-2xl border-2 border-yellow-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-yellow-500/20">
             
-            {/* Top glow line */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent"></div>
+            {/* Décoration top */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
+            <div className="absolute top-0 left-0 w-40 h-40 bg-yellow-400/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-60 h-60 bg-blue-400/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
             
-            <CardContent className="p-8 sm:p-10 md:p-14 text-center space-y-8">
+            <div className="relative z-10 p-8 sm:p-12 md:p-16 lg:p-20">
               
-              {/* Header */}
-              <div className="space-y-3">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black">
-                  Obtenez le livre maintenant
-                </h2>
-                <p className="text-white text-base sm:text-lg max-w-md mx-auto">
-                  Commencez votre transformation dès aujourd'hui.
-                </p>
-              </div>
-
-              {/* Prix */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-center gap-3 text-base sm:text-lg">
-                  <span className="text-gray-400 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
-                  <span className="bg-green-500/15 text-green-400 px-3 py-1 rounded-full text-sm font-bold">
-                    -57%
-                  </span>
-                </div>
+              {/* Grid layout 2 colonnes */}
+              <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
                 
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-5xl sm:text-6xl lg:text-7xl font-black text-yellow-400">
-                    {BOOK.specialPrice.toLocaleString()}
-                  </span>
-                  <span className="text-xl sm:text-2xl lg:text-3xl text-white font-medium">{BOOK.currency}</span>
-                </div>
-                
-                <p className="text-gray-300 text-sm">Paiement unique - Accès immédiat à vie</p>
-              </div>
-
-              {/* Inclus */}
-              <div className="grid grid-cols-2 gap-3 max-w-md mx-auto text-left text-sm">
-                {[
-                  "Livre PDF complet (56 pages)",
-                  "Compatible mobile & tablette",
-                  "Accès illimité à vie",
-                  "Paiement sécurisé MyChariow",
-                  "Téléchargement instantané",
-                  "Support dédié"
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-white">
-                    <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* BOUTON D'ACHAT UNIQUE - ANIME */}
-              <div className="w-full max-w-lg mx-auto">
-                <Button 
-                  className="
-                    w-full 
-                    bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 
-                    hover:from-yellow-500 hover:via-yellow-400 hover:to-yellow-500
-                    text-black font-bold text-base sm:text-lg py-4 sm:py-5 rounded-xl 
-                    shadow-xl shadow-yellow-500/40 hover:shadow-yellow-500/60 
-                    transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]
-                    flex items-center justify-center gap-2 sm:gap-3
-                    animate-pulse-glow
-                    relative overflow-hidden
-                    group/btn
-                  "
-                  onClick={() => {
-                    // TODO: Remplacer par le vrai lien MyChariow
-                    alert('Lien MyChariow bientôt disponible')
-                  }}
-                >
-                  {/* Effet de shine au survol */}
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 ease-out rounded-xl"></span>
+                {/* Left - Info & Prix */}
+                <div className="space-y-8 text-left">
                   
-                  <Download className="w-5 h-5 shrink-0 relative z-10" />
-                  <span className="whitespace-nowrap relative z-10">OBTENIR LE LIVRE</span>
-                  <ArrowRight className="w-5 h-5 shrink-0 relative z-10 group-hover/btn:translate-x-1 transition-transform" />
-                </Button>
-              </div>
+                  {/* Badge offre spéciale */}
+                  <div className="inline-flex items-center gap-2 bg-green-500/15 border border-green-500/30 text-green-400 px-4 py-2 rounded-full text-sm font-bold">
+                    <CheckCircle className="w-4 h-4" />
+                    OFFRE SPÉCIALE DE LANCEMENT
+                  </div>
+                  
+                  <div>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
+                      Commencez votre
+                      <br />
+                      <span className="text-yellow-400">transformation</span>
+                      <br />
+                      dès aujourd'hui
+                    </h2>
+                    <p className="text-gray-300 text-base sm:text-lg leading-relaxed">
+                      Rejoignez des milliers de personnes qui ont transformé leur vie grâce aux 7 Habitudes de la Réussite.
+                    </p>
+                  </div>
 
-              <p className="text-xs text-gray-300">
-                Paiement sécurisé via MyChariow
-              </p>
-            </CardContent>
-          </Card>
+                  {/* Prix */}
+                  <div className="space-y-3">
+                    <div className="flex items-baseline gap-3">
+                      <span className="text-2xl text-gray-400 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
+                      <span className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm font-bold">
+                        -57%
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-6xl sm:text-7xl font-black text-yellow-400">
+                        {BOOK.specialPrice.toLocaleString()}
+                      </span>
+                      <span className="text-2xl sm:text-3xl text-white font-semibold">{BOOK.currency}</span>
+                    </div>
+                    <p className="text-sm text-gray-400">Paiement unique - Accès immédiat à vie</p>
+                  </div>
+
+                  {/* Liste inclus */}
+                  <div className="space-y-3">
+                    {[
+                      { icon: BookOpen, text: "Livre PDF complet (56 pages)" },
+                      { icon: Download, text: "Téléchargement instantané" },
+                      { icon: CheckCircle, text: "Accès illimité à vie" },
+                      { icon: CheckCircle, text: "Compatible tous appareils" }
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-3 text-white">
+                        <item.icon className="w-5 h-5 text-yellow-400 shrink-0" />
+                        <span className="text-sm sm:text-base">{item.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right - Bouton CTA & Garantie */}
+                <div className="flex flex-col items-center justify-center space-y-6">
+                  
+                  {/* Bouton principal */}
+                  <Button 
+                    className="
+                      w-full max-w-sm
+                      bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 
+                      hover:from-yellow-500 hover:via-yellow-400 hover:to-yellow-500
+                      text-black font-black text-lg sm:text-xl py-6 sm:py-7 rounded-2xl 
+                      shadow-2xl shadow-yellow-500/40 hover:shadow-yellow-500/60 
+                      transition-all duration-300 hover:scale-[1.05] active:scale-[0.98]
+                      flex flex-col items-center justify-center gap-2
+                      animate-pulse-glow
+                      relative overflow-hidden
+                      group/btn
+                    "
+                    onClick={() => {
+                      // TODO: Remplacer par le vrai lien MyChariow
+                      alert('Lien MyChariow bientôt disponible')
+                    }}
+                  >
+                    {/* Shine effect */}
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 ease-out rounded-2xl"></span>
+                    
+                    <Download className="w-7 h-7 relative z-10" />
+                    <span className="whitespace-nowrap relative z-10 text-xl">OBTENIR LE LIVRE</span>
+                    <ArrowRight className="w-6 h-6 relative z-10 group-hover/btn:translate-x-2 transition-transform" />
+                  </Button>
+
+                  {/* Trust badges */}
+                  <div className="flex items-center gap-4 text-xs text-gray-400">
+                    <Lock className="w-3 h-3" />
+                    <span>Paiement sécurisé</span>
+                    <span>|</span>
+                    <span>Livraison instantanée</span>
+                  </div>
+
+                  {/* Mini garantie */}
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center max-w-sm">
+                    <p className="text-xs text-gray-300 leading-relaxed">
+                      <strong className="text-white">Garantie satisfaction :</strong> Si le livre ne correspond pas à vos attentes, contactez-nous sous 48h.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
