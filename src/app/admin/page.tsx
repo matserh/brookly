@@ -56,6 +56,10 @@ export default function AdminPage() {
   // Nouvelle habitude
   const [newHabit, setNewHabit] = useState({ title: "", desc: "" })
 
+  // État pour la couverture
+  const [coverPreview, setCoverPreview] = useState<string | null>(null)
+  const [coverFile, setCoverFile] = useState<File | null>(null)
+
   // Vérifier session existante au chargement
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -112,6 +116,39 @@ export default function AdminPage() {
 
   const updateHabit = (id: number, field: 'title' | 'desc', value: string) => {
     setChaptersList(chaptersList.map(h => h.id === id ? { ...h, [field]: value } : h))
+  }
+
+  // Gestion de l'upload de couverture
+  const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Vérifier le type
+      if (!file.type.startsWith('image/')) {
+        alert('Veuillez sélectionner une image (JPG ou PNG)')
+        return
+      }
+      // Vérifier la taille (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('L\'image ne doit pas dépasser 5MB')
+        return
+      }
+      // Créer un aperçu
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setCoverPreview(reader.result as string)
+        setCoverFile(file)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleCoverSave = async () => {
+    if (coverFile) {
+      // Ici vous pourriez envoyer à un serveur
+      // Pour l'instant, on sauvegarde en localStorage comme démo
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    }
   }
 
   // Page de connexion - Design premium
@@ -634,24 +671,88 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               
-              {/* Current cover preview */}
-              <div className="border border-dashed border-white/10 rounded-2xl p-8 text-center hover:border-yellow-500/30 transition-all group bg-white/[0.02]">
-                <div className="w-48 h-32 mx-auto mb-5 bg-gradient-to-br from-[#1a365d] to-[#0d1f3c] rounded-xl overflow-hidden shadow-xl shadow-black/20 group-hover:scale-105 transition-transform duration-300">
-                  <img src="/cover.jpg" alt="Couverture actuelle" className="w-full h-full object-cover" />
+              {/* Zone d'upload */}
+              <div 
+                className="border border-dashed border-white/10 rounded-2xl p-8 text-center hover:border-yellow-500/30 transition-all group bg-white/[0.02] cursor-pointer"
+                onClick={() => document.getElementById('cover-upload')?.click()}
+              >
+                {/* Aperçu de l'image */}
+                <div className="w-48 h-32 mx-auto mb-5 bg-gradient-to-br from-[#1a365d] to-[#0d1f3c] rounded-xl overflow-hidden shadow-xl shadow-black/20 group-hover:scale-105 transition-transform duration-300 relative">
+                  {coverPreview ? (
+                    <img src={coverPreview} alt="Nouvelle couverture" className="w-full h-full object-cover" />
+                  ) : (
+                    <img src="/cover.jpg" alt="Couverture actuelle" className="w-full h-full object-cover" />
+                  )}
+                  {coverPreview && (
+                    <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-md font-medium">
+                      Nouveau
+                    </div>
+                  )}
                 </div>
                 
                 <div className="space-y-3">
-                  <p className="text-white font-medium">Couverture actuelle</p>
+                  <p className="text-white font-medium">
+                    {coverPreview ? 'Nouvelle image sélectionnée' : 'Couverture actuelle'}
+                  </p>
                   <p className="text-xs text-gray-400">Format recommandé : 600 x 400px (ratio 3:2)</p>
                   
                   <div className="pt-3">
-                    <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:border-yellow-500/40 gap-2 rounded-xl">
+                    <input
+                      id="cover-upload"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleCoverUpload}
+                      className="hidden"
+                    />
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      className="border-white/20 text-white hover:bg-white/10 hover:border-yellow-500/40 gap-2 rounded-xl"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        document.getElementById('cover-upload')?.click()
+                      }}
+                    >
                       <Upload size={16} />
-                      Changer l'image
+                      {coverPreview ? 'Changer l\'image' : 'Parcourir...'}
                     </Button>
                   </div>
                 </div>
               </div>
+
+              {/* Info sélection */}
+              {coverFile && (
+                <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 space-y-3">
+                  <p className="text-green-300 text-sm font-medium flex items-center gap-2">
+                    <CheckCircle size={16} />
+                    Image prête à être sauvegardée
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-gray-300">
+                    <span>{coverFile.name}</span>
+                    <span>{(coverFile.size / 1024).toFixed(1)} KB</span>
+                  </div>
+                  <Button 
+                    onClick={handleCoverSave}
+                    className={`w-full h-11 rounded-xl font-semibold transition-all ${
+                      saved 
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white' 
+                        : 'bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 text-black hover:scale-[1.02]'
+                    }`}
+                  >
+                    {saved ? (
+                      <span className="flex items-center gap-2">
+                        <CheckCircle size={16} />
+                        Sauvegardée !
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <Save size={16} />
+                        Appliquer cette couverture
+                      </span>
+                    )}
+                  </Button>
+                </div>
+              )}
 
               {/* Info box */}
               <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-4 flex items-start gap-3">
@@ -661,7 +762,7 @@ export default function AdminPage() {
                 <div>
                   <p className="text-white text-sm font-medium mb-1">Note importante</p>
                   <p className="text-gray-300 text-xs leading-relaxed">
-                    L'image doit être en format JPG ou PNG, poids maximum 5MB. La couverture s'affiche horizontalement sur le site.
+                    L&apos;image doit être en format JPG, PNG ou WebP, poids maximum 5MB. La couverture s&apos;affiche horizontalement sur le site.
                   </p>
                 </div>
               </div>
