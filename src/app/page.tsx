@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { BookOpen, CheckCircle, ArrowRight, Menu, X, Download, Lock } from 'lucide-react'
+import { BookOpen, CheckCircle, ArrowRight, Menu, X, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
@@ -46,7 +46,7 @@ export default function LandingPage() {
         <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]"></div>
       </div>
 
-      {/* Navigation - SANS BOUTON ACHAT */}
+      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#0a1628]/80 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 md:h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -56,7 +56,6 @@ export default function LandingPage() {
             </span>
           </div>
           
-          {/* Navigation simple sans bouton achat */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
             <a href="#livre" className="hover:text-white transition-colors">Le Livre</a>
             <a href="#contenu" className="hover:text-white transition-colors">Contenu</a>
@@ -81,7 +80,7 @@ export default function LandingPage() {
         )}
       </nav>
 
-      {/* ===== HERO SECTION - SANS BOUTON D'ACHAT ===== */}
+      {/* ===== HERO SECTION ===== */}
       <section className="relative min-h-screen flex items-center pt-20 pb-12 md:pt-24 md:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
           
@@ -119,7 +118,7 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              {/* Prix seulement - PAS de bouton ici */}
+              {/* Prix */}
               <div className="space-y-2 pt-2">
                 <div className="flex items-baseline gap-3">
                   <span className="text-gray-500 line-through text-base sm:text-lg">{BOOK.regularPrice.toLocaleString()}</span>
@@ -127,54 +126,54 @@ export default function LandingPage() {
                   <span className="text-base sm:text-lg text-gray-300">{BOOK.currency}</span>
                 </div>
                 <p className="text-xs sm:text-sm text-gray-500">
-                  Offre de lancement • {BOOK.chapters} chapitres • {BOOK.pages} pages
+                  Offre de lancement - {BOOK.chapters} chapitres - {BOOK.pages} pages
                 </p>
               </div>
             </div>
 
-            {/* Right - LIVRE BIEN AFFICHÉ */}
+            {/* Right - Book Cover */}
             <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-              <div className="
-                relative
-                w-[240px] sm:w-[280px] md:w-[320px] lg:w-[360px] xl:w-[400px]
-              ">
-                {/* Container du livre avec ombre réaliste */}
-                <div className="relative">
-                  
-                  {/* Ombre sous le livre */}
-                  <div className="absolute -bottom-3 left-4 right-4 h-6 bg-black/40 blur-xl rounded-full"></div>
-                  
-                  {/* Le livre lui-même - proportions A5 parfaites */}
-                  <div className="relative aspect-[2/3] w-full bg-gradient-to-br from-[#1e3a5f] to-[#0d1f3c] rounded shadow-2xl overflow-hidden border border-white/10">
-                    
-                    {/* Image de couverture - couvre TOUT l'espace */}
-                    <Image 
-                      src="/cover.jpg" 
-                      alt="Les 7 Habitudes de la Réussite"
-                      fill
-                      className="object-cover"
-                      priority
-                      sizes="(max-width: 640px) 240px, (max-width: 768px) 280px, (max-width: 1024px) 320px, (max-width: 1280px) 360px, 400px"
-                    />
-                    
-                    {/* Overlay subtil pour profondeur */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-                  </div>
-                </div>
+              <div className="relative group">
                 
-                /* Info sous le livre */
-                <div className="mt-4 text-center space-y-1">
-                  <p className="text-xs uppercase tracking-widest text-gray-500 font-medium">eBook PDF</p>
-                  <p className="text-sm text-gray-400">{BOOK.chapters} chapitres • {BOOK.pages} pages</p>
+                {/* Glow effect under book */}
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[85%] h-8 bg-yellow-500/15 blur-2xl rounded-full group-hover:bg-yellow-500/25 transition-all duration-500"></div>
+                
+                {/* Book container - A5 proportions */}
+                <div className="
+                  relative
+                  w-[220px] sm:w-[260px] md:w-[300px] lg:w-[340px]
+                  aspect-[2/3]
+                  rounded-lg overflow-hidden
+                  shadow-2xl shadow-black/60
+                  border border-white/10
+                  transform transition-transform duration-500 group-hover:scale-[1.02]
+                  bg-[#0d1f3c]
+                ">
+                  
+                  {/* Cover image - shows COMPLETE image */}
+                  <Image 
+                    src="/cover.jpg" 
+                    alt="Les 7 Habitudes de la Réussite"
+                    fill
+                    className="object-contain"
+                    priority
+                    sizes="(max-width: 640px) 220px, (max-width: 768px) 260px, (max-width: 1024px) 300px, 340px"
+                  />
+                </div>
+
+                {/* Book info below */}
+                <div className="mt-5 text-center">
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">eBook PDF</p>
+                  <p className="text-sm text-gray-400 mt-1">{BOOK.chapters} chapitres - {BOOK.pages} pages</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Scroll indicator vers le CTA */}
+        {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden lg:flex flex-col items-center gap-2">
-          <span className="text-xs text-gray-500">Défiler pour acheter</span>
+          <span className="text-xs text-gray-500">Defiler pour acheter</span>
           <ArrowRight className="w-4 h-4 text-yellow-400 rotate-90" />
         </div>
       </section>
@@ -203,10 +202,10 @@ export default function LandingPage() {
           
           <div className="mb-10 sm:mb-12 md:mb-16">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">
-              Les 7 Habitudes en détail
+              Les 7 Habitudes en detail
             </h2>
             <p className="text-gray-400 text-sm sm:text-base">
-              {BOOK.chapters} chapitres • {BOOK.pages} pages
+              {BOOK.chapters} chapitres - {BOOK.pages} pages
             </p>
           </div>
 
@@ -232,7 +231,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== LE SEUL ET UNIQUE BOUTON D'ACHAT ===== */}
+      {/* ===== CTA SECTION - SEUL BOUTON D'ACHAT ===== */}
       <section id="achat" className="py-20 sm:py-28 md:py-32 relative">
         <div className="absolute inset-0 bg-gradient-to-t from-yellow-900/15 via-transparent to-transparent"></div>
         
@@ -250,7 +249,7 @@ export default function LandingPage() {
                   Obtenez le livre maintenant
                 </h2>
                 <p className="text-gray-400 text-base sm:text-lg max-w-md mx-auto">
-                  Commencez votre transformation dès aujourd'hui.
+                  Commencez votre transformation des aujourd'hui.
                 </p>
               </div>
 
@@ -270,7 +269,7 @@ export default function LandingPage() {
                   <span className="text-xl sm:text-2xl lg:text-3xl text-gray-300 font-medium">{BOOK.currency}</span>
                 </div>
                 
-                <p className="text-gray-500 text-sm">Paiement unique • Accès immédiat à vie</p>
+                <p className="text-gray-500 text-sm">Paiement unique - Acces immediat a vie</p>
               </div>
 
               {/* Inclus */}
@@ -278,10 +277,10 @@ export default function LandingPage() {
                 {[
                   "Livre PDF complet (56 pages)",
                   "Compatible mobile & tablette",
-                  "Accès illimité à vie",
-                  "Paiement sécurisé MyChariow",
-                  "Téléchargement instantané",
-                  "Support dédié"
+                  "Acces illimite a vie",
+                  "Paiement securise MyChariow",
+                  "Telechargement instantane",
+                  "Support dedie"
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-gray-300">
                     <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
@@ -290,13 +289,13 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              {/* LE SEUL BOUTON D'ACHAT */}
+              {/* BOUTON D'ACHAT UNIQUE */}
               <Button 
                 size="lg"
                 className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg sm:text-xl px-10 py-5 sm:py-6 rounded-xl shadow-xl shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-200 hover:scale-[1.02]"
                 onClick={() => {
                   // TODO: Remplacer par le vrai lien MyChariow
-                  alert('Lien MyChariow bientôt disponible')
+                  alert('Lien MyChariow bientot disponible')
                 }}
               >
                 <Download className="w-6 h-6 mr-3" />
@@ -305,7 +304,7 @@ export default function LandingPage() {
               </Button>
 
               <p className="text-xs text-gray-600">
-                Paiement sécurisé via MyChariow
+                Paiement securise via MyChariow
               </p>
             </CardContent>
           </Card>
@@ -314,27 +313,27 @@ export default function LandingPage() {
 
       {/* ===== FAQ SECTION ===== */}
       <section className="py-16 sm:py-20 md:py-24 relative">
-        <div class="max-w-2xl sm:max-w-3xl mx-auto px-4 sm:px-6">
+        <div className="max-w-2xl sm:max-w-3xl mx-auto px-4 sm:px-6">
           
           <div className="mb-10 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">
-              Questions fréquentes
+              Questions frequentes
             </h2>
           </div>
 
           <div className="space-y-3 sm:space-y-4">
             {[
               {
-                q: "Comment je reçois le livre après paiement ?",
-                a: "Une fois votre paiement confirmé via MyChariow, vous recevrez instantanément un lien de téléchargement sécurisé par email."
+                q: "Comment je recois le livre apres paiement ?",
+                a: "Une fois votre paiement confirme via MyChariow, vous recevrez instantanement un lien de telechargement securise par email."
               },
               {
                 q: "Sur quels appareils puis-je lire le livre ?",
                 a: "Le livre est au format PDF, compatible avec tous les appareils : smartphone, tablette, ordinateur."
               },
               {
-                q: "Le prix est vraiment à 3 000 FCFA ?",
-                a: "Oui ! C'est une offre spéciale de lancement. Le prix normal est de 7 000 FCFA."
+                q: "Le prix est vraiment a 3 000 FCFA ?",
+                a: "Oui ! C'est une offre speciale de lancement. Le prix normal est de 7 000 FCFA."
               }
             ].map((faq, idx) => (
               <Card key={idx} className="bg-white/[0.03] border-white/10 hover:bg-white/[0.05] transition-colors">
@@ -354,9 +353,9 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-gray-500">
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-yellow-400" />
-              <span className="font-medium">Les 7 Habitudes de la Réussite</span>
+              <span className="font-medium">Les 7 Habitudes de la Reussite</span>
             </div>
-            <span>© 2024 Tous droits réservés</span>
+            <span>2024 Tous droits reserves</span>
           </div>
         </div>
       </footer>
