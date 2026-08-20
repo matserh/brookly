@@ -119,6 +119,10 @@ html {
   animation: glow-pulse 2s ease-in-out infinite;
 }
 
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
 .animate-shimmer {
   background: linear-gradient(
     90deg,
@@ -207,5 +211,17 @@ html {
 @media (min-width: 1536px) {
   html {
     font-size: 18px;
+  }
+}
+
+/* Pulse glow animation for CTA button */
+@keyframes pulse-glow {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(250, 204, 21, 0.3), 0 10px 40px rgba(250, 204, 21, 0.2);
+  }
+  50% { 
+    transform: scale(1.02);
+    box-shadow: 0 0 35px rgba(250, 204, 21, 0.5), 0 15px 50px rgba(250, 204, 21, 0.3);
   }
 }
