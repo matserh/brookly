@@ -372,7 +372,7 @@ export default function LandingPage() {
                   {/* Mini garantie */}
                   <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center max-w-sm">
                     <p className="text-xs text-gray-300 leading-relaxed">
-                      <strong className="text-white">Garantie satisfaction :</strong> Si le livre ne correspond pas à vos attentes, contactez-nous sous 48h.
+                      <strong className="text-white">Qualité garantie :</strong> Un guide complet et pratique, conçu pour vous aider à atteindre vos objectifs.
                     </p>
                   </div>
                 </div>
