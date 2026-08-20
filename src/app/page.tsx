@@ -167,6 +167,7 @@ export default function LandingPage() {
                 <div className="mt-4 text-center">
                   <p className="text-xs uppercase tracking-widest text-gray-300 font-semibold">eBook PDF</p>
                   <p className="text-sm text-white mt-1">{BOOK.chapters} chapitres - {BOOK.pages} pages</p>
+                  <p className="text-xs text-gray-400 mt-1">Par {BOOK.author}</p>
                 </div>
               </div>
             </div>
@@ -196,14 +197,10 @@ export default function LandingPage() {
             </blockquote>
             
             {/* Auteur */}
-            <div className="flex items-center gap-3 pt-4 border-t border-white/10">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-black font-bold text-lg">
-                {BOOK.author.split(' ').map(n => n[0]).join('')}
-              </div>
-              <div>
-                <p className="text-white font-semibold">{BOOK.author}</p>
-                <p className="text-gray-400 text-sm">Auteur & Coach de développement personnel</p>
-              </div>
+            <div className="pt-4 border-t border-white/10">
+              <p className="text-sm text-gray-300">
+                <span className="text-white font-medium">Auteur :</span> {BOOK.author}
+              </p>
             </div>
           </div>
         </div>

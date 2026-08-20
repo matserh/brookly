@@ -343,7 +343,7 @@ export default function AdminPage() {
                 Fichiers du livre
               </CardTitle>
               <CardDescription className="text-xs text-gray-300">
-                Gérez la couverture et le PDF du livre
+                Gérez l'image de couverture du livre
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
@@ -366,19 +366,7 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* PDF du livre */}
-              <div className="space-y-3">
-                <label className="text-xs text-gray-300 font-medium">Livre PDF</label>
-                <div className="border border-dashed border-white/10 rounded-xl p-6 text-center hover:border-[#facc15]/30 transition-colors cursor-pointer">
-                  <FileText size={32} className="mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm font-medium text-white mb-1">Télécharger le PDF</p>
-                  <p className="text-xs text-gray-400 mb-3">56 pages • ~2MB max</p>
-                  <Button variant="outline" size="sm" className="border-white/20 text-xs h-8 text-white hover:bg-white/10">
-                    <Upload className="w-3 h-3 mr-1" />
-                    Choisir un fichier
-                  </Button>
-                </div>
-              </div>
+
             </CardContent>
           </Card>
         </div>
