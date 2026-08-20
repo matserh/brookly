@@ -1,0 +1,959 @@
+     1→'use client'
+     2→
+     3→import { useState, useEffect } from 'react'
+     4→import { useRouter } from 'next/navigation'
+     5→import { 
+     6→  BookOpen, Lock, Eye, EyeOff, LogIn, Shield, Settings, 
+     7→  BarChart3, Users, ArrowLeft, ExternalLink, Upload, Save, 
+     8→  CheckCircle, Image, PenLine, CreditCard, Package, LogOut,
+     9→  Sparkles, ChevronRight, AlertCircle, Plus, Trash2, GripVertical,
+    10→  RotateCcw
+    11→} from 'lucide-react'
+    12→import { Button } from '@/components/ui/button'
+    13→import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+    14→import { Input } from '@/components/ui/input'
+    15→import { Label } from '@/components/ui/label'
+    16→import { Textarea } from '@/components/ui/textarea'
+    17→import { getBookData, saveBookData, resetBookData, onBookDataChange, type BookData, type Habit } from '@/lib/book-store'
+    18→
+    19→// Configuration admin sécurisée
+    20→const ADMIN_CONFIG = {
+    21→  username: 'booklydanbookstorm',
+    22→  password: 'HkqBrJG2aviNjLR8blIH'
+    23→}
+    24→
+    25→export default function AdminPage() {
+    26→  const [isAuthenticated, setIsAuthenticated] = useState(false)
+    27→  const [username, setUsername] = useState('')
+    28→  const [password, setPassword] = useState('')
+    29→  const [showPassword, setShowPassword] = useState(false)
+    30→  const [error, setError] = useState('')
+    31→  const [isLoading, setIsLoading] = useState(false)
+    32→  const router = useRouter()
+    33→  const [saved, setSaved] = useState(false)
+    34→  const [activeSection, setActiveSection] = useState<'book' | 'habits' | 'cover' | 'payment'>('book')
+    35→  const [resetConfirm, setResetConfirm] = useState(false)
+    36→
+    37→  // États pour les données du livre - chargés depuis le store
+    38→  const [bookData, setBookDataStateState] = useState<BookData>({
+    39→    title: "",
+    40→    author: "",
+    41→    regularPrice: 0,
+    42→    specialPrice: 0,
+    43→    currency: "FCFA",
+    44→    tagline: "",
+    45→    description: { hook: "", body1: "", body2: "", body3: "", cta: "" },
+    46→    chaptersList: [],
+    47→    paymentLink: ""
+    48→  })
+    49→
+    50→  // État local pour les habitudes (avant sauvegarde)
+    51→  const [chaptersList, setChaptersList] = useState<Habit[]>([])
+    52→
+    53→  // Nouvelle habitude
+    54→  const [newHabit, setNewHabit] = useState({ title: "", desc: "" })
+    55→
+    56→  // État pour la couverture
+    57→  const [coverPreview, setCoverPreview] = useState<string | null>(null)
+    58→  const [coverFile, setCoverFile] = useState<File | null>(null)
+    59→
+    60→  // Charger les données au montage
+    61→  useEffect(() => {
+    62→    if (typeof window !== 'undefined') {
+    63→      const data = getBookData()
+    64→      setBookDataStateState(data)
+    65→      setChaptersList(data.chaptersList)
+    66→
+    67→      // Écouter les changements (si modifié ailleurs)
+    68→      const unsubscribe = onBookDataChange((newData) => {
+    69→        setBookDataStateState(newData)
+    70→        setChaptersList(newData.chaptersList)
+    71→      })
+    72→      
+    73→      return unsubscribe
+    74→    }
+    75→  }, [])
+    76→
+    77→  // Vérifier session existante au chargement
+    78→  useEffect(() => {
+    79→    if (typeof window !== 'undefined') {
+    80→      const auth = localStorage.getItem('brookly_admin_auth')
+    81→      const time = localStorage.getItem('brookly_admin_time')
+    82→      if (auth === 'true' && time && (Date.now() - parseInt(time)) < 24 * 60 * 60 * 1000) {
+    83→        setIsAuthenticated(true)
+    84→      }
+    85→    }
+    86→  }, [])
+    87→
+    88→  const handleLogin = async (e: React.FormEvent) => {
+    89→    e.preventDefault()
+    90→    setIsLoading(true)
+    91→    setError('')
+    92→
+    93→    await new Promise(resolve => setTimeout(resolve, 800))
+    94→
+    95→    if (username === ADMIN_CONFIG.username && password === ADMIN_CONFIG.password) {
+    96→      setIsAuthenticated(true)
+    97→      localStorage.setItem('brookly_admin_auth', 'true')
+    98→      localStorage.setItem('brookly_admin_time', Date.now().toString())
+    99→    } else {
+   100→      setError('Identifiants incorrects')
+   101→      setIsLoading(false)
+   102→    }
+   103→  }
+   104→
+   105→  const handleLogout = () => {
+   106→    setIsAuthenticated(false)
+   107→    localStorage.removeItem('brookly_admin_auth')
+   108→    localStorage.removeItem('brookly_admin_time')
+   109→    setUsername('')
+   110→    setPassword('')
+   111→  }
+   112→
+   113→  // VRAIE sauvegarde - persiste dans localStorage et notifie la page publique
+   114→  const handleSave = () => {
+   115→    // Sauvegarder toutes les données
+   116→    const dataToSave = {
+   117→      ...bookData,
+   118→      chaptersList: chaptersList,
+   119→      regularPrice: typeof bookData.regularPrice === 'string' ? parseInt(bookData.regularPrice) || 0 : bookData.regularPrice,
+   120→      specialPrice: typeof bookData.specialPrice === 'string' ? parseInt(bookData.specialPrice) || 0 : bookData.specialPrice
+   121→    }
+   122→    
+   123→    saveBookData(dataToSave)
+   124→    
+   125→    setSaved(true)
+   126→    setTimeout(() => setSaved(false), 3000)
+   127→  }
+   128→
+   129→  // Réinitialiser aux valeurs par défaut
+   130→  const handleReset = () => {
+   131→    if (resetConfirm) {
+   132→      const defaultData = resetBookDataState()
+   133→      setBookDataStateState(defaultData)
+   134→      setChaptersList(defaultData.chaptersList)
+   135→      setResetConfirm(false)
+   136→      setSaved(true)
+   137→      setTimeout(() => setSaved(false), 3000)
+   138→    } else {
+   139→      setResetConfirm(true)
+   140→      // Auto-cache après 5 secondes
+   141→      setTimeout(() => setResetConfirm(false), 5000)
+   142→    }
+   143→  }
+   144→
+   145→  // Gestion des habitudes
+   146→  const addHabit = () => {
+   147→    if (newHabit.title.trim() && newHabit.desc.trim()) {
+   148→      const newId = chaptersList.length > 0 ? Math.max(...chaptersList.map(h => h.id)) + 1 : 1
+   149→      setChaptersList([...chaptersList, { id: newId, title: newHabit.title.trim(), desc: newHabit.desc.trim() }])
+   150→      setNewHabit({ title: "", desc: "" })
+   151→    }
+   152→  }
+   153→
+   154→  const removeHabit = (id: number) => {
+   155→    setChaptersList(chaptersList.filter(h => h.id !== id))
+   156→  }
+   157→
+   158→  const updateHabit = (id: number, field: 'title' | 'desc', value: string) => {
+   159→    setChaptersList(chaptersList.map(h => h.id === id ? { ...h, [field]: value } : h))
+   160→  }
+   161→
+   162→  // Gestion de l'upload de couverture
+   163→  const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+   164→    const file = e.target.files?.[0]
+   165→    if (file) {
+   166→      // Vérifier le type
+   167→      if (!file.type.startsWith('image/')) {
+   168→        alert('Veuillez sélectionner une image (JPG ou PNG)')
+   169→        return
+   170→      }
+   171→      // Vérifier la taille (5MB max)
+   172→      if (file.size > 5 * 1024 * 1024) {
+   173→        alert('L\'image ne doit pas dépasser 5MB')
+   174→        return
+   175→      }
+   176→      // Créer un aperçu
+   177→      const reader = new FileReader()
+   178→      reader.onloadend = () => {
+   179→        setCoverPreview(reader.result as string)
+   180→        setCoverFile(file)
+   181→      }
+   182→      reader.readAsDataURL(file)
+   183→    }
+   184→  }
+   185→
+   186→  const handleCoverSave = async () => {
+   187→    if (coverFile) {
+   188→      // Ici vous pourriez envoyer à un serveur
+   189→      // Pour l'instant, on sauvegarde en localStorage comme démo
+   190→      setSaved(true)
+   191→      setTimeout(() => setSaved(false), 3000)
+   192→    }
+   193→  }
+   194→
+   195→  // Page de connexion - Design premium
+   196→  if (!isAuthenticated) {
+   197→    return (
+   198→      <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1f3c] to-[#0a1628] flex items-center justify-center p-4 relative overflow-hidden">
+   199→        
+   200→        {/* Background effects */}
+   201→        <div className="absolute inset-0 pointer-events-none">
+   202→          <div className="absolute top-1/4 -left-32 w-96 h-96 bg-yellow-500/5 rounded-full blur-[120px]"></div>
+   203→          <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px]"></div>
+   204→        </div>
+   205→
+   206→        <div className="w-full max-w-md relative z-10">
+   207→          
+   208→          {/* Header */}
+   209→          <div className="text-center mb-8 space-y-3">
+   210→            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl shadow-lg shadow-yellow-500/30 mb-4">
+   211→              <Shield className="w-8 h-8 text-black" />
+   212→            </div>
+   213→            <h1 className="text-2xl font-bold text-white tracking-tight">
+   214→              Brookly <span className="text-yellow-400">Admin</span>
+   215→            </h1>
+   216→            <p className="text-sm text-gray-400">
+   217→              Espace de gestion sécurisé
+   218→            </p>
+   219→          </div>
+   220→
+   221→          {/* Carte de connexion */}
+   222→          <Card className="bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-2xl">
+   223→            <CardContent className="p-8 space-y-6">
+   224→              <form onSubmit={handleLogin} className="space-y-5">
+   225→                
+   226→                {/* Identifiant */}
+   227→                <div className="space-y-2">
+   228→                  <Label htmlFor="username" className="text-gray-300 text-sm font-medium flex items-center gap-2">
+   229→                    <PenLine size={14} className="text-yellow-400" />
+   230→                    Identifiant
+   231→                  </Label>
+   232→                  <Input
+   233→                    id="username"
+   234→                    type="text"
+   235→                    value={username}
+   236→                    onChange={(e) => setUsername(e.target.value)}
+   237→                    placeholder="Entrez votre identifiant"
+   238→                    className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 focus:ring-yellow-400/20 h-12 rounded-xl transition-all"
+   239→                    required
+   240→                  />
+   241→                </div>
+   242→
+   243→                {/* Mot de passe */}
+   244→                <div className="space-y-2">
+   245→                  <Label htmlFor="password" className="text-gray-300 text-sm font-medium flex items-center gap-2">
+   246→                    <Lock size={14} className="text-yellow-400" />
+   247→                    Mot de passe
+   248→                  </Label>
+   249→                  <div className="relative">
+   250→                    <Input
+   251→                      id="password"
+   252→                      type={showPassword ? 'text' : 'password'}
+   253→                      value={password}
+   254→                      onChange={(e) => setPassword(e.target.value)}
+   255→                      placeholder="Entrez votre mot de passe"
+   256→                      className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 focus:ring-yellow-400/20 h-12 rounded-xl pr-12 transition-all"
+   257→                      required
+   258→                    />
+   259→                    <button
+   260→                      type="button"
+   261→                      onClick={() => setShowPassword(!showPassword)}
+   262→                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-yellow-400 transition-colors"
+   263→                    >
+   264→                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+   265→                    </button>
+   266→                  </div>
+   267→                </div>
+   268→
+   269→                {/* Erreur */}
+   270→                {error && (
+   271→                  <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-pulse">
+   272→                    <AlertCircle size={16} />
+   273→                    {error}
+   274→                  </div>
+   275→                )}
+   276→
+   277→                {/* Bouton connexion */}
+   278→                <Button 
+   279→                  type="submit" 
+   280→                  disabled={isLoading}
+   281→                  className="
+   282→                    w-full 
+   283→                    bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 
+   284→                    hover:from-yellow-500 hover:via-yellow-400 hover:to-yellow-500
+   285→                    text-black font-bold text-base py-3.5 rounded-xl
+   286→                    shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40
+   287→                    transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
+   288→                    relative overflow-hidden group
+   289→                  "
+   290→                >
+   291→                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+   292→                  {isLoading ? (
+   293→                    <div className="flex items-center gap-2 relative z-10">
+   294→                      <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+   295→                      Vérification...
+   296→                    </div>
+   297→                  ) : (
+   298→                    <div className="flex items-center gap-2 relative z-10">
+   299→                      <LogIn size={18} />
+   300→                      Se connecter
+   301→                    </div>
+   302→                  )}
+   303→                </Button>
+   304→              </form>
+   305→            </CardContent>
+   306→          </Card>
+   307→
+   308→          {/* Lien retour */}
+   309→          <Button 
+   310→            variant="ghost" 
+   311→            onClick={() => router.push('/')}
+   312→            className="w-full mt-6 text-gray-400 hover:text-white transition-colors group"
+   313→          >
+   314→            <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+   315→            Retour au site public
+   316→          </Button>
+   317→
+   318→          {/* Footer info */}
+   319→          <p className="text-center text-xs text-gray-500 mt-6">
+   320→            Connexion sécurisée • Session 24h
+   321→          </p>
+   322→        </div>
+   323→      </div>
+   324→    )
+   325→  }
+   326→
+   327→  // Dashboard Admin - Design premium complet
+   328→  return (
+   329→    <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1f3c] to-[#0a1628] overflow-x-hidden">
+   330→      
+   331→      {/* Background effects */}
+   332→      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+   333→        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-yellow-500/3 rounded-full blur-[150px]"></div>
+   334→        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/3 rounded-full blur-[120px]"></div>
+   335→      </div>
+   336→
+   337→      {/* Header premium */}
+   338→      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0a1628]/80 border-b border-white/5">
+   339→        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   340→          <div className="h-16 flex items-center justify-between">
+   341→            
+   342→            {/* Logo */}
+   343→            <div className="flex items-center gap-3">
+   344→              <div className="w-9 h-9 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/20">
+   345→                <span className="text-black font-black text-lg">7</span>
+   346→              </div>
+   347→              <div>
+   348→                <span className="font-bold text-white">Admin</span>
+   349→                <span className="hidden sm:inline text-xs text-gray-400 ml-2">Brookly</span>
+   350→              </div>
+   351→            </div>
+   352→            
+   353→            {/* Actions */}
+   354→            <div className="flex items-center gap-3">
+   355→              <a 
+   356→                href="/" 
+   357→                target="_blank" 
+   358→                className="hidden sm:flex items-center gap-2 text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-all"
+   359→              >
+   360→                Voir le site
+   361→                <ExternalLink size={12} />
+   362→              </a>
+   363→              <Button 
+   364→                variant="ghost" 
+   365→                size="sm"
+   366→                onClick={handleLogout}
+   367→                className="text-gray-400 hover:text-red-400 hover:bg-red-500/10 gap-2"
+   368→              >
+   369→                <LogOut size={16} />
+   370→                <span className="hidden sm:inline">Déconnexion</span>
+   371→              </Button>
+   372→            </div>
+   373→          </div>
+   374→        </div>
+   375→      </header>
+   376→
+   377→      {/* Main content */}
+   378→      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+   379→        
+   380→        {/* Welcome banner */}
+   381→        <div className="relative bg-gradient-to-r from-yellow-500/10 via-yellow-500/5 to-transparent border border-yellow-500/20 rounded-2xl p-6 overflow-hidden">
+   382→          <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+   383→          <div className="relative">
+   384→            <h2 className="text-lg font-bold text-white mb-1">Bienvenue dans l'espace de gestion</h2>
+   385→            <p className="text-sm text-gray-300 leading-relaxed">
+   386→              Gérez les informations de votre livre, les habitudes et configurez le paiement. Les modifications sont appliquées instantanément sur le site public.
+   387→            </p>
+   388→          </div>
+   389→        </div>
+   390→
+   391→        {/* Navigation tabs */}
+   392→        <div className="flex gap-2 p-1 bg-white/[0.03] rounded-xl border border-white/5 overflow-x-auto scrollbar-hide">
+   393→          {[
+   394→            { id: 'book' as const, icon: BookOpen, label: 'Informations' },
+   395→            { id: 'habits' as const, icon: Sparkles, label: 'Habitudes' },
+   396→            { id: 'cover' as const, icon: Image, label: 'Couverture' },
+   397→            { id: 'payment' as const, icon: CreditCard, label: 'Paiement' }
+   398→          ].map((tab) => (
+   399→            <button
+   400→              key={tab.id}
+   401→              onClick={() => setActiveSection(tab.id)}
+   402→              className={`
+   403→                flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap shrink-0
+   404→                ${activeSection === tab.id 
+   405→                  ? 'bg-yellow-400/10 text-yellow-400 border border-yellow-500/30' 
+   406→                  : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'}
+   407→              `}
+   408→            >
+   409→              <tab.icon size={16} />
+   410→              {tab.label}
+   411→            </button>
+   412→          ))}
+   413→        </div>
+   414→
+   415→        {/* Content based on active tab */}
+   416→        {activeSection === 'book' && (
+   417→          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+   418→            
+   419→            {/* Main form */}
+   420→            <Card className="lg:col-span-2 bg-white/[0.03] backdrop-blur-sm border-white/5 hover:border-white/10 transition-colors">
+   421→              <CardHeader className="pb-6">
+   422→                <div className="flex items-center gap-3">
+   423→                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl flex items-center justify-center">
+   424→                    <Settings size={18} className="text-blue-400" />
+   425→                  </div>
+   426→                  <div>
+   427→                    <CardTitle className="text-base font-semibold text-white">
+   428→                  Informations du livre
+   429→                </CardTitle>
+   430→                <CardDescription className="text-xs text-gray-400 mt-0.5">
+   431→                  Modifiez les données affichées sur le site public
+   432→                </CardDescription>
+   433→                  </div>
+   434→                </div>
+   435→              </CardHeader>
+   436→              <CardContent className="space-y-6">
+   437→                
+   438→                {/* Titre & Auteur */}
+   439→                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+   440→                  <div className="space-y-2">
+   441→                    <label className="text-xs text-gray-300 font-semibold uppercase tracking-wider flex items-center gap-2">
+   442→                      <PenLine size={12} className="text-yellow-400" />
+   443→                      Titre du livre
+   444→                    </label>
+   445→                    <Input 
+   446→                      value={bookData.title}
+   447→                      onChange={(e) => setBookDataState({...bookData, title: e.target.value})}
+   448→                      className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 h-11 rounded-xl transition-all" 
+   449→                    />
+   450→                  </div>
+   451→                  <div className="space-y-2">
+   452→                    <label className="text-xs text-gray-300 font-semibold uppercase tracking-wider flex items-center gap-2">
+   453→                      <Users size={12} className="text-yellow-400" />
+   454→                      Auteur
+   455→                    </label>
+   456→                    <Input 
+   457→                      value={bookData.author}
+   458→                      onChange={(e) => setBookDataState({...bookData, author: e.target.value})}
+   459→                      className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 h-11 rounded-xl transition-all" 
+   460→                    />
+   461→                  </div>
+   462→                </div>
+   463→
+   464→                {/* Prix */}
+   465→                <div className="space-y-2">
+   466→                  <label className="text-xs text-gray-300 font-semibold uppercase tracking-wider flex items-center gap-2">
+   467→                    <Package size={12} className="text-yellow-400" />
+   468→                    Tarification (FCFA)
+   469→                  </label>
+   470→                  <div className="grid grid-cols-2 gap-4">
+   471→                    <div className="relative">
+   472→                      <Input 
+   473→                        value={bookData.specialPrice}
+   474→                        onChange={(e) => setBookDataState({...bookData, specialPrice: e.target.value})}
+   475→                        type="number" 
+   476→                        className="bg-white/[0.05] border-white/10 text-white focus:border-green-400/50 h-11 rounded-xl pl-4 pr-16 transition-all" 
+   477→                      />
+   478→                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-green-400 font-semibold bg-green-400/10 px-2 py-1 rounded-md">
+   479→                        Promo
+   480→                      </span>
+   481→                    </div>
+   482→                    <div className="relative">
+   483→                      <Input 
+   484→                        value={bookData.regularPrice}
+   485→                        onChange={(e) => setBookDataState({...bookData, regularPrice: e.target.value})}
+   486→                        type="number" 
+   487→                        className="bg-white/[0.05] border-white/10 text-white focus:border-gray-400/50 h-11 rounded-xl pl-4 pr-16 transition-all" 
+   488→                      />
+   489→                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-semibold bg-white/10 px-2 py-1 rounded-md">
+   490→                        Normal
+   491→                      </span>
+   492→                    </div>
+   493→                  </div>
+   494→                </div>
+   495→
+   496→                {/* Phrase d'accroche */}
+   497→                <div className="space-y-2">
+   498→                  <label className="text-xs text-gray-300 font-semibold uppercase tracking-wider flex items-center gap-2">
+   499→                    <Sparkles size={12} className="text-yellow-400" />
+   500→                    Phrase d'accroche
+   501→                  </label>
+   502→                  <Textarea 
+   503→                    value={bookData.tagline}
+   504→                    onChange={(e) => setBookDataState({...bookData, tagline: e.target.value})}
+   505→                    className="bg-white/[0.05] border-white/10 text-white min-h-[90px] resize-none focus:border-yellow-400/50 rounded-xl transition-all"
+   506→                    placeholder="Phrase motivatrice qui accroche..."
+   507→                  />
+   508→                </div>
+   509→
+   510→                {/* Description principale */}
+   511→                <div className="space-y-2">
+   512→                  <label className="text-xs text-gray-300 font-semibold uppercase tracking-wider flex items-center gap-2">
+   513→                    <BookOpen size={12} className="text-yellow-400" />
+   514→                    Description (hook)
+   515→                  </label>
+   516→                  <Textarea 
+   517→                    value={typeof bookData.description === 'string' ? bookData.description : bookData.description?.hook || ''}
+   518→                    onChange={(e) => setBookDataState({
+   519→                      ...bookData, 
+   520→                      description: typeof bookData.description === 'string' 
+   521→                        ? e.target.value 
+   522→                        : { ...bookData.description, hook: e.target.value }
+   523→                    })}
+   524→                    className="bg-white/[0.05] border-white/10 text-white min-h-[110px] resize-none focus:border-yellow-400/50 rounded-xl transition-all"
+   525→                    placeholder="Description courte qui accroche..."
+   526→                  />
+   527→                </div>
+   528→
+   529→                {/* Bouton sauvegarder */}
+   530→                <Button 
+   531→                  onClick={handleSave}
+   532→                  className={`
+   533→                    w-full h-12 rounded-xl font-semibold text-base transition-all duration-300
+   534→                    ${saved 
+   535→                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25' 
+   536→                      : 'bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 text-black shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 hover:scale-[1.02] active:scale-[0.98]'
+   537→                    }
+   538→                    relative overflow-hidden group
+   539→                  `}
+   540→                >
+   541→                  <span className={`absolute inset-0 ${!saved ? 'bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700' : ''}`}></span>
+   542→                  {saved ? (
+   543→                    <div className="flex items-center gap-2 relative z-10">
+   544→                      <CheckCircle className="w-5 h-5" />
+   545→                      Modifications sauvegardées !
+   546→                    </div>
+   547→                  ) : (
+   548→                    <div className="flex items-center gap-2 relative z-10">
+   549→                      <Save className="w-5 h-5" />
+   550→                      Sauvegarder les modifications
+   551→                    </div>
+   552→                  )}
+   553→                </Button>
+   554→
+   555→                {/* Bouton réinitialiser */}
+   556→                <Button 
+   557→                  onClick={handleReset}
+   558→                  className={`
+   559→                    w-full h-11 rounded-xl font-semibold text-sm transition-all duration-300
+   560→                    ${resetConfirm 
+   561→                      ? 'bg-red-600 hover:bg-red-700 text-white' 
+   562→                      : 'bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-white/10 hover:border-red-500/30'
+   563→                    }
+   564→                  `}
+   565→                >
+   566→                  {resetConfirm ? (
+   567→                    <span className="flex items-center gap-2">
+   568→                      <AlertCircle size={16} />
+   569→                      Confirmer la réinitialisation ?
+   570→                    </span>
+   571→                  ) : (
+   572→                    <span className="flex items-center gap-2">
+   573→                      <RotateCcw size={16} />
+   574→                      Réinitialiser aux valeurs par défaut
+   575→                    </span>
+   576→                  )}
+   577→                </Button>
+   578→              </CardContent>
+   579→            </Card>
+   580→
+   581→            {/* Preview card */}
+   582→            <Card className="bg-white/[0.03] backdrop-blur-sm border-white/5">
+   583→              <CardHeader className="pb-4">
+   584→                <CardTitle className="text-sm font-semibold text-gray-300 flex items-center gap-2">
+   585→                  <Eye size={14} className="text-yellow-400" />
+   586→                  Aperçu en temps réel
+   587→                </CardTitle>
+   588→              </CardHeader>
+   589→              <CardContent>
+   590→                <div className="bg-gradient-to-br from-[#1a365d]/50 to-[#0d1f3c]/50 rounded-xl p-5 border border-white/5 space-y-4">
+   591→                  
+   592→                  {/* Mini book preview */}
+   593→                  <div className="aspect-[3/2] bg-gradient-to-br from-[#0d1f3c] to-[#1a365d] rounded-lg overflow-hidden relative">
+   594→                    <img src="/cover.jpg" alt="Preview" className="w-full h-full object-cover opacity-80" />
+   595→                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+   596→                    <div className="absolute bottom-3 left-3 right-3">
+   597→                      <p className="text-white font-bold text-sm line-clamp-1">{bookData.title}</p>
+   598→                      <p className="text-gray-300 text-xs">{bookData.author}</p>
+   599→                    </div>
+   600→                  </div>
+   601→
+   602→                  {/* Info preview */}
+   603→                  <div className="space-y-2 text-sm">
+   604→                    <div className="flex justify-between items-center">
+   605→                      <span className="text-gray-400">Prix promo</span>
+   606→                      <span className="text-green-400 font-bold">{bookData.specialPrice} FCFA</span>
+   607→                    </div>
+   608→                    <div className="flex justify-between items-center">
+   609→                      <span className="text-gray-400">Prix normal</span>
+   610→                      <span className="text-gray-300 line-through">{bookData.regularPrice} FCFA</span>
+   611→                    </div>
+   612→                    <div className="pt-2 border-t border-white/10">
+   613→                      <p className="text-gray-400 text-xs mb-1">Accroche :</p>
+   614→                      <p className="text-white text-xs line-clamp-2 italic">{bookData.tagline}</p>
+   615→                    </div>
+   616→                  </div>
+   617→                </div>
+   618→              </CardContent>
+   619→            </Card>
+   620→          </div>
+   621→        )}
+   622→
+   623→        {activeSection === 'habits' && (
+   624→          <Card className="bg-white/[0.03] backdrop-blur-sm border-white/5">
+   625→            <CardHeader className="pb-6">
+   626→              <div className="flex items-center justify-between">
+   627→                <div className="flex items-center gap-3">
+   628→                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl flex items-center justify-center">
+   629→                    <Sparkles size={18} className="text-yellow-400" />
+   630→                  </div>
+   631→                  <div>
+   632→                    <CardTitle className="text-base font-semibold text-white">
+   633→                      Gestion des habitudes
+   634→                    </CardTitle>
+   635→                    <CardDescription className="text-xs text-gray-400 mt-0.5">
+   636→                      {chaptersList.length} habitude{chaptersList.length > 1 ? 's' : ''} configurée{chaptersList.length > 1 ? 's' : ''}
+   637→                    </CardDescription>
+   638→                  </div>
+   639→                </div>
+   640→              </div>
+   641→            </CardHeader>
+   642→            <CardContent className="space-y-6">
+   643→              
+   644→              {/* Liste des habitudes */}
+   645→              <div className="space-y-3">
+   646→                {chaptersList.map((habit, index) => (
+   647→                  <div 
+   648→                    key={habit.id}
+   649→                    className="group bg-white/[0.03] border border-white/10 rounded-xl p-4 hover:border-yellow-500/30 transition-all"
+   650→                  >
+   651→                    <div className="flex items-start gap-3">
+   652→                      {/* Numéro */}
+   653→                      <div className="w-8 h-8 bg-gradient-to-br from-yellow-400/20 to-yellow-600/20 rounded-lg flex items-center justify-center shrink-0 text-sm font-bold text-yellow-400">
+   654→                        {index + 1}
+   655→                      </div>
+   656→                      
+   657→                      {/* Contenu éditable */}
+   658→                      <div className="flex-1 space-y-2 min-w-0">
+   659→                        <Input 
+   660→                          value={habit.title}
+   661→                          onChange={(e) => updateHabit(habit.id, 'title', e.target.value)}
+   662→                          className="bg-white/[0.05] border-white/10 text-white text-sm h-9 font-medium focus:border-yellow-400/50"
+   663→                          placeholder="Titre de l'habitude"
+   664→                        />
+   665→                        <Input 
+   666→                          value={habit.desc}
+   667→                          onChange={(e) => updateHabit(habit.id, 'desc', e.target.value)}
+   668→                          className="bg-white/[0.05] border-white/10 text-gray-300 text-xs h-8 focus:border-yellow-400/50"
+   669→                          placeholder="Description courte..."
+   670→                        />
+   671→                      </div>
+   672→
+   673→                      {/* Bouton supprimer */}
+   674→                      <button
+   675→                        onClick={() => removeHabit(habit.id)}
+   676→                        className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100 shrink-0"
+   677→                      >
+   678→                        <Trash2 size={16} />
+   679→                      </button>
+   680→                    </div>
+   681→                  </div>
+   682→                ))}
+   683→              </div>
+   684→
+   685→              {/* Ajouter une habitude */}
+   686→              <div className="border border-dashed border-white/10 rounded-xl p-4 hover:border-yellow-500/30 transition-colors">
+   687→                <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+   688→                  <Plus size={12} className="text-yellow-400" />
+   689→                  Ajouter une habitude
+   690→                </p>
+   691→                <div className="space-y-3">
+   692→                  <Input 
+   693→                    value={newHabit.title}
+   694→                    onChange={(e) => setNewHabit({...newHabit, title: e.target.value})}
+   695→                    placeholder="Titre de la nouvelle habitude"
+   696→                    className="bg-white/[0.05] border-white/10 text-white text-sm h-10 focus:border-yellow-400/50"
+   697→                    onKeyDown={(e) => e.key === 'Enter' && addHabit()}
+   698→                  />
+   699→                  <Input 
+   700→                    value={newHabit.desc}
+   701→                    onChange={(e) => setNewHabit({...newHabit, desc: e.target.value})}
+   702→                    placeholder="Description courte..."
+   703→                    className="bg-white/[0.05] border-white/10 text-gray-300 text-sm h-10 focus:border-yellow-400/50"
+   704→                    onKeyDown={(e) => e.key === 'Enter' && addHabit()}
+   705→                  />
+   706→                  <Button 
+   707→                    onClick={addHabit}
+   708→                    disabled={!newHabit.title.trim() || !newHabit.desc.trim()}
+   709→                    className="w-full bg-white/5 hover:bg-yellow-400/10 text-white hover:text-yellow-400 border border-white/10 hover:border-yellow-500/30 h-10 text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+   710→                  >
+   711→                    <Plus size={16} className="mr-2" />
+   712→                    Ajouter cette habitude
+   713→                  </Button>
+   714→                </div>
+   715→              </div>
+   716→
+   717→              {/* Info */}
+   718→              <p className="text-xs text-gray-500 text-center">
+   719→                Appuyez sur Entrée ou cliquez sur le bouton pour ajouter. Aucune limite de nombre.
+   720→              </p>
+   721→            </CardContent>
+   722→          </Card>
+   723→        )}
+   724→
+   725→        {activeSection === 'cover' && (
+   726→          <Card className="bg-white/[0.03] backdrop-blur-sm border-white/5 max-w-2xl mx-auto">
+   727→            <CardHeader className="pb-6">
+   728→              <div className="flex items-center gap-3">
+   729→                <div className="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl flex items-center justify-center">
+   730→                  <Image size={18} className="text-purple-400" />
+   731→                </div>
+   732→                <div>
+   733→                  <CardTitle className="text-base font-semibold text-white">
+   734→                    Image de couverture
+   735→                  </CardTitle>
+   736→                  <CardDescription className="text-xs text-gray-400 mt-0.5">
+   737→                    Changez l'image affichée sur le site
+   738→                  </CardDescription>
+   739→                </div>
+   740→              </div>
+   741→            </CardHeader>
+   742→            <CardContent className="space-y-6">
+   743→              
+   744→              {/* Zone d'upload */}
+   745→              <div 
+   746→                className="border border-dashed border-white/10 rounded-2xl p-8 text-center hover:border-yellow-500/30 transition-all group bg-white/[0.02] cursor-pointer"
+   747→                onClick={() => document.getElementById('cover-upload')?.click()}
+   748→              >
+   749→                {/* Aperçu de l'image */}
+   750→                <div className="w-48 h-32 mx-auto mb-5 bg-gradient-to-br from-[#1a365d] to-[#0d1f3c] rounded-xl overflow-hidden shadow-xl shadow-black/20 group-hover:scale-105 transition-transform duration-300 relative">
+   751→                  {coverPreview ? (
+   752→                    <img src={coverPreview} alt="Nouvelle couverture" className="w-full h-full object-cover" />
+   753→                  ) : (
+   754→                    <img src="/cover.jpg" alt="Couverture actuelle" className="w-full h-full object-cover" />
+   755→                  )}
+   756→                  {coverPreview && (
+   757→                    <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-md font-medium">
+   758→                      Nouveau
+   759→                    </div>
+   760→                  )}
+   761→                </div>
+   762→                
+   763→                <div className="space-y-3">
+   764→                  <p className="text-white font-medium">
+   765→                    {coverPreview ? 'Nouvelle image sélectionnée' : 'Couverture actuelle'}
+   766→                  </p>
+   767→                  <p className="text-xs text-gray-400">Format recommandé : 600 x 400px (ratio 3:2)</p>
+   768→                  
+   769→                  <div className="pt-3">
+   770→                    <input
+   771→                      id="cover-upload"
+   772→                      type="file"
+   773→                      accept="image/jpeg,image/png,image/webp"
+   774→                      onChange={handleCoverUpload}
+   775→                      className="hidden"
+   776→                    />
+   777→                    <Button 
+   778→                      type="button"
+   779→                      variant="outline" 
+   780→                      className="border-white/20 text-white hover:bg-white/10 hover:border-yellow-500/40 gap-2 rounded-xl"
+   781→                      onClick={(e) => {
+   782→                        e.stopPropagation()
+   783→                        document.getElementById('cover-upload')?.click()
+   784→                      }}
+   785→                    >
+   786→                      <Upload size={16} />
+   787→                      {coverPreview ? 'Changer l\'image' : 'Parcourir...'}
+   788→                    </Button>
+   789→                  </div>
+   790→                </div>
+   791→              </div>
+   792→
+   793→              {/* Info sélection */}
+   794→              {coverFile && (
+   795→                <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 space-y-3">
+   796→                  <p className="text-green-300 text-sm font-medium flex items-center gap-2">
+   797→                    <CheckCircle size={16} />
+   798→                    Image prête à être sauvegardée
+   799→                  </p>
+   800→                  <div className="flex items-center justify-between text-xs text-gray-300">
+   801→                    <span>{coverFile.name}</span>
+   802→                    <span>{(coverFile.size / 1024).toFixed(1)} KB</span>
+   803→                  </div>
+   804→                  <Button 
+   805→                    onClick={handleCoverSave}
+   806→                    className={`w-full h-11 rounded-xl font-semibold transition-all ${
+   807→                      saved 
+   808→                        ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white' 
+   809→                        : 'bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 text-black hover:scale-[1.02]'
+   810→                    }`}
+   811→                  >
+   812→                    {saved ? (
+   813→                      <span className="flex items-center gap-2">
+   814→                        <CheckCircle size={16} />
+   815→                        Sauvegardée !
+   816→                      </span>
+   817→                    ) : (
+   818→                      <span className="flex items-center gap-2">
+   819→                        <Save size={16} />
+   820→                        Appliquer cette couverture
+   821→                      </span>
+   822→                    )}
+   823→                  </Button>
+   824→                </div>
+   825→              )}
+   826→
+   827→              {/* Info box */}
+   828→              <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-4 flex items-start gap-3">
+   829→                <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center shrink-0">
+   830→                  <AlertCircle size={16} className="text-blue-400" />
+   831→                </div>
+   832→                <div>
+   833→                  <p className="text-white text-sm font-medium mb-1">Note importante</p>
+   834→                  <p className="text-gray-300 text-xs leading-relaxed">
+   835→                    L&apos;image doit être en format JPG, PNG ou WebP, poids maximum 5MB. La couverture s&apos;affiche horizontalement sur le site.
+   836→                  </p>
+   837→                </div>
+   838→              </div>
+   839→            </CardContent>
+   840→          </Card>
+   841→        )}
+   842→
+   843→        {activeSection === 'payment' && (
+   844→          <Card className="bg-white/[0.03] backdrop-blur-sm border-white/5 max-w-2xl mx-auto">
+   845→            <CardHeader className="pb-6">
+   846→              <div className="flex items-center gap-3">
+   847→                <div className="w-10 h-10 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-xl flex items-center justify-center">
+   848→                  <CreditCard size={18} className="text-green-400" />
+   849→                </div>
+   850→                <div>
+   851→                  <CardTitle className="text-base font-semibold text-white">
+   852→                    Configuration du paiement
+   853→                  </CardTitle>
+   854→                  <CardDescription className="text-xs text-gray-400 mt-0.5">
+   855→                    Le lien MyChariow gère automatiquement la livraison du PDF
+   856→                  </CardDescription>
+   857→                </div>
+   858→              </div>
+   859→            </CardHeader>
+   860→            <CardContent className="space-y-6">
+   861→              
+   862→              {/* MyChariow info */}
+   863→              <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/5 border border-yellow-500/20 rounded-2xl p-6 space-y-4">
+   864→                <div className="flex items-start gap-4">
+   865→                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
+   866→                    <ExternalLink size={22} className="text-black" />
+   867→                  </div>
+   868→                  <div className="flex-1">
+   869→                    <h3 className="text-white font-bold mb-1">Intégration MyChariow</h3>
+   870→                    <p className="text-gray-300 text-sm leading-relaxed">
+   871→                      Configurez votre lien de paiement directement depuis votre tableau de bord MyChariow. Une fois créé, collez-le ci-dessous pour activer les achats.
+   872→                    </p>
+   873→                  </div>
+   874→                </div>
+   875→              </div>
+   876→
+   877→              {/* Input lien */}
+   878→              <div className="space-y-2">
+   879→                <label className="text-xs text-gray-300 font-semibold uppercase tracking-wider flex items-center gap-2">
+   880→                  <CreditCard size={12} className="text-yellow-400" />
+   881→                  Lien de paiement MyChariow
+   882→                </label>
+   883→                <Input 
+   884→                  value={bookData.paymentLink}
+   885→                  onChange={(e) => setBookDataState({...bookData, paymentLink: e.target.value})}
+   886→                  placeholder="https://pay.mychariow.com/votre-lien-paiement"
+   887→                  className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 h-12 rounded-xl transition-all"
+   888→                />
+   889→              </div>
+   890→
+   891→              {/* Status */}
+   892→              {!bookData.paymentLink ? (
+   893→                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 flex items-center gap-3">
+   894→                  <Shield size={18} className="text-yellow-400 shrink-0" />
+   895→                  <p className="text-yellow-200/80 text-sm">
+   896→                    Le bouton d&apos;achat sera désactivé tant qu&apos;aucun lien n&apos;est configuré
+   897→                  </p>
+   898→                </div>
+   899→              ) : (
+   900→                <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 flex items-center gap-3">
+   901→                  <CheckCircle size={18} className="text-green-400 shrink-0" />
+   902→                  <p className="text-green-200/80 text-sm">
+   903→                    Lien configuré ! Les achats sont activés
+   904→                  </p>
+   905→                </div>
+   906→              )}
+   907→
+   908→              {/* Save button for payment */}
+   909→              <Button 
+   910→                onClick={handleSave}
+   911→                className="w-full h-11 rounded-xl font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25 hover:shadow-green-500/40 transition-all"
+   912→              >
+   913→                <Save className="w-4 h-4 mr-2" />
+   914→                Sauvegarder le lien
+   915→              </Button>
+   916→            </CardContent>
+   917→          </Card>
+   918→        )}
+   919→
+   920→        {/* Quick stats - Bottom */}
+   921→        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+   922→          {[
+   923→            { label: "Ventes totales", value: "0", icon: BarChart3, color: "from-blue-500 to-cyan-500" },
+   924→            { label: "Revenus", value: "0 FCFA", icon: Package, color: "from-green-500 to-emerald-500" },
+   925→            { label: "Conversion", value: "---", icon: Settings, color: "from-purple-500 to-pink-500" },
+   926→            { label: "Statut", value: "Actif", icon: CheckCircle, color: "from-yellow-500 to-orange-500" }
+   927→          ].map((stat, idx) => (
+   928→            <Card key={idx} className="bg-white/[0.03] border-white/5 hover:bg-white/[0.05] transition-all group">
+   929→              <CardContent className="p-4 flex items-center gap-3">
+   930→                <div className={`w-10 h-10 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+   931→                  <stat.icon size={18} className="text-white" />
+   932→                </div>
+   933→                <div>
+   934→                  <p className="text-lg font-bold text-white">{stat.value}</p>
+   935→                  <p className="text-xs text-gray-400">{stat.label}</p>
+   936→                </div>
+   937→              </CardContent>
+   938→            </Card>
+   939→          ))}
+   940→        </div>
+   941→
+   942→      </main>
+   943→
+   944→      {/* Footer */}
+   945→      <footer className="relative z-10 border-t border-white/5 mt-12">
+   946→        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+   947→          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+   948→            <div className="flex items-center gap-2">
+   949→              <Shield size={14} className="text-yellow-400/50" />
+   950→              <span>Brookly Admin Panel • Sécurisé</span>
+   951→            </div>
+   952→            <span>© 2026 Tous droits réservés</span>
+   953→          </div>
+   954→        </div>
+   955→      </footer>
+   956→    </div>
+   957→  )
+   958→}
+   959→

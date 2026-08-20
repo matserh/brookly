@@ -35,7 +35,7 @@ export default function AdminPage() {
   const [resetConfirm, setResetConfirm] = useState(false)
 
   // États pour les données du livre - chargés depuis le store
-  const [bookData, setBookDataStateState] = useState<BookData>({
+  const [bookData, setBookData] = useState<BookData>({
     title: "",
     author: "",
     regularPrice: 0,
@@ -61,12 +61,12 @@ export default function AdminPage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const data = getBookData()
-      setBookDataStateState(data)
+      setBookData(data)
       setChaptersList(data.chaptersList)
 
       // Écouter les changements (si modifié ailleurs)
       const unsubscribe = onBookDataChange((newData) => {
-        setBookDataStateState(newData)
+        setBookData(newData)
         setChaptersList(newData.chaptersList)
       })
       
@@ -129,8 +129,8 @@ export default function AdminPage() {
   // Réinitialiser aux valeurs par défaut
   const handleReset = () => {
     if (resetConfirm) {
-      const defaultData = resetBookDataState()
-      setBookDataStateState(defaultData)
+      const defaultData = resetBookData()
+      setBookData(defaultData)
       setChaptersList(defaultData.chaptersList)
       setResetConfirm(false)
       setSaved(true)
