@@ -1,42 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BookOpen, CheckCircle, ArrowRight, Menu, X, Download, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
-
-// Configuration du livre
-const BOOK = {
-  title: "Les 7 Habitudes de la Réussite",
-  author: "Badi Mohamed",
-  chapters: 7,
-  pages: 56,
-  regularPrice: 7000,
-  specialPrice: 3000,
-  currency: "FCFA",
-  
-  description: {
-    hook: "Découvrez les secrets qui distinguent les personnes qui réussissent de celles qui restent bloquées dans leurs objectifs.",
-    body1: "Dans « Les 7 Habitudes des Personnes qui Réussissent », vous apprendrez les comportements et les méthodes adoptés par les entrepreneurs, les leaders, les étudiants performants et les personnes qui accomplissent leurs rêves.",
-    body2: "À travers 7 chapitres complets, cet eBook vous guide pas à pas pour développer la discipline, mieux gérer votre temps, fixer des objectifs clairs, apprendre efficacement, prendre soin de votre santé, construire un entourage positif et transformer les échecs en opportunités de croissance.",
-    body3: "Rédigé dans un langage simple et accessible, ce guide pratique vous offre des conseils concrets que vous pourrez appliquer immédiatement dans votre vie quotidienne.",
-    cta: "Le changement commence par une seule décision. Faites aujourd'hui le premier pas vers la réussite."
-  },
-  
-  chaptersList: [
-    { num: 1, title: "Être Proactif", desc: "Prenez la responsabilité de votre vie au lieu de subir les événements" },
-    { num: 2, title: "Commencer par la fin en tête", desc: "Définissez clairement votre vision et vos objectifs de vie" },
-    { num: 3, title: "Placer les priorités en premier", desc: "Organisez votre temps autour de ce qui compte vraiment" },
-    { num: 4, title: "Penser Gagnant-Gagnant", desc: "Créez des relations mutuellement bénéfiques et durables" },
-    { num: 5, title: "Comprendre avant d'être compris", desc: "Écoutez vraiment les autres avant de vouloir vous faire comprendre" },
-    { num: 6, title: "Synergiser", desc: "Combinez vos forces pour créer mieux que seul" },
-    { num: 7, title: "Aiguisez l'outil", desc: "Renouvelez continuellement vos capacités physiques, mentales et spirituelles" }
-  ]
-}
+import { getBookData, onBookDataChange, type BookData } from '@/lib/book-store'
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  // État dynamique - se met à jour quand l'admin modifie
+  const [bookData, setBookData] = useState<BookData | null>(null)
+
+  // Charger les données et écouter les changements
+  useEffect(() => {
+    // Chargement initial
+    setBookData(getBookData())
+
+    // Écouter les changements de l'admin
+    const unsubscribe = onBookDataChange((data) => {
+      setBookData(data)
+    })
+
+    return unsubscribe
+  }, [])
+
+  // Utiliser les données chargées ou un fallback
+  const BOOK = bookData || {
+    title: "Les 7 Habitudes de la Réussite",
+    author: "Badi Mohamed",
+    chaptersList: [
+      { id: 1, title: "Être Proactif", desc: "Prenez la responsabilité de votre vie" },
+      { id: 2, title: "Commencer par la fin en tête", desc: "Définissez votre vision" },
+      { id: 3, title: "Placer les priorités en premier", desc: "Organisez votre temps" },
+      { id: 4, title: "Penser Gagnant-Gagnant", desc: "Créez des relations gagnantes" },
+      { id: 5, title: "Comprendre avant d'être compris", desc: "Écoutez vraiment" },
+      { id: 6, title: "Synergizer", desc: "Combinez vos forces" },
+      { id: 7, title: "Aiguisez l'outil", desc: "Renouvelez-vous continuellement" }
+    ],
+    regularPrice: 7000,
+    specialPrice: 3000,
+    currency: "FCFA",
+    description: {
+      hook: "Découvrez les secrets qui transforment votre vie.",
+      body1: "",
+      body2: "",
+      body3: "",
+      cta: ""
+    },
+    paymentLink: ""
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1f3c] to-[#061020] text-white">
@@ -89,23 +102,20 @@ export default function LandingPage() {
               
               {/* Title */}
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-[1.1] tracking-tight">
-                <span className="text-white">LES </span>
-                <span className="text-yellow-400">7</span>
+                <span className="text-white">{BOOK.title.split(' ').slice(0, -2).join(' ')}</span>
                 <br />
-                <span className="text-white">HABITUDES</span>
-                <br />
-                <span className="text-white text-2xl sm:text-3xl lg:text-4xl xl:text-5xl">DE LA RÉUSSITE</span>
+                <span className="text-yellow-400">{BOOK.title.split(' ').slice(-2).join(' ')}</span>
               </h1>
 
               {/* Hook */}
               <p className="text-base sm:text-lg lg:text-xl text-blue-100 max-w-lg leading-relaxed">
-                {BOOK.description.hook}
+                {BOOK.description.hook || "Transformez votre vie avec les principes de la réussite."}
               </p>
 
               {/* Features Pills */}
               <div className="flex flex-wrap gap-2 sm:gap-3">
                 {[
-                  { icon: BookOpen, label: "Contenu Complet" },
+                  { icon: BookOpen, label: `${BOOK.chaptersList.length} Chapitres` },
                   { icon: Download, label: "Accès Immédiat" },
                   { icon: CheckCircle, label: "Guide Pratique" }
                 ].map((feature, idx) => (
@@ -124,7 +134,7 @@ export default function LandingPage() {
                   <span className="text-base sm:text-lg text-white">{BOOK.currency}</span>
                 </div>
                 <p className="text-xs sm:text-sm text-gray-300">
-                  Offre de lancement - {BOOK.chapters} chapitres - {BOOK.pages} pages
+                  Offre de lancement - {BOOK.chaptersList.length} chapitres
                 </p>
               </div>
             </div>
@@ -152,7 +162,7 @@ export default function LandingPage() {
                   {/* Image couverture horizontale */}
                   <Image 
                     src="/cover.jpg" 
-                    alt="Les 7 Habitudes de la Réussite"
+                    alt={BOOK.title}
                     fill
                     className="object-cover scale-105"
                     priority
@@ -163,7 +173,7 @@ export default function LandingPage() {
                 {/* Book info below */}
                 <div className="mt-4 text-center">
                   <p className="text-xs uppercase tracking-widest text-gray-300 font-semibold">eBook PDF</p>
-                  <p className="text-sm text-white mt-1">{BOOK.chapters} chapitres - {BOOK.pages} pages</p>
+                  <p className="text-sm text-white mt-1">{BOOK.chaptersList.length} chapitres</p>
                   <p className="text-xs text-gray-400 mt-1">Par {BOOK.author}</p>
                 </div>
               </div>
@@ -183,15 +193,19 @@ export default function LandingPage() {
         <div className="max-w-3xl sm:max-w-4xl mx-auto px-4 sm:px-6">
           
           <div className="space-y-5 sm:space-y-6 text-sm sm:text-base lg:text-lg text-blue-100 leading-relaxed">
-            <p className="text-base sm:text-lg lg:text-xl text-white font-medium">
-              {BOOK.description.body1}
-            </p>
-            <p>{BOOK.description.body2}</p>
-            <p>{BOOK.description.body3}</p>
+            {BOOK.description.body1 && (
+              <p className="text-base sm:text-lg lg:text-xl text-white font-medium">
+                {BOOK.description.body1}
+              </p>
+            )}
+            {BOOK.description.body2 && <p>{BOOK.description.body2}</p>}
+            {BOOK.description.body3 && <p>{BOOK.description.body3}</p>}
             
-            <blockquote className="border-l-4 border-yellow-500 pl-4 sm:pl-6 my-6 sm:my-8 italic text-yellow-100 text-sm sm:text-base">
-              "{BOOK.description.cta}"
-            </blockquote>
+            {BOOK.description.cta && (
+              <blockquote className="border-l-4 border-yellow-500 pl-4 sm:pl-6 my-6 sm:my-8 italic text-yellow-100 text-sm sm:text-base">
+                "{BOOK.description.cta}"
+              </blockquote>
+            )}
             
             {/* Auteur */}
             <div className="pt-4 border-t border-white/10">
@@ -213,12 +227,12 @@ export default function LandingPage() {
           <div className="text-center mb-14 sm:mb-16 md:mb-20">
             <span className="inline-block text-xs uppercase tracking-[0.25em] text-yellow-400 font-semibold mb-3">Programme complet</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
-              Les 7 Habitudes qui
+              Les {BOOK.chaptersList.length} Habitudes qui
               <br />
               <span className="text-yellow-400">transforment votre vie</span>
             </h2>
             <p className="text-gray-300 text-base sm:text-lg max-w-2xl mx-auto">
-              Une méthode éprouvée, étape par étape, pour atteindre vos objectifs et réaliser vos rêves
+              Une méthode éprouvée, étape par étape, pour atteindre vos objectifs
             </p>
           </div>
 
@@ -226,14 +240,14 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {BOOK.chaptersList.map((chapter, idx) => (
               <div 
-                key={idx} 
+                key={chapter.id || idx} 
                 className="group relative bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/10 hover:border-yellow-500/40 rounded-2xl p-5 sm:p-6 md:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/10 hover:-translate-y-1"
               >
                 
                 <div className="flex items-start gap-4">
                   {/* Numéro visible */}
                   <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center text-lg sm:text-xl font-black text-black shadow-lg shadow-yellow-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    {chapter.num}
+                    {(idx + 1).toString()}
                   </div>
                   
                   <div className="flex-1 min-w-0 pt-1">
@@ -252,7 +266,7 @@ export default function LandingPage() {
             <p className="text-sm text-gray-300">
               <span className="inline-flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                Formation complète de <span className="text-white font-medium">56 pages</span> avec exercices pratiques
+                Formation complète avec exercices pratiques
               </span>
             </p>
           </div>
@@ -300,7 +314,7 @@ export default function LandingPage() {
                       dès aujourd'hui
                     </h2>
                     <p className="text-gray-300 text-base sm:text-lg leading-relaxed">
-                      Rejoignez des milliers de personnes qui ont transformé leur vie grâce aux 7 Habitudes de la Réussite.
+                      Rejoignez des milliers de personnes qui ont transformé leur vie.
                     </p>
                   </div>
 
@@ -309,7 +323,7 @@ export default function LandingPage() {
                     <div className="flex items-baseline gap-3">
                       <span className="text-2xl text-gray-400 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
                       <span className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm font-bold">
-                        -57%
+                        -{Math.round(((BOOK.regularPrice - BOOK.specialPrice) / BOOK.regularPrice) * 100)}%
                       </span>
                     </div>
                     <div className="flex items-baseline gap-2">
@@ -324,7 +338,7 @@ export default function LandingPage() {
                   {/* Liste inclus */}
                   <div className="space-y-3">
                     {[
-                      { icon: BookOpen, text: "Livre PDF complet (56 pages)" },
+                      { icon: BookOpen, text: `Livre PDF (${BOOK.chaptersList.length} chapitres)` },
                       { icon: Download, text: "Téléchargement instantané" },
                       { icon: CheckCircle, text: "Accès illimité à vie" },
                       { icon: CheckCircle, text: "Compatible tous appareils" }
@@ -355,8 +369,11 @@ export default function LandingPage() {
                       group/btn
                     "
                     onClick={() => {
-                      // TODO: Remplacer par le vrai lien MyChariow
-                      alert('Lien MyChariow bientôt disponible')
+                      if (BOOK.paymentLink) {
+                        window.open(BOOK.paymentLink, '_blank')
+                      } else {
+                        alert('Lien de paiement bientôt disponible')
+                      }
                     }}
                   >
                     {/* Shine effect */}
@@ -403,15 +420,15 @@ export default function LandingPage() {
             {[
               {
                 q: "Comment je reçois le livre après paiement ?",
-                a: "Une fois votre paiement confirmé via MyChariow, vous recevrez instantanément un lien de téléchargement sécurisé par email."
+                a: "Une fois votre paiement confirmé, vous recevrez instantanément un lien de téléchargement sécurisé par email."
               },
               {
                 q: "Sur quels appareils puis-je lire le livre ?",
                 a: "Le livre est au format PDF, compatible avec tous les appareils : smartphone, tablette, ordinateur."
               },
               {
-                q: "Le prix est vraiment à 3 000 FCFA ?",
-                a: "Oui ! C'est une offre spéciale de lancement. Le prix normal est de 7 000 FCFA."
+                q: `Le prix est vraiment à ${BOOK.specialPrice.toLocaleString()} ${BOOK.currency} ?`,
+                a: `Oui ! C'est une offre spéciale de lancement. Le prix normal est de ${BOOK.regularPrice.toLocaleString()} ${BOOK.currency}.`
               }
             ].map((faq, idx) => (
               <Card key={idx} className="bg-white/[0.03] border-white/10 hover:bg-white/[0.05] transition-colors">

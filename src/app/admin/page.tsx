@@ -6,13 +6,15 @@ import {
   BookOpen, Lock, Eye, EyeOff, LogIn, Shield, Settings, 
   BarChart3, Users, ArrowLeft, ExternalLink, Upload, Save, 
   CheckCircle, Image, PenLine, CreditCard, Package, LogOut,
-  Sparkles, ChevronRight, AlertCircle, Plus, Trash2, GripVertical
+  Sparkles, ChevronRight, AlertCircle, Plus, Trash2, GripVertical,
+  RotateCcw
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { getBookData, saveBookData, resetBookData, onBookDataChange, type BookData, type Habit } from '@/lib/book-store'
 
 // Configuration admin sécurisée
 const ADMIN_CONFIG = {
@@ -30,28 +32,23 @@ export default function AdminPage() {
   const router = useRouter()
   const [saved, setSaved] = useState(false)
   const [activeSection, setActiveSection] = useState<'book' | 'habits' | 'cover' | 'payment'>('book')
+  const [resetConfirm, setResetConfirm] = useState(false)
 
-  // États pour les données du livre
-  const [bookData, setBookData] = useState({
-    title: "Les 7 Habitudes de la Réussite",
-    author: "Badi Mohamed",
-    regularPrice: "7000",
-    specialPrice: "3000",
-    tagline: "Le changement commence par une seule décision. Faites aujourd'hui le premier pas vers la réussite.",
-    description: "Découvrez les secrets qui distinguent les personnes qui réussissent de celles qui restent bloquées dans leurs objectifs.",
+  // États pour les données du livre - chargés depuis le store
+  const [bookData, setBookDataStateState] = useState<BookData>({
+    title: "",
+    author: "",
+    regularPrice: 0,
+    specialPrice: 0,
+    currency: "FCFA",
+    tagline: "",
+    description: { hook: "", body1: "", body2: "", body3: "", cta: "" },
+    chaptersList: [],
     paymentLink: ""
   })
 
-  // État pour les habitudes/chapitres
-  const [chaptersList, setChaptersList] = useState([
-    { id: 1, title: "Être Proactif", desc: "Prenez la responsabilité de votre vie au lieu de subir les événements" },
-    { id: 2, title: "Commencer par la fin en tête", desc: "Définissez clairement votre vision et vos objectifs de vie" },
-    { id: 3, title: "Placer les priorités en premier", desc: "Organisez votre temps autour de ce qui compte vraiment" },
-    { id: 4, title: "Penser Gagnant-Gagnant", desc: "Créez des relations mutuellement bénéfiques et durables" },
-    { id: 5, title: "Comprendre avant d'être compris", desc: "Écoutez vraiment les autres avant de vouloir vous faire comprendre" },
-    { id: 6, title: "Synergiser", desc: "Combinez vos forces pour créer mieux que seul" },
-    { id: 7, title: "Aiguisez l'outil", desc: "Renouvelez continuellement vos capacités physiques, mentales et spirituelles" }
-  ])
+  // État local pour les habitudes (avant sauvegarde)
+  const [chaptersList, setChaptersList] = useState<Habit[]>([])
 
   // Nouvelle habitude
   const [newHabit, setNewHabit] = useState({ title: "", desc: "" })
@@ -59,6 +56,23 @@ export default function AdminPage() {
   // État pour la couverture
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
   const [coverFile, setCoverFile] = useState<File | null>(null)
+
+  // Charger les données au montage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const data = getBookData()
+      setBookDataStateState(data)
+      setChaptersList(data.chaptersList)
+
+      // Écouter les changements (si modifié ailleurs)
+      const unsubscribe = onBookDataChange((newData) => {
+        setBookDataStateState(newData)
+        setChaptersList(newData.chaptersList)
+      })
+      
+      return unsubscribe
+    }
+  }, [])
 
   // Vérifier session existante au chargement
   useEffect(() => {
@@ -96,9 +110,36 @@ export default function AdminPage() {
     setPassword('')
   }
 
+  // VRAIE sauvegarde - persiste dans localStorage et notifie la page publique
   const handleSave = () => {
+    // Sauvegarder toutes les données
+    const dataToSave = {
+      ...bookData,
+      chaptersList: chaptersList,
+      regularPrice: typeof bookData.regularPrice === 'string' ? parseInt(bookData.regularPrice) || 0 : bookData.regularPrice,
+      specialPrice: typeof bookData.specialPrice === 'string' ? parseInt(bookData.specialPrice) || 0 : bookData.specialPrice
+    }
+    
+    saveBookData(dataToSave)
+    
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+  }
+
+  // Réinitialiser aux valeurs par défaut
+  const handleReset = () => {
+    if (resetConfirm) {
+      const defaultData = resetBookDataState()
+      setBookDataStateState(defaultData)
+      setChaptersList(defaultData.chaptersList)
+      setResetConfirm(false)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } else {
+      setResetConfirm(true)
+      // Auto-cache après 5 secondes
+      setTimeout(() => setResetConfirm(false), 5000)
+    }
   }
 
   // Gestion des habitudes
@@ -403,7 +444,7 @@ export default function AdminPage() {
                     </label>
                     <Input 
                       value={bookData.title}
-                      onChange={(e) => setBookData({...bookData, title: e.target.value})}
+                      onChange={(e) => setBookDataState({...bookData, title: e.target.value})}
                       className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 h-11 rounded-xl transition-all" 
                     />
                   </div>
@@ -414,7 +455,7 @@ export default function AdminPage() {
                     </label>
                     <Input 
                       value={bookData.author}
-                      onChange={(e) => setBookData({...bookData, author: e.target.value})}
+                      onChange={(e) => setBookDataState({...bookData, author: e.target.value})}
                       className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 h-11 rounded-xl transition-all" 
                     />
                   </div>
@@ -430,7 +471,7 @@ export default function AdminPage() {
                     <div className="relative">
                       <Input 
                         value={bookData.specialPrice}
-                        onChange={(e) => setBookData({...bookData, specialPrice: e.target.value})}
+                        onChange={(e) => setBookDataState({...bookData, specialPrice: e.target.value})}
                         type="number" 
                         className="bg-white/[0.05] border-white/10 text-white focus:border-green-400/50 h-11 rounded-xl pl-4 pr-16 transition-all" 
                       />
@@ -441,7 +482,7 @@ export default function AdminPage() {
                     <div className="relative">
                       <Input 
                         value={bookData.regularPrice}
-                        onChange={(e) => setBookData({...bookData, regularPrice: e.target.value})}
+                        onChange={(e) => setBookDataState({...bookData, regularPrice: e.target.value})}
                         type="number" 
                         className="bg-white/[0.05] border-white/10 text-white focus:border-gray-400/50 h-11 rounded-xl pl-4 pr-16 transition-all" 
                       />
@@ -460,7 +501,7 @@ export default function AdminPage() {
                   </label>
                   <Textarea 
                     value={bookData.tagline}
-                    onChange={(e) => setBookData({...bookData, tagline: e.target.value})}
+                    onChange={(e) => setBookDataState({...bookData, tagline: e.target.value})}
                     className="bg-white/[0.05] border-white/10 text-white min-h-[90px] resize-none focus:border-yellow-400/50 rounded-xl transition-all"
                     placeholder="Phrase motivatrice qui accroche..."
                   />
@@ -474,7 +515,7 @@ export default function AdminPage() {
                   </label>
                   <Textarea 
                     value={bookData.description}
-                    onChange={(e) => setBookData({...bookData, description: e.target.value})}
+                    onChange={(e) => setBookDataState({...bookData, description: e.target.value})}
                     className="bg-white/[0.05] border-white/10 text-white min-h-[110px] resize-none focus:border-yellow-400/50 rounded-xl transition-all"
                     placeholder="Description détaillée du livre..."
                   />
@@ -503,6 +544,30 @@ export default function AdminPage() {
                       <Save className="w-5 h-5" />
                       Sauvegarder les modifications
                     </div>
+                  )}
+                </Button>
+
+                {/* Bouton réinitialiser */}
+                <Button 
+                  onClick={handleReset}
+                  className={`
+                    w-full h-11 rounded-xl font-semibold text-sm transition-all duration-300
+                    ${resetConfirm 
+                      ? 'bg-red-600 hover:bg-red-700 text-white' 
+                      : 'bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-white/10 hover:border-red-500/30'
+                    }
+                  `}
+                >
+                  {resetConfirm ? (
+                    <span className="flex items-center gap-2">
+                      <AlertCircle size={16} />
+                      Confirmer la réinitialisation ?
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <RotateCcw size={16} />
+                      Réinitialiser aux valeurs par défaut
+                    </span>
                   )}
                 </Button>
               </CardContent>
@@ -812,7 +877,7 @@ export default function AdminPage() {
                 </label>
                 <Input 
                   value={bookData.paymentLink}
-                  onChange={(e) => setBookData({...bookData, paymentLink: e.target.value})}
+                  onChange={(e) => setBookDataState({...bookData, paymentLink: e.target.value})}
                   placeholder="https://pay.mychariow.com/votre-lien-paiement"
                   className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 h-12 rounded-xl transition-all"
                 />
