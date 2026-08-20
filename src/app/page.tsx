@@ -9,6 +9,7 @@ import Image from 'next/image'
 // Configuration du livre
 const BOOK = {
   title: "Les 7 Habitudes de la Réussite",
+  author: "Badi Mohamed",
   chapters: 7,
   pages: 56,
   regularPrice: 7000,
@@ -193,6 +194,17 @@ export default function LandingPage() {
             <blockquote className="border-l-4 border-yellow-500 pl-4 sm:pl-6 my-6 sm:my-8 italic text-yellow-100 text-sm sm:text-base">
               "{BOOK.description.cta}"
             </blockquote>
+            
+            {/* Auteur */}
+            <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-black font-bold text-lg">
+                {BOOK.author.split(' ').map(n => n[0]).join('')}
+              </div>
+              <div>
+                <p className="text-white font-semibold">{BOOK.author}</p>
+                <p className="text-gray-400 text-sm">Auteur & Coach de développement personnel</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

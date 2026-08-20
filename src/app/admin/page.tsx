@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { BookOpen, Lock, Eye, EyeOff, LogIn, Shield, Settings, BarChart3, Users, FileText, ArrowLeft, ExternalLink } from 'lucide-react'
+import { BookOpen, Lock, Eye, EyeOff, LogIn, Shield, Settings, BarChart3, Users, FileText, ArrowLeft, ExternalLink, Upload, Save, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 
 // Configuration admin sécurisée
 const ADMIN_CONFIG = {
@@ -25,6 +26,19 @@ export default function AdminPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+
+  // États pour les données du livre (à connecter à une DB plus tard)
+  const [bookData, setBookData] = useState({
+    title: "Les 7 Habitudes de la Réussite",
+    author: "Badi Mohamed",
+    regularPrice: "7000",
+    specialPrice: "3000",
+    tagline: "Le changement commence par une seule décision. Faites aujourd'hui le premier pas vers la réussite.",
+    description: "Découvrez les secrets qui distinguent les personnes qui réussissent de celles qui restent bloquées dans leurs objectifs.",
+    paymentLink: ""
+  })
+
+  const [saved, setSaved] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,6 +72,12 @@ export default function AdminPage() {
     localStorage.removeItem('brookly_admin_time')
     setUsername('')
     setPassword('')
+  }
+
+  const handleSave = () => {
+    // Simulation de sauvegarde (à connecter à API/DB)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 3000)
   }
 
   // Page de connexion
@@ -215,82 +235,198 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Grid principal */}
+        {/* Grid principal - Gestion complète du livre */}
         <div className="grid lg:grid-cols-2 gap-6">
           
-          {/* Infos livre */}
+          {/* Informations du livre - COMPLÈTES */}
           <Card className="bg-white/[0.03] border-white/5">
             <CardHeader className="pb-4">
               <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
                 <Settings size={16} className="text-[#facc15]" />
                 Informations du livre
               </CardTitle>
+              <CardDescription className="text-xs text-gray-300">
+                Modifiez les informations affichées sur le site public
+              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="text-xs text-gray-300">Titre</label>
-                  <Input defaultValue="Les 7 Habitudes de la Réussite" className="bg-white/5 border-white/10 text-sm h-9 text-white" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs text-gray-300">Auteur</label>
-                  <Input defaultValue="Votre Nom" className="bg-white/5 border-white/10 text-sm h-9 text-white" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs text-gray-300">Prix promo (FCFA)</label>
-                  <Input defaultValue="3000" type="number" className="bg-white/5 border-white/10 text-sm h-9 text-white" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs text-gray-300">Prix normal (FCFA)</label>
-                  <Input defaultValue="7000" type="number" className="bg-white/5 border-white/10 text-sm h-9 text-white" />
-                </div>
-              </div>
+            <CardContent className="space-y-5">
               
-              <div className="space-y-1.5">
-                <label className="text-xs text-gray-300">Lien de paiement MyChariow</label>
-                <Input placeholder="https://pay.mychariow.com/..." className="bg-white/5 border-white/10 text-sm h-9 text-white" />
-                <p className="text-xs text-[#facc15]/70">⚠️ Non configuré — Les achats sont désactivés</p>
+              {/* Titre & Auteur */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs text-gray-300 font-medium">Titre du livre</label>
+                  <Input 
+                    value={bookData.title}
+                    onChange={(e) => setBookData({...bookData, title: e.target.value})}
+                    className="bg-white/5 border-white/10 text-sm h-10 text-white" 
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs text-gray-300 font-medium">Auteur</label>
+                  <Input 
+                    value={bookData.author}
+                    onChange={(e) => setBookData({...bookData, author: e.target.value})}
+                    className="bg-white/5 border-white/10 text-sm h-10 text-white" 
+                  />
+                </div>
               </div>
 
-              <Button className="w-full bg-white/10 hover:bg-white/20 text-white text-sm h-9 mt-2">
-                Sauvegarder les modifications
+              {/* Prix */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs text-gray-300 font-medium">Prix promo (FCFA)</label>
+                  <Input 
+                    value={bookData.specialPrice}
+                    onChange={(e) => setBookData({...bookData, specialPrice: e.target.value})}
+                    type="number" 
+                    className="bg-white/5 border-white/10 text-sm h-10 text-white" 
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs text-gray-300 font-medium">Prix normal (FCFA)</label>
+                  <Input 
+                    value={bookData.regularPrice}
+                    onChange={(e) => setBookData({...bookData, regularPrice: e.target.value})}
+                    type="number" 
+                    className="bg-white/5 border-white/10 text-sm h-10 text-white" 
+                  />
+                </div>
+              </div>
+
+              {/* Phrase d'accroche */}
+              <div className="space-y-1.5">
+                <label className="text-xs text-gray-300 font-medium">Phrase d'accroche (tagline)</label>
+                <Textarea 
+                  value={bookData.tagline}
+                  onChange={(e) => setBookData({...bookData, tagline: e.target.value})}
+                  className="bg-white/5 border-white/10 text-sm min-h-[80px] text-white resize-none"
+                  placeholder="Phrase motivatrice..."
+                />
+              </div>
+
+              {/* Description principale */}
+              <div className="space-y-1.5">
+                <label className="text-xs text-gray-300 font-medium">Description principale</label>
+                <Textarea 
+                  value={bookData.description}
+                  onChange={(e) => setBookData({...bookData, description: e.target.value})}
+                  className="bg-white/5 border-white/10 text-sm min-h-[100px] text-white resize-none"
+                  placeholder="Description du livre..."
+                />
+              </div>
+
+              {/* Bouton sauvegarder */}
+              <Button 
+                onClick={handleSave}
+                className={`w-full ${saved ? 'bg-green-600 hover:bg-green-700' : 'bg-white/10 hover:bg-white/20'} text-white text-sm h-10 transition-all`}
+              >
+                {saved ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Modifications sauvegardées !
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Sauvegarder les modifications
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>
 
-          {/* Fichiers */}
+          {/* Fichiers du livre */}
           <Card className="bg-white/[0.03] border-white/5">
             <CardHeader className="pb-4">
               <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
                 <FileText size={16} className="text-[#facc15]" />
                 Fichiers du livre
               </CardTitle>
+              <CardDescription className="text-xs text-gray-300">
+                Gérez la couverture et le PDF du livre
+              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-5">
               
-              {/* PDF */}
-              <div className="border border-dashed border-white/10 rounded-lg p-4 text-center hover:border-[#facc15]/30 transition-colors cursor-pointer">
-                <FileText size={24} className="mx-auto mb-2 text-gray-300" />
-                <p className="text-sm font-medium text-white">Livre PDF</p>
-                <p className="text-xs text-gray-300">56 pages • 7 chapitres • ~2MB</p>
-                <Button variant="outline" size="sm" className="mt-2 border-white/20 text-xs h-7 text-white">
-                  Choisir un fichier
-                </Button>
+              {/* Couverture actuelle */}
+              <div className="space-y-3">
+                <label className="text-xs text-gray-300 font-medium">Image de couverture</label>
+                <div className="border border-dashed border-white/10 rounded-xl p-6 text-center hover:border-[#facc15]/30 transition-colors cursor-pointer group">
+                  <div className="w-24 h-32 mx-auto mb-3 bg-gradient-to-br from-[#1a365d] to-[#0d1f3c] rounded-lg overflow-hidden flex items-center justify-center relative group-hover:scale-105 transition-transform">
+                    <img src="/cover.jpg" alt="Couverture" className="w-full h-full object-cover" onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none'
+                    }} />
+                  </div>
+                  <p className="text-sm font-medium text-white mb-2">Changer l'image</p>
+                  <p className="text-xs text-gray-400 mb-3">PNG, JPG jusqu'à 5MB</p>
+                  <Button variant="outline" size="sm" className="border-white/20 text-xs h-8 text-white hover:bg-white/10">
+                    <Upload className="w-3 h-3 mr-1" />
+                    Parcourir...
+                  </Button>
+                </div>
               </div>
 
-              {/* Couverture */}
-              <div className="border border-dashed border-white/10 rounded-lg p-4 text-center hover:border-[#facc15]/30 transition-colors cursor-pointer">
-                <div className="w-20 h-28 mx-auto mb-2 bg-[#1a365d] rounded overflow-hidden flex items-center justify-center">
-                  <span className="text-[10px] text-gray-300 text-center px-1">Couverture<br/>actuelle</span>
+              {/* PDF du livre */}
+              <div className="space-y-3">
+                <label className="text-xs text-gray-300 font-medium">Livre PDF</label>
+                <div className="border border-dashed border-white/10 rounded-xl p-6 text-center hover:border-[#facc15]/30 transition-colors cursor-pointer">
+                  <FileText size={32} className="mx-auto mb-2 text-gray-400" />
+                  <p className="text-sm font-medium text-white mb-1">Télécharger le PDF</p>
+                  <p className="text-xs text-gray-400 mb-3">56 pages • ~2MB max</p>
+                  <Button variant="outline" size="sm" className="border-white/20 text-xs h-8 text-white hover:bg-white/10">
+                    <Upload className="w-3 h-3 mr-1" />
+                    Choisir un fichier
+                  </Button>
                 </div>
-                <p className="text-sm font-medium text-white">Image de couverture</p>
-                <Button variant="outline" size="sm" className="mt-2 border-white/20 text-xs h-7 text-white">
-                  Changer l'image
-                </Button>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Configuration paiement - INFO SEULEMENT */}
+        <Card className="bg-white/[0.03] border-white/5">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
+              <Settings size={16} className="text-[#facc15]" />
+              Configuration du paiement
+            </CardTitle>
+            <CardDescription className="text-xs text-gray-300">
+              Le lien de paiement se configure directement sur MyChariow
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-5 space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                  <ExternalLink size={16} className="text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-white font-medium text-sm mb-1">Configuration MyChariow</p>
+                  <p className="text-gray-300 text-xs leading-relaxed">
+                    Pour configurer le lien de paiement, rendez-vous sur votre tableau de bord MyChariow. 
+                    Une fois le lien créé, collez-le ci-dessous.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-2 pt-2">
+                <label className="text-xs text-gray-300 font-medium">Lien de paiement MyChariow (optionnel)</label>
+                <Input 
+                  value={bookData.paymentLink}
+                  onChange={(e) => setBookData({...bookData, paymentLink: e.target.value})}
+                  placeholder="https://pay.mychariow.com/votre-lien"
+                  className="bg-white/5 border-white/10 text-sm h-10 text-white"
+                />
+                {!bookData.paymentLink && (
+                  <p className="text-xs text-yellow-400/70 flex items-center gap-1">
+                    <Shield size={12} />
+                    Le bouton d'achat sera désactivé tant qu'aucun lien n'est configuré
+                  </p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Commandes (vide pour l'instant) */}
         <Card className="bg-white/[0.03] border-white/5">
@@ -305,7 +441,7 @@ export default function AdminPage() {
             <div className="text-center py-12 text-gray-300">
               <BookOpen size={32} className="mx-auto mb-3 opacity-50" />
               <p className="text-sm text-white">Aucune commande pour le moment</p>
-              <p className="text-xs mt-1 text-gray-300">Configurez le lien MyChariow pour commencer à vendre</p>
+              <p className="text-xs mt-1">Configurez le lien MyChariow pour commencer à vendre</p>
             </div>
           </CardContent>
         </Card>
