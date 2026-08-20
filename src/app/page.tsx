@@ -5,51 +5,82 @@ import { BookOpen, CheckCircle, ArrowRight, Menu, X, Download, Lock } from 'luci
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
-import { getBookData, onBookDataChange, type BookData } from '@/lib/book-store'
+
+// Type pour les données du livre
+interface Habit {
+  id: number;
+  title: string;
+  desc: string;
+}
+
+interface BookData {
+  title: string;
+  author: string;
+  regularPrice: number;
+  specialPrice: number;
+  currency: string;
+  tagline: string;
+  description: {
+    hook: string;
+    body1: string;
+    body2: string;
+    body3: string;
+    cta: string;
+  };
+  chaptersList: Habit[];
+  paymentLink: string;
+  coverImage?: string;
+}
+
+// Valeurs par défaut (fallback)
+const DEFAULT_BOOK: BookData = {
+  title: "Les 7 Habitudes de la Réussite",
+  author: "Badi Mohamed",
+  regularPrice: 7000,
+  specialPrice: 3000,
+  currency: "FCFA",
+  tagline: "Le changement commence par une seule décision...",
+  description: {
+    hook: "Découvrez les secrets qui transforment votre vie.",
+    body1: "",
+    body2: "",
+    body3: "",
+    cta: ""
+  },
+  chaptersList: [
+    { id: 1, title: "Être Proactif", desc: "Prenez la responsabilité de votre vie" },
+    { id: 2, title: "Commencer par la fin en tête", desc: "Définissez votre vision" },
+    { id: 3, title: "Placer les priorités en premier", desc: "Organisez votre temps" },
+    { id: 4, title: "Penser Gagnant-Gagnant", desc: "Créez des relations gagnantes" },
+    { id: 5, title: "Comprendre avant d'être compris", desc: "Écoutez vraiment" },
+    { id: 6, title: "Synergizer", desc: "Combinez vos forces" },
+    { id: 7, title: "Aiguisez l'outil", desc: "Renouvelez-vous continuellement" }
+  ],
+  paymentLink: ""
+}
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  // État dynamique - se met à jour quand l'admin modifie
+  // État dynamique - chargé depuis l'API (partagé pour tous)
   const [bookData, setBookData] = useState<BookData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // Charger les données et écouter les changements
+  // Charger les données depuis l'API
   useEffect(() => {
-    // Chargement initial
-    setBookData(getBookData())
-
-    // Écouter les changements de l'admin
-    const unsubscribe = onBookDataChange((data) => {
-      setBookData(data)
-    })
-
-    return unsubscribe
+    fetch('/api/book-data')
+      .then(res => res.json())
+      .then(data => {
+        setBookData(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Erreur chargement:', err)
+        setLoading(false)
+      })
   }, [])
 
   // Utiliser les données chargées ou un fallback
-  const BOOK = bookData || {
-    title: "Les 7 Habitudes de la Réussite",
-    author: "Badi Mohamed",
-    chaptersList: [
-      { id: 1, title: "Être Proactif", desc: "Prenez la responsabilité de votre vie" },
-      { id: 2, title: "Commencer par la fin en tête", desc: "Définissez votre vision" },
-      { id: 3, title: "Placer les priorités en premier", desc: "Organisez votre temps" },
-      { id: 4, title: "Penser Gagnant-Gagnant", desc: "Créez des relations gagnantes" },
-      { id: 5, title: "Comprendre avant d'être compris", desc: "Écoutez vraiment" },
-      { id: 6, title: "Synergizer", desc: "Combinez vos forces" },
-      { id: 7, title: "Aiguisez l'outil", desc: "Renouvelez-vous continuellement" }
-    ],
-    regularPrice: 7000,
-    specialPrice: 3000,
-    currency: "FCFA",
-    description: {
-      hook: "Découvrez les secrets qui transforment votre vie.",
-      body1: "",
-      body2: "",
-      body3: "",
-      cta: ""
-    },
-    paymentLink: ""
-  }
+  const BOOK = bookData || DEFAULT_BOOK
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1f3c] to-[#061020] text-white">
@@ -274,27 +305,27 @@ export default function LandingPage() {
       </section>
 
       {/* ===== CTA SECTION - DESIGN PREMIUM ===== */}
-      <section id="achat" className="py-24 sm:py-32 md:py-40 relative overflow-hidden">
+      <section id="achat" className="py-16 sm:py-20 md:py-28 lg:py-32 relative overflow-hidden">
         {/* Background effets */}
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-yellow-500/10 rounded-full blur-[150px]"></div>
-          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px]"></div>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] bg-yellow-500/10 rounded-full blur-[150px]"></div>
+          <div className="absolute bottom-0 right-0 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] bg-blue-500/10 rounded-full blur-[100px]"></div>
         </div>
         
-        <div className="relative max-w-4xl sm:max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="relative max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Carte principale */}
-          <div className="relative bg-gradient-to-br from-[#1a365d]/95 via-[#0d1f3c]/95 to-[#1a365d]/95 backdrop-blur-2xl border-2 border-yellow-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-yellow-500/20">
+          <div className="relative bg-gradient-to-br from-[#1a365d]/95 via-[#0d1f3c]/95 to-[#1a365d]/95 backdrop-blur-2xl border-2 border-yellow-500/30 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-yellow-500/20">
             
             {/* Décoration top */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
-            <div className="absolute top-0 left-0 w-40 h-40 bg-yellow-400/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-60 h-60 bg-blue-400/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+            <div className="absolute top-0 left-0 w-32 h-32 sm:w-40 sm:h-40 bg-yellow-400/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-40 h-40 sm:w-60 sm:h-60 bg-blue-400/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
             
-            <div className="relative z-10 p-8 sm:p-12 md:p-16 lg:p-20">
+            <div className="relative z-10 p-6 sm:p-10 md:p-12 lg:p-16">
               
-              {/* Grid layout 2 colonnes */}
-              <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+              {/* Grid layout responsive */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                 
                 {/* Left - Info & Prix */}
                 <div className="space-y-8 text-left">
@@ -449,7 +480,11 @@ export default function LandingPage() {
             <div className="flex items-center gap-2">
               <Image src="/logo-brookly.svg" alt="Brookly" width={80} height={20} className="h-5 w-auto opacity-80" />
             </div>
-            <span>© 2026 Brookly - Tous droits réservés</span>
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <span>© 2026 Brookly - Tous droits réservés</span>
+              <span className="hidden sm:inline text-gray-500">|</span>
+              <span className="text-gray-400">Propulsé par <a href="https://aeronlabs.com" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 transition-colors font-medium">Aeronlabs</a></span>
+            </div>
           </div>
         </div>
       </footer>

@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { getBookData, saveBookData, resetBookData, onBookDataChange, type BookData, type Habit } from '@/lib/book-store'
+import { type BookData, type Habit } from '@/lib/book-store'
 
 // Configuration admin sécurisée
 const ADMIN_CONFIG = {
@@ -57,20 +57,17 @@ export default function AdminPage() {
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
   const [coverFile, setCoverFile] = useState<File | null>(null)
 
-  // Charger les données au montage
+  // Charger les données depuis l'API au montage
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const data = getBookData()
-      setBookData(data)
-      setChaptersList(data.chaptersList)
-
-      // Écouter les changements (si modifié ailleurs)
-      const unsubscribe = onBookDataChange((newData) => {
-        setBookData(newData)
-        setChaptersList(newData.chaptersList)
-      })
-      
-      return unsubscribe
+      // Charger depuis l'API (partagé pour tous les utilisateurs)
+      fetch('/api/book-data')
+        .then(res => res.json())
+        .then(data => {
+          setBookData(data)
+          setChaptersList(data.chaptersList || [])
+        })
+        .catch(err => console.error('Erreur chargement:', err))
     }
   }, [])
 
@@ -110,31 +107,52 @@ export default function AdminPage() {
     setPassword('')
   }
 
-  // VRAIE sauvegarde - persiste dans localStorage et notifie la page publique
-  const handleSave = () => {
-    // Sauvegarder toutes les données
-    const dataToSave = {
-      ...bookData,
-      chaptersList: chaptersList,
-      regularPrice: typeof bookData.regularPrice === 'string' ? parseInt(bookData.regularPrice) || 0 : bookData.regularPrice,
-      specialPrice: typeof bookData.specialPrice === 'string' ? parseInt(bookData.specialPrice) || 0 : bookData.specialPrice
+  // VRAIE sauvegarde - persiste via API pour TOUS les utilisateurs
+  const handleSave = async () => {
+    try {
+      // Sauvegarder toutes les données via API
+      const dataToSave = {
+        ...bookData,
+        chaptersList: chaptersList,
+        regularPrice: typeof bookData.regularPrice === 'string' ? parseInt(bookData.regularPrice) || 0 : bookData.regularPrice,
+        specialPrice: typeof bookData.specialPrice === 'string' ? parseInt(bookData.specialPrice) || 0 : bookData.specialPrice
+      }
+      
+      const response = await fetch('/api/book-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSave)
+      })
+      
+      if (response.ok) {
+        setSaved(true)
+        setTimeout(() => setSaved(false), 3000)
+      } else {
+        alert('Erreur lors de la sauvegarde')
+      }
+    } catch (error) {
+      console.error('Erreur sauvegarde:', error)
+      alert('Erreur de connexion au serveur')
     }
-    
-    saveBookData(dataToSave)
-    
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
   }
 
-  // Réinitialiser aux valeurs par défaut
-  const handleReset = () => {
+  // Réinitialiser aux valeurs par défaut via API
+  const handleReset = async () => {
     if (resetConfirm) {
-      const defaultData = resetBookData()
-      setBookData(defaultData)
-      setChaptersList(defaultData.chaptersList)
-      setResetConfirm(false)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
+      try {
+        const response = await fetch('/api/book-data', { method: 'DELETE' })
+        
+        if (response.ok) {
+          const result = await response.json()
+          setBookData(result.data)
+          setChaptersList(result.data.chaptersList)
+          setResetConfirm(false)
+          setSaved(true)
+          setTimeout(() => setSaved(false), 3000)
+        }
+      } catch (error) {
+        console.error('Erreur réinitialisation:', error)
+      }
     } else {
       setResetConfirm(true)
       // Auto-cache après 5 secondes
@@ -185,10 +203,21 @@ export default function AdminPage() {
 
   const handleCoverSave = async () => {
     if (coverPreview) {
-      // Sauvegarder l'image en base64 dans le store
-      saveBookData({ coverImage: coverPreview })
-      setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
+      try {
+        // Sauvegarder l'image via API
+        const response = await fetch('/api/book-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ coverImage: coverPreview })
+        })
+        
+        if (response.ok) {
+          setSaved(true)
+          setTimeout(() => setSaved(false), 3000)
+        }
+      } catch (error) {
+        console.error('Erreur sauvegarde couverture:', error)
+      }
     }
   }
 
@@ -949,7 +978,11 @@ export default function AdminPage() {
               <Shield size={14} className="text-yellow-400/50" />
               <span>Brookly Admin Panel • Sécurisé</span>
             </div>
-            <span>© 2026 Tous droits réservés</span>
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <span>© 2026 Tous droits réservés</span>
+              <span className="hidden sm:inline text-gray-600">|</span>
+              <span>Propulsé par <span className="text-yellow-400/70 font-medium">Aeronlabs</span></span>
+            </div>
           </div>
         </div>
       </footer>
