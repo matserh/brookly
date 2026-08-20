@@ -15,6 +15,10 @@ const BOOK = {
   specialPrice: 3000,
   currency: "FCFA",
   
+  // Dimensions réelles d'un PDF/livre (ratio A5 approximatif)
+  // A5 = 148 x 210mm → ratio 1:1.416
+  coverRatio: 210 / 148, // hauteur / largeur
+  
   description: {
     hook: "Découvrez les secrets qui distinguent les personnes qui réussissent de celles qui restent bloquées dans leurs objectifs.",
     body1: "Dans « Les 7 Habitudes des Personnes qui Réussissent », vous apprendrez les comportements et les méthodes adoptés par les entrepreneurs, les leaders, les étudiants performants et les personnes qui accomplissent leurs rêves.",
@@ -32,6 +36,35 @@ const BOOK = {
     { num: 6, title: "Synergiser", desc: "Travaillez ensemble pour plus" },
     { num: 7, title: "Aiguisez la tranchante", desc: "Renouvelez-vous continuellement" }
   ]
+}
+
+// Composant Livre avec proportions PDF réelles
+function BookCover({ className = "" }: { className?: string }) {
+  return (
+    <div className={`relative ${className}`}>
+      {/* Container avec ombre de livre réel */}
+      <div className="relative w-full h-full bg-gradient-to-br from-[#1a365d] to-[#0d1f3c] rounded-sm shadow-2xl overflow-hidden border border-white/10">
+        
+        {/* Image de couverture - remplit tout l'espace */}
+        <Image 
+          src="/cover.jpg" 
+          alt="Les 7 Habitudes de la Réussite"
+          fill
+          className="object-cover"
+          priority
+        />
+        
+        {/* Légère ombre intérieure pour effet profondeur */}
+        <div className="absolute inset-0 shadow-inner pointer-events-none"></div>
+        
+        {/* Reflet subtil (comme un vrai livre brillant) */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none"></div>
+      </div>
+      
+      {/* Ombre portée réaliste sous le livre */}
+      <div className="absolute -bottom-2 left-4 right-4 h-4 bg-black/30 blur-lg rounded-full"></div>
+    </div>
+  )
 }
 
 export default function LandingPage() {
@@ -97,11 +130,10 @@ export default function LandingPage() {
       <section className="relative min-h-screen flex items-center pt-20 pb-12 md:pt-24 md:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
           
-          {/* Mobile: Stack vertical | Desktop: Side by side with large book */}
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             
             {/* Left - Content */}
-            <div className="space-y-6 lg:space-y-8 order-2 lg:order-1">
+            <div className="space-y-5 lg:space-y-6 order-2 lg:order-1">
               
               {/* Title */}
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-[1.1] tracking-tight">
@@ -118,7 +150,7 @@ export default function LandingPage() {
                 {BOOK.description.hook}
               </p>
 
-              {/* Features Pills - No emoji */}
+              {/* Features Pills */}
               <div className="flex flex-wrap gap-2 sm:gap-3">
                 {[
                   { icon: BookOpen, label: "Contenu Complet" },
@@ -132,7 +164,7 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              {/* Price + Single CTA */}
+              {/* Price + CTA */}
               <div className="space-y-3 pt-2">
                 <div className="flex items-baseline gap-3">
                   <span className="text-gray-500 line-through text-base sm:text-lg">{BOOK.regularPrice.toLocaleString()}</span>
@@ -156,40 +188,23 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right - Large Book Cover (Desktop) / Small (Mobile) */}
-            <div className="order-1 lg:order-2 flex justify-center">
-              <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+            {/* Right - BOOK COVER avec proportions PDF exactes */}
+            <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+              
+              {/* 
+                Proportions réelles d'un livre/PDF:
+                - Mobile: comme un livre tenu en main (~140x200px visuel)
+                - Tablet: taille intermédiaire (~200x284px)  
+                - Desktop: grand format (~280x396px)
                 
-                {/* Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/10 rounded-3xl blur-2xl scale-95"></div>
-                
-                {/* Book Container - Responsive sizing */}
-                <div className="relative bg-gradient-to-br from-[#1a365d] to-[#0d1f3c] rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-6 shadow-2xl border border-white/10">
-                  
-                  {/* The Cover Image - Scales with screen */}
-                  <div className="relative aspect-[3/4] w-full rounded-lg sm:rounded-xl overflow-hidden shadow-xl">
-                    <Image 
-                      src="/cover.jpg" 
-                      alt="Les 7 Habitudes de la Réussite - Couverture"
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                    
-                    {/* Subtle overlay gradient for depth */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-                  </div>
-                  
-                  {/* Book Info Below Cover - Only on larger screens */}
-                  <div className="mt-3 sm:mt-4 hidden sm:block text-center space-y-1">
-                    <p className="text-xs uppercase tracking-wider text-gray-500">eBook Complet</p>
-                    <div className="flex justify-center gap-3 text-xs text-gray-400">
-                      <span>{BOOK.chapters} Chapitres</span>
-                      <span>•</span>
-                      <span>{BOOK.pages} Pages</span>
-                    </div>
-                  </div>
-                </div>
+                Ratio constant: 1:1.416 (format A5/book)
+              */}
+              <div className="
+                w-[180px] sm:w-[220px] md:w-[260px] lg:w-[300px] xl:w-[340px]
+                aspect-[1/1.416]
+                relative
+              ">
+                <BookCover className="w-full h-full" />
               </div>
             </div>
           </div>
@@ -232,12 +247,10 @@ export default function LandingPage() {
               <Card key={idx} className="group bg-white/[0.03] border-white/10 hover:bg-white/[0.06] hover:border-yellow-500/30 transition-all duration-200">
                 <CardContent className="p-3 sm:p-4 md:p-5 flex items-center gap-3 sm:gap-4">
                   
-                  {/* Number Badge */}
                   <div className="w-9 h-9 sm:w-11 sm:h-11 shrink-0 bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 group-hover:from-yellow-400 group-hover:to-yellow-500 rounded-lg sm:rounded-xl flex items-center justify-center text-sm sm:text-lg font-bold text-yellow-400 group-hover:text-black transition-all duration-200">
                     {chapter.num}
                   </div>
                   
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-white group-hover:text-yellow-400 transition-colors">
                       {chapter.title}
@@ -253,19 +266,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== SINGLE CTA SECTION ===== */}
+      {/* ===== CTA SECTION ===== */}
       <section id="achat" className="py-16 sm:py-20 md:py-24 relative">
         <div className="absolute inset-0 bg-gradient-to-t from-yellow-900/10 via-transparent to-transparent"></div>
         
         <div className="relative max-w-2xl sm:max-w-3xl mx-auto px-4 sm:px-6">
           <Card className="bg-gradient-to-br from-[#1a365d]/80 to-[#0d1f3c]/80 backdrop-blur-xl border border-yellow-500/20 overflow-hidden">
             
-            {/* Top glow line */}
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent"></div>
             
             <CardContent className="p-6 sm:p-8 md:p-12 text-center space-y-6 sm:space-y-8">
               
-              {/* Header */}
               <div className="space-y-3">
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black">
                   Commencez votre transformation aujourd'hui
@@ -275,7 +286,6 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              {/* Price Display */}
               <div className="space-y-2">
                 <div className="flex items-center justify-center gap-3 text-base sm:text-lg">
                   <span className="text-gray-500 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
@@ -294,7 +304,6 @@ export default function LandingPage() {
                 <p className="text-gray-500 text-xs sm:text-sm">Paiement unique • Accès à vie • Téléchargement immédiat</p>
               </div>
 
-              {/* What's Included - No emoji */}
               <div className="grid grid-cols-2 gap-2 sm:gap-3 max-w-md mx-auto text-left text-xs sm:text-sm">
                 {[
                   "Livre PDF complet (56 pages)",
@@ -311,12 +320,10 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              {/* THE ONE AND ONLY CTA BUTTON */}
               <Button 
                 size="lg"
                 className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg px-8 py-4 sm:py-5 rounded-xl shadow-xl shadow-yellow-500/25 hover:shadow-yellow-500/40 transition-all duration-200"
                 onClick={() => {
-                  // TODO: Replace with actual MyChariow link
                   alert('Lien MyChariow bientôt disponible')
                 }}
               >
