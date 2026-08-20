@@ -140,16 +140,16 @@ export default function LandingPage() {
                   relative
                   w-[280px] sm:w-[340px] md:w-[400px] lg:w-[480px] xl:w-[520px]
                   aspect-[3/2]
-                  rounded-2xl overflow-hidden
+                  rounded-[1.5rem] overflow-hidden
                   transform transition-transform duration-500 group-hover:scale-[1.02]
                 ">
                   
-                  {/* Image couverture horizontale */}
+                  {/* Image couverture horizontale - zoom pour cacher bords */}
                   <Image 
                     src="/cover.jpg" 
                     alt="Les 7 Habitudes de la Réussite"
                     fill
-                    className="object-contain"
+                    className="object-cover scale-105"
                     priority
                     sizes="(max-width: 640px) 280px, (max-width: 768px) 340px, (max-width: 1024px) 400px, (max-width: 1280px) 480px, 520px"
                   />
