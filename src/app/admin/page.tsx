@@ -184,9 +184,9 @@ export default function AdminPage() {
   }
 
   const handleCoverSave = async () => {
-    if (coverFile) {
-      // Ici vous pourriez envoyer à un serveur
-      // Pour l'instant, on sauvegarde en localStorage comme démo
+    if (coverPreview) {
+      // Sauvegarder l'image en base64 dans le store
+      saveBookData({ coverImage: coverPreview })
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     }
@@ -444,7 +444,7 @@ export default function AdminPage() {
                     </label>
                     <Input 
                       value={bookData.title}
-                      onChange={(e) => setBookDataState({...bookData, title: e.target.value})}
+                      onChange={(e) => setBookData({...bookData, title: e.target.value})}
                       className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 h-11 rounded-xl transition-all" 
                     />
                   </div>
@@ -455,7 +455,7 @@ export default function AdminPage() {
                     </label>
                     <Input 
                       value={bookData.author}
-                      onChange={(e) => setBookDataState({...bookData, author: e.target.value})}
+                      onChange={(e) => setBookData({...bookData, author: e.target.value})}
                       className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 h-11 rounded-xl transition-all" 
                     />
                   </div>
@@ -471,7 +471,7 @@ export default function AdminPage() {
                     <div className="relative">
                       <Input 
                         value={bookData.specialPrice}
-                        onChange={(e) => setBookDataState({...bookData, specialPrice: e.target.value})}
+                        onChange={(e) => setBookData({...bookData, specialPrice: e.target.value})}
                         type="number" 
                         className="bg-white/[0.05] border-white/10 text-white focus:border-green-400/50 h-11 rounded-xl pl-4 pr-16 transition-all" 
                       />
@@ -482,7 +482,7 @@ export default function AdminPage() {
                     <div className="relative">
                       <Input 
                         value={bookData.regularPrice}
-                        onChange={(e) => setBookDataState({...bookData, regularPrice: e.target.value})}
+                        onChange={(e) => setBookData({...bookData, regularPrice: e.target.value})}
                         type="number" 
                         className="bg-white/[0.05] border-white/10 text-white focus:border-gray-400/50 h-11 rounded-xl pl-4 pr-16 transition-all" 
                       />
@@ -501,7 +501,7 @@ export default function AdminPage() {
                   </label>
                   <Textarea 
                     value={bookData.tagline}
-                    onChange={(e) => setBookDataState({...bookData, tagline: e.target.value})}
+                    onChange={(e) => setBookData({...bookData, tagline: e.target.value})}
                     className="bg-white/[0.05] border-white/10 text-white min-h-[90px] resize-none focus:border-yellow-400/50 rounded-xl transition-all"
                     placeholder="Phrase motivatrice qui accroche..."
                   />
@@ -515,7 +515,7 @@ export default function AdminPage() {
                   </label>
                   <Textarea 
                     value={typeof bookData.description === 'string' ? bookData.description : bookData.description?.hook || ''}
-                    onChange={(e) => setBookDataState({
+                    onChange={(e) => setBookData({
                       ...bookData, 
                       description: typeof bookData.description === 'string' 
                         ? e.target.value 
@@ -882,7 +882,7 @@ export default function AdminPage() {
                 </label>
                 <Input 
                   value={bookData.paymentLink}
-                  onChange={(e) => setBookDataState({...bookData, paymentLink: e.target.value})}
+                  onChange={(e) => setBookData({...bookData, paymentLink: e.target.value})}
                   placeholder="https://pay.mychariow.com/votre-lien-paiement"
                   className="bg-white/[0.05] border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-400/50 h-12 rounded-xl transition-all"
                 />

@@ -161,7 +161,7 @@ export default function LandingPage() {
                   
                   {/* Image couverture horizontale */}
                   <Image 
-                    src="/cover.jpg" 
+                    src={BOOK.coverImage || "/cover.jpg"} 
                     alt={BOOK.title}
                     fill
                     className="object-cover scale-105"
