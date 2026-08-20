@@ -140,6 +140,7 @@ export default function LandingPage() {
                   relative
                   w-[280px] sm:w-[340px] md:w-[400px] lg:w-[480px] xl:w-[520px]
                   aspect-[3/2]
+                  rounded-2xl overflow-hidden
                   transform transition-transform duration-500 group-hover:scale-[1.02]
                 ">
                   
