@@ -71,7 +71,7 @@ export default function AdminPage() {
               <Shield className="w-6 h-6 text-[#facc15]" />
             </div>
             <h1 className="text-xl font-bold text-white">Brookly Admin</h1>
-            <p className="text-sm text-gray-500">Espace de gestion du livre</p>
+            <p className="text-sm text-gray-300">Espace de gestion du livre</p>
           </div>
 
           {/* Formulaire */}
@@ -79,20 +79,20 @@ export default function AdminPage() {
             <CardContent className="p-6 space-y-4">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="username" className="text-gray-400 text-sm">Identifiant</Label>
+                  <Label htmlFor="username" className="text-gray-200 text-sm">Identifiant</Label>
                   <Input
                     id="username"
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Entrez votre identifiant"
-                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-[#facc15]"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#facc15]"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-400 text-sm">Mot de passe</Label>
+                  <Label htmlFor="password" className="text-gray-200 text-sm">Mot de passe</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -100,13 +100,13 @@ export default function AdminPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Entrez votre mot de passe"
-                      className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-[#facc15] pr-10"
+                      className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#facc15] pr-10"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white"
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -144,7 +144,7 @@ export default function AdminPage() {
           <Button 
             variant="ghost" 
             onClick={() => router.push('/')}
-            className="w-full text-gray-500 hover:text-white"
+            className="w-full text-gray-300 hover:text-white"
           >
             <ArrowLeft size={14} className="mr-2" />
             Retour au site public
@@ -163,14 +163,14 @@ export default function AdminPage() {
           <div className="flex items-center gap-3">
             <span className="text-[#facc15] font-bold">7</span>
             <span className="font-semibold text-white">Admin</span>
-            <span className="text-xs text-gray-500 bg-white/5 px-2 py-0.5 rounded">Brookly</span>
+            <span className="text-xs text-gray-300 bg-white/5 px-2 py-0.5 rounded">Brookly</span>
           </div>
           
           <div className="flex items-center gap-4">
             <a 
               href="/" 
               target="_blank" 
-              className="text-xs text-gray-500 hover:text-white flex items-center gap-1"
+              className="text-xs text-gray-300 hover:text-white flex items-center gap-1"
             >
               Voir le site
               <ExternalLink size={12} />
@@ -179,7 +179,7 @@ export default function AdminPage() {
               variant="ghost" 
               size="sm"
               onClick={handleLogout}
-              className="text-gray-500 hover:text-red-400"
+              className="text-gray-300 hover:text-red-400"
             >
               Déconnexion
             </Button>
@@ -192,7 +192,7 @@ export default function AdminPage() {
         
         {/* Tagline */}
         <div className="bg-gradient-to-r from-[#facc15]/10 to-transparent border-l-2 border-[#facc15] p-4 rounded-r-lg">
-          <p className="text-sm text-gray-300 italic">{ADMIN_TAGLINE}</p>
+          <p className="text-sm text-white italic">{ADMIN_TAGLINE}</p>
         </div>
 
         {/* Stats */}
@@ -208,7 +208,7 @@ export default function AdminPage() {
                 <stat.icon size={18} className="text-[#facc15]" />
                 <div>
                   <p className="text-xl font-bold text-white">{stat.value}</p>
-                  <p className="text-xs text-gray-500">{stat.label}</p>
+                  <p className="text-xs text-gray-300">{stat.label}</p>
                 </div>
               </CardContent>
             </Card>
@@ -229,26 +229,26 @@ export default function AdminPage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs text-gray-500">Titre</label>
-                  <Input defaultValue="Les 7 Habitudes de la Réussite" className="bg-white/5 border-white/10 text-sm h-9" />
+                  <label className="text-xs text-gray-300">Titre</label>
+                  <Input defaultValue="Les 7 Habitudes de la Réussite" className="bg-white/5 border-white/10 text-sm h-9 text-white" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-gray-500">Auteur</label>
-                  <Input defaultValue="Votre Nom" className="bg-white/5 border-white/10 text-sm h-9" />
+                  <label className="text-xs text-gray-300">Auteur</label>
+                  <Input defaultValue="Votre Nom" className="bg-white/5 border-white/10 text-sm h-9 text-white" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-gray-500">Prix promo (FCFA)</label>
-                  <Input defaultValue="3000" type="number" className="bg-white/5 border-white/10 text-sm h-9" />
+                  <label className="text-xs text-gray-300">Prix promo (FCFA)</label>
+                  <Input defaultValue="3000" type="number" className="bg-white/5 border-white/10 text-sm h-9 text-white" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-gray-500">Prix normal (FCFA)</label>
-                  <Input defaultValue="7000" type="number" className="bg-white/5 border-white/10 text-sm h-9" />
+                  <label className="text-xs text-gray-300">Prix normal (FCFA)</label>
+                  <Input defaultValue="7000" type="number" className="bg-white/5 border-white/10 text-sm h-9 text-white" />
                 </div>
               </div>
               
               <div className="space-y-1.5">
-                <label className="text-xs text-gray-500">Lien de paiement MyChariow</label>
-                <Input placeholder="https://pay.mychariow.com/..." className="bg-white/5 border-white/10 text-sm h-9" />
+                <label className="text-xs text-gray-300">Lien de paiement MyChariow</label>
+                <Input placeholder="https://pay.mychariow.com/..." className="bg-white/5 border-white/10 text-sm h-9 text-white" />
                 <p className="text-xs text-[#facc15]/70">⚠️ Non configuré — Les achats sont désactivés</p>
               </div>
 
@@ -270,10 +270,10 @@ export default function AdminPage() {
               
               {/* PDF */}
               <div className="border border-dashed border-white/10 rounded-lg p-4 text-center hover:border-[#facc15]/30 transition-colors cursor-pointer">
-                <FileText size={24} className="mx-auto mb-2 text-gray-500" />
+                <FileText size={24} className="mx-auto mb-2 text-gray-300" />
                 <p className="text-sm font-medium text-white">Livre PDF</p>
-                <p className="text-xs text-gray-500">56 pages • 7 chapitres • ~2MB</p>
-                <Button variant="outline" size="sm" className="mt-2 border-white/20 text-xs h-7">
+                <p className="text-xs text-gray-300">56 pages • 7 chapitres • ~2MB</p>
+                <Button variant="outline" size="sm" className="mt-2 border-white/20 text-xs h-7 text-white">
                   Choisir un fichier
                 </Button>
               </div>
@@ -281,10 +281,10 @@ export default function AdminPage() {
               {/* Couverture */}
               <div className="border border-dashed border-white/10 rounded-lg p-4 text-center hover:border-[#facc15]/30 transition-colors cursor-pointer">
                 <div className="w-20 h-28 mx-auto mb-2 bg-[#1a365d] rounded overflow-hidden flex items-center justify-center">
-                  <span className="text-[10px] text-gray-500 text-center px-1">Couverture<br/>actuelle</span>
+                  <span className="text-[10px] text-gray-300 text-center px-1">Couverture<br/>actuelle</span>
                 </div>
                 <p className="text-sm font-medium text-white">Image de couverture</p>
-                <Button variant="outline" size="sm" className="mt-2 border-white/20 text-xs h-7">
+                <Button variant="outline" size="sm" className="mt-2 border-white/20 text-xs h-7 text-white">
                   Changer l'image
                 </Button>
               </div>
@@ -299,13 +299,13 @@ export default function AdminPage() {
               <Users size={16} className="text-[#facc15]" />
               Commandes
             </CardTitle>
-            <CardDescription className="text-xs">Les commandes apparaîtront ici une fois le paiement configuré</CardDescription>
+            <CardDescription className="text-xs text-gray-300">Les commandes apparaîtront ici une fois le paiement configuré</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-12 text-gray-500">
-              <BookOpen size={32} className="mx-auto mb-3 opacity-30" />
-              <p className="text-sm">Aucune commande pour le moment</p>
-              <p className="text-xs mt-1">Configurez le lien MyChariow pour commencer à vendre</p>
+            <div className="text-center py-12 text-gray-300">
+              <BookOpen size={32} className="mx-auto mb-3 opacity-50" />
+              <p className="text-sm text-white">Aucune commande pour le moment</p>
+              <p className="text-xs mt-1 text-gray-300">Configurez le lien MyChariow pour commencer à vendre</p>
             </div>
           </CardContent>
         </Card>

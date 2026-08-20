@@ -56,14 +56,14 @@ export default function LandingPage() {
             </span>
           </div>
           
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-            <a href="#livre" className="hover:text-white transition-colors">Le Livre</a>
-            <a href="#contenu" className="hover:text-white transition-colors">Contenu</a>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white">
+            <a href="#livre" className="hover:text-yellow-400 transition-colors">Le Livre</a>
+            <a href="#contenu" className="hover:text-yellow-400 transition-colors">Contenu</a>
             <a href="#achat" className="hover:text-yellow-400 transition-colors text-yellow-400">Acheter</a>
           </div>
 
           <button 
-            className="md:hidden p-2 text-gray-400 hover:text-white"
+            className="md:hidden p-2 text-gray-300 hover:text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -73,8 +73,8 @@ export default function LandingPage() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-[#0a1628]/95 backdrop-blur-xl border-t border-white/5 p-4 space-y-3">
-            <a href="#livre" className="block text-gray-300 py-2" onClick={() => setMobileMenuOpen(false)}>Le Livre</a>
-            <a href="#contenu" className="block text-gray-300 py-2" onClick={() => setMobileMenuOpen(false)}>Contenu</a>
+            <a href="#livre" className="block text-white py-2" onClick={() => setMobileMenuOpen(false)}>Le Livre</a>
+            <a href="#contenu" className="block text-white py-2" onClick={() => setMobileMenuOpen(false)}>Contenu</a>
             <a href="#achat" className="block text-yellow-400 py-2 font-medium" onClick={() => setMobileMenuOpen(false)}>Acheter le livre</a>
           </div>
         )}
@@ -96,11 +96,11 @@ export default function LandingPage() {
                 <br />
                 <span className="text-white">HABITUDES</span>
                 <br />
-                <span className="text-gray-300 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl">DE LA RÉUSSITE</span>
+                <span className="text-white text-2xl sm:text-3xl lg:text-4xl xl:text-5xl">DE LA RÉUSSITE</span>
               </h1>
 
               {/* Hook */}
-              <p className="text-base sm:text-lg lg:text-xl text-blue-100/80 max-w-lg leading-relaxed">
+              <p className="text-base sm:text-lg lg:text-xl text-blue-100 max-w-lg leading-relaxed">
                 {BOOK.description.hook}
               </p>
 
@@ -121,11 +121,11 @@ export default function LandingPage() {
               {/* Prix */}
               <div className="space-y-2 pt-2">
                 <div className="flex items-baseline gap-3">
-                  <span className="text-gray-500 line-through text-base sm:text-lg">{BOOK.regularPrice.toLocaleString()}</span>
+                  <span className="text-gray-400 line-through text-base sm:text-lg">{BOOK.regularPrice.toLocaleString()}</span>
                   <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-yellow-400">{BOOK.specialPrice.toLocaleString()}</span>
-                  <span className="text-base sm:text-lg text-gray-300">{BOOK.currency}</span>
+                  <span className="text-base sm:text-lg text-white">{BOOK.currency}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-300">
                   Offre de lancement - {BOOK.chapters} chapitres - {BOOK.pages} pages
                 </p>
               </div>
@@ -164,8 +164,8 @@ export default function LandingPage() {
 
                 {/* Book info below */}
                 <div className="mt-4 text-center">
-                  <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">eBook PDF</p>
-                  <p className="text-sm text-gray-400 mt-1">{BOOK.chapters} chapitres - {BOOK.pages} pages</p>
+                  <p className="text-xs uppercase tracking-widest text-gray-300 font-semibold">eBook PDF</p>
+                  <p className="text-sm text-white mt-1">{BOOK.chapters} chapitres - {BOOK.pages} pages</p>
                 </div>
               </div>
             </div>
@@ -174,7 +174,7 @@ export default function LandingPage() {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden lg:flex flex-col items-center gap-2">
-          <span className="text-xs text-gray-500">Defiler pour acheter</span>
+          <span className="text-xs text-gray-300">Défiler pour acheter</span>
           <ArrowRight className="w-4 h-4 text-yellow-400 rotate-90" />
         </div>
       </section>
@@ -183,7 +183,7 @@ export default function LandingPage() {
       <section id="livre" className="py-16 sm:py-20 md:py-24 relative">
         <div className="max-w-3xl sm:max-w-4xl mx-auto px-4 sm:px-6">
           
-          <div className="space-y-5 sm:space-y-6 text-sm sm:text-base lg:text-lg text-blue-100/80 leading-relaxed">
+          <div className="space-y-5 sm:space-y-6 text-sm sm:text-base lg:text-lg text-blue-100 leading-relaxed">
             <p className="text-base sm:text-lg lg:text-xl text-white font-medium">
               {BOOK.description.body1}
             </p>
@@ -203,9 +203,9 @@ export default function LandingPage() {
           
           <div className="mb-10 sm:mb-12 md:mb-16">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">
-              Les 7 Habitudes en detail
+              Les 7 Habitudes en détail
             </h2>
-            <p className="text-gray-400 text-sm sm:text-base">
+            <p className="text-white text-sm sm:text-base">
               {BOOK.chapters} chapitres - {BOOK.pages} pages
             </p>
           </div>
@@ -223,7 +223,7 @@ export default function LandingPage() {
                     <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-white group-hover:text-yellow-400 transition-colors">
                       {chapter.title}
                     </h3>
-                    <p className="text-gray-500 text-xs sm:text-sm truncate">{chapter.desc}</p>
+                    <p className="text-gray-300 text-xs sm:text-sm truncate">{chapter.desc}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -249,15 +249,15 @@ export default function LandingPage() {
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black">
                   Obtenez le livre maintenant
                 </h2>
-                <p className="text-gray-400 text-base sm:text-lg max-w-md mx-auto">
-                  Commencez votre transformation des aujourd'hui.
+                <p className="text-white text-base sm:text-lg max-w-md mx-auto">
+                  Commencez votre transformation dès aujourd'hui.
                 </p>
               </div>
 
               {/* Prix */}
               <div className="space-y-2">
                 <div className="flex items-center justify-center gap-3 text-base sm:text-lg">
-                  <span className="text-gray-500 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
+                  <span className="text-gray-400 line-through">{BOOK.regularPrice.toLocaleString()} {BOOK.currency}</span>
                   <span className="bg-green-500/15 text-green-400 px-3 py-1 rounded-full text-sm font-bold">
                     -57%
                   </span>
@@ -267,10 +267,10 @@ export default function LandingPage() {
                   <span className="text-5xl sm:text-6xl lg:text-7xl font-black text-yellow-400">
                     {BOOK.specialPrice.toLocaleString()}
                   </span>
-                  <span className="text-xl sm:text-2xl lg:text-3xl text-gray-300 font-medium">{BOOK.currency}</span>
+                  <span className="text-xl sm:text-2xl lg:text-3xl text-white font-medium">{BOOK.currency}</span>
                 </div>
                 
-                <p className="text-gray-500 text-sm">Paiement unique - Acces immediat a vie</p>
+                <p className="text-gray-300 text-sm">Paiement unique - Accès immédiat à vie</p>
               </div>
 
               {/* Inclus */}
@@ -278,12 +278,12 @@ export default function LandingPage() {
                 {[
                   "Livre PDF complet (56 pages)",
                   "Compatible mobile & tablette",
-                  "Acces illimite a vie",
-                  "Paiement securise MyChariow",
-                  "Telechargement instantane",
-                  "Support dedie"
+                  "Accès illimité à vie",
+                  "Paiement sécurisé MyChariow",
+                  "Téléchargement instantané",
+                  "Support dédié"
                 ].map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-gray-300">
+                  <div key={idx} className="flex items-center gap-2 text-white">
                     <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
                     <span>{item}</span>
                   </div>
@@ -307,7 +307,7 @@ export default function LandingPage() {
                   "
                   onClick={() => {
                     // TODO: Remplacer par le vrai lien MyChariow
-                    alert('Lien MyChariow bientot disponible')
+                    alert('Lien MyChariow bientôt disponible')
                   }}
                 >
                   {/* Effet de shine au survol */}
@@ -319,8 +319,8 @@ export default function LandingPage() {
                 </Button>
               </div>
 
-              <p className="text-xs text-gray-600">
-                Paiement securise via MyChariow
+              <p className="text-xs text-gray-300">
+                Paiement sécurisé via MyChariow
               </p>
             </CardContent>
           </Card>
@@ -333,29 +333,29 @@ export default function LandingPage() {
           
           <div className="mb-10 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">
-              Questions frequentes
+              Questions fréquentes
             </h2>
           </div>
 
           <div className="space-y-3 sm:space-y-4">
             {[
               {
-                q: "Comment je recois le livre apres paiement ?",
-                a: "Une fois votre paiement confirme via MyChariow, vous recevrez instantanement un lien de telechargement securise par email."
+                q: "Comment je reçois le livre après paiement ?",
+                a: "Une fois votre paiement confirmé via MyChariow, vous recevrez instantanément un lien de téléchargement sécurisé par email."
               },
               {
                 q: "Sur quels appareils puis-je lire le livre ?",
                 a: "Le livre est au format PDF, compatible avec tous les appareils : smartphone, tablette, ordinateur."
               },
               {
-                q: "Le prix est vraiment a 3 000 FCFA ?",
-                a: "Oui ! C'est une offre speciale de lancement. Le prix normal est de 7 000 FCFA."
+                q: "Le prix est vraiment à 3 000 FCFA ?",
+                a: "Oui ! C'est une offre spéciale de lancement. Le prix normal est de 7 000 FCFA."
               }
             ].map((faq, idx) => (
               <Card key={idx} className="bg-white/[0.03] border-white/10 hover:bg-white/[0.05] transition-colors">
                 <CardContent className="p-4 sm:p-6">
                   <h3 className="font-bold text-sm sm:text-base lg:text-lg mb-1 sm:mb-2 text-yellow-400/90">{faq.q}</h3>
-                  <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">{faq.a}</p>
+                  <p className="text-gray-200 text-xs sm:text-sm leading-relaxed">{faq.a}</p>
                 </CardContent>
               </Card>
             ))}
@@ -366,12 +366,12 @@ export default function LandingPage() {
       {/* ===== FOOTER ===== */}
       <footer className="py-8 sm:py-10 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-gray-500">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-gray-300">
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-yellow-400" />
-              <span className="font-medium">Les 7 Habitudes de la Reussite</span>
+              <span className="font-medium">Les 7 Habitudes de la Réussite</span>
             </div>
-            <span>2024 Tous droits reserves</span>
+            <span>© 2024 Tous droits réservés</span>
           </div>
         </div>
       </footer>
