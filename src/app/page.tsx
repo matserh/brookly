@@ -223,12 +223,8 @@ export default function LandingPage() {
                 key={idx} 
                 className="group relative bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/10 hover:border-yellow-500/40 rounded-2xl p-5 sm:p-6 md:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/10 hover:-translate-y-1"
               >
-                {/* Numéro décoratif en arrière-plan */}
-                <div className="absolute top-4 right-4 sm:top-6 sm:right-6 text-5xl sm:text-6xl font-black text-white/[0.03] group-hover:text-yellow-400/10 transition-colors">
-                  {chapter.num}
-                </div>
                 
-                <div className="flex items-start gap-4 relative z-10">
+                <div className="flex items-start gap-4">
                   {/* Numéro visible */}
                   <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center text-lg sm:text-xl font-black text-black shadow-lg shadow-yellow-500/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                     {chapter.num}
